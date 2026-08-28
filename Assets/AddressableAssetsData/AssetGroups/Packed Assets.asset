@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Packed Assets
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Packed Assets
+  m_GUID: 94550efbf0216bd42948502cf92b87cd
+  m_SerializeEntries:
+  - m_GUID: 0c18fa363da74494191d45a4f10d80a0
+    m_Address: Assets/CoreDomain/GameDomain/GameStateDomain/GameplayDomain/Assets/Scenes/GameplayScene.unity
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 02ddd7c7bc3068d44a50ba11c9ac81fd, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 99563f9dcf04d164d9e25b91c1be869c, type: 2}
+    - {fileID: 11400000, guid: dedfbd0eb8bc56846a11c0cece908b86, type: 2}

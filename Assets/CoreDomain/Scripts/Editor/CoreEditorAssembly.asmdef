@@ -1,0 +1,20 @@
+{
+    "name": "CoreEditorAssembly",
+    "rootNamespace": "",
+    "references": [
+        "GUID:46b3264a026243741a2b549d4a01dbe1",
+        "GUID:2bafac87e7f4b9b418d9448d219b01ab",
+        "GUID:8f1b24476b429914ca7a4e96f755ed7d",
+        "GUID:27619889b8ba8c24980f49ee34dbb44a",
+        "GUID:a2f2239355369ba4fb6909aeaa41def5"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
