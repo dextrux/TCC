@@ -1,0 +1,10 @@
+﻿<Solution>
+  <Project Path="Zenject.csproj" />
+  <Project Path="CoreEditorAssembly.csproj" />
+  <Project Path="CoreAssembly.csproj" />
+  <Project Path="Assembly-CSharp.csproj" />
+  <Project Path="GameplayAssembly.csproj" />
+  <Project Path="CorePluginsAssembly.csproj" />
+  <Project Path="Zenject-TestFramework.csproj" />
+  <Project Path="GameDomain.csproj" />
+</Solution>
