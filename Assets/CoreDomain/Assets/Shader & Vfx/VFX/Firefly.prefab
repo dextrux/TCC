@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 9221486829606707261}
   - component: {fileID: 2618227081992689140}
   m_Layer: 0
-  m_Name: Vagalumes
+  m_Name: Firefly
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

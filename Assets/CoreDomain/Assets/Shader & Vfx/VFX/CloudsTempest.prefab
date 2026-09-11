@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 968298921024437732}
   - component: {fileID: 1480622968904303574}
   m_Layer: 0
-  m_Name: NuvemTempestuosa
+  m_Name: CloudsTempest
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

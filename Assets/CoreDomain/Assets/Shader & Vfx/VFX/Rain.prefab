@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 155601612647246157}
   - component: {fileID: 6674913607398773194}
   m_Layer: 0
-  m_Name: Chuva
+  m_Name: Rain
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
