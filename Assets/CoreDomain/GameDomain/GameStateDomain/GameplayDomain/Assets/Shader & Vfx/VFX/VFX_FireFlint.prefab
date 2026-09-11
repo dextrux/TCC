@@ -236,7 +236,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3663962536632227044}
   m_Layer: 0
-  m_Name: FirePerdeneira
+  m_Name: VFX_FireFlint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

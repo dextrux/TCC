@@ -476,7 +476,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6703335167280491019}
   m_Layer: 0
-  m_Name: FireTorch
+  m_Name: VFX_FireTorch
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: VFX_Cloud_mat
-  m_Shader: {fileID: 4800000, guid: 2eaf0029997278a48bf542b038328bc4, type: 3}
+  m_Name: VFX_Lighting_mat
+  m_Shader: {fileID: 4800000, guid: 0a09c7f3dfc01a746a32c1214c5995e3, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -25,15 +25,19 @@ Material:
     m_TexEnvs: []
     m_Ints: []
     m_Floats:
-    - _Density: 0.169
-    - _EdgeDetail: 0.6
-    - _EdgeScale: 15.22
-    - _LobeCount: 5.97
-    - _LobeSpread: 0.6
-    - _NoiseScale: 3.5
-    - _Softness: 1
+    - _BoltWidth: 0.02
+    - _Branches: 2
+    - _DoubleFlashChance: 0.3
+    - _FlashDuration: 0.25
+    - _FlickerAmount: 0.4
+    - _FlickerSpeed: 25
+    - _GlowWidth: 0.15
+    - _Intensity: 5
+    - _IntervalRandom: 0.011
+    - _Seed: 0
+    - _StrikeInterval: 1.9
     m_Colors:
-    - _MainTint: {r: 1, g: 1, b: 1, a: 1}
-    - _ShadowTint: {r: 0.54999995, g: 0.6, b: 0.72, a: 1}
+    - _BoltColor: {r: 0.85, g: 0.9, b: 1, a: 1}
+    - _GlowColor: {r: 0.5, g: 0.6, b: 1, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

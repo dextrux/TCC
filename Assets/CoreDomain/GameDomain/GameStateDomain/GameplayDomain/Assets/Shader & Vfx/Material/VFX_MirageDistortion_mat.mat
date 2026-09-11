@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: VFX_Cloud_mat
-  m_Shader: {fileID: 4800000, guid: 2eaf0029997278a48bf542b038328bc4, type: 3}
+  m_Name: VFX_MirageDistortion_mat
+  m_Shader: {fileID: 4800000, guid: 9be403d8020bb3a4c8ec7b0b7ae98f81, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -22,18 +22,22 @@ Material:
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
-    m_TexEnvs: []
+    m_TexEnvs:
+    - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Density: 0.169
-    - _EdgeDetail: 0.6
-    - _EdgeScale: 15.22
-    - _LobeCount: 5.97
-    - _LobeSpread: 0.6
-    - _NoiseScale: 3.5
-    - _Softness: 1
+    - _RimPower: 3
+    - _Transparency: 0.15
+    - _UVAmount: 0
+    - _UVSpeed: 1.5
+    - _VertexAmount: 0.047
+    - _VertexFreq: 2
+    - _VertexSpeed: 1
     m_Colors:
-    - _MainTint: {r: 1, g: 1, b: 1, a: 1}
-    - _ShadowTint: {r: 0.54999995, g: 0.6, b: 0.72, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _RimColor: {r: 0.6, g: 0.8, b: 1, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: VFX_Cloud_mat
-  m_Shader: {fileID: 4800000, guid: 2eaf0029997278a48bf542b038328bc4, type: 3}
+  m_Name: VFX_WaterDroplet_mat
+  m_Shader: {fileID: 4800000, guid: a273819feee071042a613dbb4067e8d2, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -25,15 +25,11 @@ Material:
     m_TexEnvs: []
     m_Ints: []
     m_Floats:
-    - _Density: 0.169
-    - _EdgeDetail: 0.6
-    - _EdgeScale: 15.22
-    - _LobeCount: 5.97
-    - _LobeSpread: 0.6
-    - _NoiseScale: 3.5
-    - _Softness: 1
+    - _EdgeSoftness: 0.15
+    - _HighlightSize: 0.15
     m_Colors:
-    - _MainTint: {r: 1, g: 1, b: 1, a: 1}
-    - _ShadowTint: {r: 0.54999995, g: 0.6, b: 0.72, a: 1}
+    - _Color: {r: 0.6, g: 0.8, b: 1, a: 0.7}
+    - _HighlightColor: {r: 1, g: 1, b: 1, a: 1}
+    - _HighlightPos: {r: 0.35, g: 0.65, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
