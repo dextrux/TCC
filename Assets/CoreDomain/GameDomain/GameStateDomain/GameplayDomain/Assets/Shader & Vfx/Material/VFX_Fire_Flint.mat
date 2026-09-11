@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Nuvem
-  m_Shader: {fileID: 4800000, guid: 2eaf0029997278a48bf542b038328bc4, type: 3}
+  m_Name: VFX_Fire_Flint
+  m_Shader: {fileID: 4800000, guid: 99d4119cdb9b40041a8d124fdfb38b1b, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -25,15 +25,13 @@ Material:
     m_TexEnvs: []
     m_Ints: []
     m_Floats:
-    - _Density: 0.3
-    - _EdgeDetail: 0.6
-    - _EdgeScale: 15.22
-    - _LobeCount: 5.97
-    - _LobeSpread: 0.6
-    - _NoiseScale: 3.5
-    - _Softness: 0.534
+    - _FlameHeight: 1
+    - _FlameWidth: 0.05
+    - _Flicker: 0.15
+    - _NoiseScale: 0
+    - _Speed: 1.5
     m_Colors:
-    - _MainTint: {r: 1, g: 1, b: 1, a: 1}
-    - _ShadowTint: {r: 0.54999995, g: 0.6, b: 0.72, a: 1}
+    - _ColorBottom: {r: 1, g: 0.9, b: 0.29999998, a: 1}
+    - _ColorTop: {r: 1, g: 0.14999998, b: 0, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

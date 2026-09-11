@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: TochaPhase3
+  m_Name: VFX_Fire_Torch_2
   m_Shader: {fileID: 4800000, guid: 7abd0013527e1894e93d0e67d4dad5c9, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -31,7 +31,7 @@ Material:
     - _FlameWidth: 0.24
     - _Flicker: 0.18
     - _NoiseScale: 3.2
-    - _PhaseOffset: 0.66
+    - _PhaseOffset: 0.33
     - _Speed: 1.6
     - _Turbulence: 0.6
     - _WaveAmount: 0.1

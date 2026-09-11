@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: moon_mat
-  m_Shader: {fileID: 200, guid: 0000000000000000f000000000000000, type: 0}
+  m_Name: VFX_Cloud_mat
+  m_Shader: {fileID: 4800000, guid: 2eaf0029997278a48bf542b038328bc4, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -22,14 +22,18 @@ Material:
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
-    m_TexEnvs:
-    - _MainTex:
-        m_Texture: {fileID: 2800000, guid: b781e586fd48392448a37b848f27e9c2, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
+    m_TexEnvs: []
     m_Ints: []
     m_Floats:
-    - _InvFade: 1
+    - _Density: 0.3
+    - _EdgeDetail: 0.6
+    - _EdgeScale: 15.22
+    - _LobeCount: 5.97
+    - _LobeSpread: 0.6
+    - _NoiseScale: 3.5
+    - _Softness: 0.534
     m_Colors:
-    - _TintColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}
+    - _MainTint: {r: 1, g: 1, b: 1, a: 1}
+    - _ShadowTint: {r: 0.54999995, g: 0.6, b: 0.72, a: 1}
   m_BuildTextureStacks: []
+  m_AllowLocking: 1
