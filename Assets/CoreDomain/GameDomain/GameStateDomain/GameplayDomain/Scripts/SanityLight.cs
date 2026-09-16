@@ -2,43 +2,42 @@ using UnityEngine;
 
 public class SanityLight : MonoBehaviour
 {
-    [Header("Configurações")]
-    public float decreaseRate = 5f;
-    public float increaseRate = 10f;
+    [Header("Área da Luz")]
+    public float outerRadius = 10f;
+    public float innerRadius = 4f;
 
-    private bool isInSpotlight = false;
-    private PlayerSanity playerSanity;
+    [Header("Regeneração de Sanidade")]
+    public float centerRegeneration = 10f;
+    public float edgeRegeneration = 5f;
 
-    void Start()
+    public float GetRegenerationRate(Vector3 playerPosition)
     {
-        playerSanity = GetComponent<PlayerSanity>();
+        float distance = Vector3.Distance(transform.position, playerPosition);
+
+        
+        if (distance <= innerRadius)
+        {
+            return centerRegeneration;
+        }
+
+        
+        if (distance <= outerRadius)
+        {
+            return edgeRegeneration;
+        }
+
+        
+        return 0f;
     }
 
-    void Update()
+    private void OnDrawGizmosSelected()
     {
-        if (isInSpotlight)
-        {
-            playerSanity.ChangeSanity(increaseRate * Time.deltaTime);
-        }
-        else
-        {
-            playerSanity.ChangeSanity(-decreaseRate * Time.deltaTime);
-        }
-    }
+        
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, outerRadius);
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Spotlight"))
-        {
-            isInSpotlight = true;
-        }
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("Spotlight"))
-        {
-            isInSpotlight = false;
-        }
+        
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position, innerRadius);
     }
 }
