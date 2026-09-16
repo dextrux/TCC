@@ -2,7 +2,8 @@
     "name": "GameDomain",
     "rootNamespace": "",
     "references": [
-        "Zenject"
+        "Zenject",
+        "CoreAssembly"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

@@ -1,10 +1,12 @@
 ﻿namespace CoreDomain.Scripts.Services.SceneService
 {
-    public enum SceneType
+    public enum ScenesType
     {
         CoreScene,
         GamePlayScene,
         GameScene,
-        LobbyScene
+        LobbyScene,
+        GYMScene,
+        ZooScene
     }
 }

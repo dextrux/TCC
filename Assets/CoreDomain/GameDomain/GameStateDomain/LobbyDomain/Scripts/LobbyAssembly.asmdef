@@ -1,3 +1,18 @@
 {
-	"name": "LobbyAssembly"
+    "name": "LobbyAssembly",
+    "rootNamespace": "",
+    "references": [
+        "GUID:8f1b24476b429914ca7a4e96f755ed7d",
+        "GUID:46b3264a026243741a2b549d4a01dbe1",
+        "GUID:787c3847eeeeab648aafb0e1d0fc2478"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }

@@ -9,8 +9,8 @@ namespace CoreDomain.Scripts.Services.InitiatorInvokerService
     {
         void RegisterInitiator(ISceneInitiator sceneInitiator);
         void UnregisterInitiator(ISceneInitiator sceneInitiator);
-        Awaitable InvokeInitiatorLoadEntryPoint(SceneType sceneType, IInitiatorEnterData enterData, CancellationTokenSource cancellationTokenSource);
-        Awaitable InvokeInitiatorStartEntryPoint(SceneType sceneType, IInitiatorEnterData enterData, CancellationTokenSource cancellationTokenSource);
-        Awaitable InvokeInitiatorExitPoint(SceneType sceneType, CancellationTokenSource cancellationTokenSource);
+        Awaitable InvokeInitiatorLoadEntryPoint(ScenesType sceneType, IInitiatorEnterData enterData, CancellationTokenSource cancellationTokenSource);
+        Awaitable InvokeInitiatorStartEntryPoint(ScenesType sceneType, IInitiatorEnterData enterData, CancellationTokenSource cancellationTokenSource);
+        Awaitable InvokeInitiatorExitPoint(ScenesType sceneType, CancellationTokenSource cancellationTokenSource);
     }
 }

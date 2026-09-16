@@ -8,7 +8,7 @@ namespace CoreDomain.Scripts.Services.InitiatorInvokerService
 {
     public class SceneInitiatorsService : ISceneInitiatorsService
     {
-        private readonly Dictionary<SceneType, ISceneInitiator> _sceneInitiators = new Dictionary<SceneType, ISceneInitiator>();
+        private readonly Dictionary<ScenesType, ISceneInitiator> _sceneInitiators = new Dictionary<ScenesType, ISceneInitiator>();
         
         public void RegisterInitiator(ISceneInitiator sceneInitiator)
         {
@@ -20,17 +20,17 @@ namespace CoreDomain.Scripts.Services.InitiatorInvokerService
             _sceneInitiators.Remove(sceneInitiator.SceneType);
         }
 
-        public async Awaitable InvokeInitiatorLoadEntryPoint(SceneType sceneType, IInitiatorEnterData enterData, CancellationTokenSource cancellationTokenSource)
+        public async Awaitable InvokeInitiatorLoadEntryPoint(ScenesType sceneType, IInitiatorEnterData enterData, CancellationTokenSource cancellationTokenSource)
         {
             await _sceneInitiators[sceneType].LoadEntryPoint(enterData, cancellationTokenSource);
         }
         
-        public async Awaitable InvokeInitiatorStartEntryPoint(SceneType sceneType, IInitiatorEnterData enterData, CancellationTokenSource cancellationTokenSource)
+        public async Awaitable InvokeInitiatorStartEntryPoint(ScenesType sceneType, IInitiatorEnterData enterData, CancellationTokenSource cancellationTokenSource)
         {
             await _sceneInitiators[sceneType].StartEntryPoint(enterData, cancellationTokenSource);
         }
 
-        public async Awaitable InvokeInitiatorExitPoint(SceneType sceneType, CancellationTokenSource cancellationTokenSource)
+        public async Awaitable InvokeInitiatorExitPoint(ScenesType sceneType, CancellationTokenSource cancellationTokenSource)
         {
             await _sceneInitiators[sceneType].InitExitPoint(cancellationTokenSource);
         }
