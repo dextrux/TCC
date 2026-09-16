@@ -48,7 +48,7 @@ namespace CoreDomain.Scripts.Services.SceneService
             return true;
         }
 
-        public async Awaitable<bool> TryLoadScene<TEnterData>(SceneType sceneType, TEnterData enterData, CancellationTokenSource cancellationTokenSource) where TEnterData : class, IInitiatorEnterData
+        public async Awaitable<bool> TryLoadScene<TEnterData>(ScenesType sceneType, TEnterData enterData, CancellationTokenSource cancellationTokenSource) where TEnterData : class, IInitiatorEnterData
         {
             if (!await TryLoadScene(sceneType.ToString(), cancellationTokenSource))
             {
@@ -59,12 +59,12 @@ namespace CoreDomain.Scripts.Services.SceneService
             return true;
         }
 
-        public async Awaitable StartScene<TEnterData>(SceneType sceneType, TEnterData enterData, CancellationTokenSource cancellationTokenSource) where TEnterData : class, IInitiatorEnterData
+        public async Awaitable StartScene<TEnterData>(ScenesType sceneType, TEnterData enterData, CancellationTokenSource cancellationTokenSource) where TEnterData : class, IInitiatorEnterData
         {
             await _sceneInitiatorsService.InvokeInitiatorStartEntryPoint(sceneType, enterData, cancellationTokenSource);
         }
 
-        public async Awaitable<bool> TryUnloadScene(SceneType sceneType, CancellationTokenSource cancellationTokenSource)
+        public async Awaitable<bool> TryUnloadScene(ScenesType sceneType, CancellationTokenSource cancellationTokenSource)
         {
             var sceneName = sceneType.ToString();
             var isSceneAlreadyLoaded = _loadedScenes.Contains(sceneName);
@@ -113,7 +113,7 @@ namespace CoreDomain.Scripts.Services.SceneService
             SceneManager.SetActiveScene(SceneManager.GetSceneByName(sceneName));
         }
 
-        private async Awaitable UnloadScene(SceneType sceneType, CancellationTokenSource cancellationTokenSource)
+        private async Awaitable UnloadScene(ScenesType sceneType, CancellationTokenSource cancellationTokenSource)
         {
             await _sceneInitiatorsService.InvokeInitiatorExitPoint(sceneType, cancellationTokenSource);
             var sceneName = sceneType.ToString();
