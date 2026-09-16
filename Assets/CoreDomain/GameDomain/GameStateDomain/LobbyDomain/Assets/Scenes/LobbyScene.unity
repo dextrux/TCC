@@ -163,6 +163,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11c004a8af8728c4eb617753b594d066, type: 3}
   m_Name: 
   m_EditorClassIdentifier: LobbyAssembly::LobbyInstaller
+  _lobbyView: {fileID: 467861745980791321, guid: 253a3843e4977f547b82e0a32fdf52b7, type: 3}
 --- !u!1 &251274429
 GameObject:
   m_ObjectHideFlags: 0

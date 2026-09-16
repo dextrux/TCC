@@ -1,6 +1,5 @@
 using CoreDomain.Scripts.Mvc.LoadingScreen;
 using CoreDomain.Scripts.Mvc.UICamera;
-using CoreDomain.Scripts.Mvc.WorldCamera;
 using CoreDomain.Scripts.Services.AddressablesLoader;
 using CoreDomain.Scripts.Services.CommandFactory;
 using CoreDomain.Scripts.Services.DataPersistence;
@@ -21,7 +20,6 @@ namespace CoreDomain.Scripts.ZenjectInstallers
         [SerializeField] private UpdateSubscriptionService _updateSubscriptionService;
         [SerializeField] private LoadingScreenView _loadingScreenView;
         //[SerializeField] private UICameraView _uiCameraView;
-        //[SerializeField] private WorldCameraView _worldCameraView;
 
         public override void InstallBindings()
         {
@@ -37,7 +35,6 @@ namespace CoreDomain.Scripts.ZenjectInstallers
             Container.BindInterfacesTo<CommandFactory>().AsSingle().CopyIntoAllSubContainers().NonLazy();
             Container.BindInterfacesTo<LoadingScreenController>().AsSingle().WithArguments(_loadingScreenView).NonLazy();
             //Container.BindInterfacesTo<UICameraController>().AsSingle().WithArguments(_uiCameraView).NonLazy();
-            //Container.BindInterfacesTo<WorldCameraController>().AsSingle().WithArguments(_worldCameraView).NonLazy();
             Container.Bind<GameInputActions>().AsSingle().NonLazy();
         }
     }

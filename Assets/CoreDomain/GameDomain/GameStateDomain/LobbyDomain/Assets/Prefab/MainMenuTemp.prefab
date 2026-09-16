@@ -354,7 +354,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3758861534731050813}
   - component: {fileID: 467861745980791321}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: MainMenuTemp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -389,6 +389,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62c8eb787d5bb7942a15da76f66944a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: LobbyAssembly::LobbyView
+  _zooButton: {fileID: 8033010519385850714}
 --- !u!1 &7202888550542961671
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,16 +1,19 @@
+using CoreDomain.Scripts.Services.SceneService;
+using System;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class LobbyView : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
+    [SerializeField] private Button _zooButton;
+
+    private Action<ScenesType> OnClickZooButton;
+    public void SetUp(Action<ScenesType> OnZooButonCLick) {
+        OnClickZooButton = OnZooButonCLick;
+        _zooButton.onClick.AddListener(OnZooClick);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+    private void OnZooClick() {
+        OnClickZooButton.Invoke(ScenesType.ZooScene);
     }
 }
