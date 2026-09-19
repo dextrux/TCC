@@ -2,6 +2,9 @@ using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.AudioSystem;
 using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.AudioSystem.Datas;
 using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.AudioSystem.Interfaces;
 using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.AudioSystem.Services;
+using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.NoiseSystem.Datas;
+using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.NoiseSystem.Interfaces;
+using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.NoiseSystem.Services;
 using UnityEngine;
 using Zenject;
 
@@ -10,6 +13,7 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.ZenjectIn
     public class GYMInstaller : MonoInstaller
     {
         [SerializeField] private AudioSetting audioSetting;
+        [SerializeField] private NoiseDecaySettings noiseDecaySettings;
         
         public override void InstallBindings() {
             BindServices();
@@ -23,6 +27,7 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.ZenjectIn
         private void BindControllers()
         {
             BindAudio();
+            BindNoise();
         }
 
         private void BindAudio()
@@ -46,6 +51,13 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.ZenjectIn
                 .To<AudioPoolWarmup>()
                 .AsSingle()
                 .WithArguments(audioSetting.prewarmCount);
+        }
+
+        private void BindNoise()
+        {
+            Container.Bind<NoiseDecaySettings>().FromInstance(noiseDecaySettings).AsSingle();
+            
+            Container.Bind<INoiseManager>().To<NoiseManager>().AsSingle();
         }
     }
 }
