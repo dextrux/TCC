@@ -4,7 +4,7 @@ using CoreDomain.Scripts.Services.CommandFactory;
 using CoreDomain.Scripts.Services.StateMachineService;
 using UnityEngine;
 
-namespace CoreDomain.GameDomain.GameStateDomain.GamePlayDomain.Scripts.Commands{
+namespace CoreDomain.GameDomain.GameStateDomain.GamePlayDomain.Scripts.Commands {
     public class LoadLevelCommand : BaseCommand, ICommandAsync {
         private IStateMachineService _stateMachineService;
         private ILevelCancellationTokenService _levelCancellationTokenService;
@@ -27,12 +27,7 @@ namespace CoreDomain.GameDomain.GameStateDomain.GamePlayDomain.Scripts.Commands{
         }
 
         private async Awaitable CreateLevel(int levelNumber, CancellationTokenSource cancellationTokenSource) {
-            
-        }
-        private async Awaitable CreateLevelTrack(int levelNumber, CancellationTokenSource cancellationTokenSource) {
             //await _levelTrackController.CreateLevelTrack(levelNumber, cancellationTokenSource);
-            //_balloonsController.SetupBalloons(_levelTrackController.CurrentLevelTrackView.BalloonViews);
-            //_bubblesController.SetupBubbles(_levelTrackController.CurrentLevelTrackView.BubbleViews);
         }
     }
 }
