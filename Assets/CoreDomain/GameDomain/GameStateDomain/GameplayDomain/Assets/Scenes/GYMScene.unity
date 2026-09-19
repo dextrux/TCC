@@ -212,6 +212,43 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a29d0ffb8ee710342acc2c28ee7b4405, type: 3}
   m_Name: 
   m_EditorClassIdentifier: GameplayAssembly::GYMInstaller
+  noiseDecaySettings:
+    obstacleMask:
+      serializedVersion: 2
+      m_Bits: 0
+    attenuationPerObstacle: 0.5
+    maxObstaclesPenetrated: 2
+    curve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 1
+        inSlope: 0
+        outSlope: -1
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 0
+        inSlope: -1
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+  audioSetting:
+    sourcePrefab: {fileID: 0}
+    mixer: {fileID: 24100000, guid: 99cff6d8406804b05b127ec120f31efc, type: 2}
+    defaultGroup: {fileID: 24300002, guid: 99cff6d8406804b05b127ec120f31efc, type: 2}
+    registry: {fileID: 11400000, guid: bee006b8a740d6c49be2a5543d4f3bf3, type: 2}
+    networkAudioRelay: {fileID: 0}
+    prewarmCount: 16
 --- !u!1 &251274429
 GameObject:
   m_ObjectHideFlags: 0

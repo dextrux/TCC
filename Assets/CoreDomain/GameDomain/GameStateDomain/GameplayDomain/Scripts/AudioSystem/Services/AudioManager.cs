@@ -14,10 +14,10 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.AudioSyst
         private readonly AudioMixer _mixer;
         private readonly List<AudioSourcePooled> _activeSources = new();
 
-        private const string ParamSfx = "SFXVolume";
-        private const string ParamVoice = "VoiceVolume";
-        private const string ParamAmbient = "AmbientVolume";
-        private const string ParamMusic = "MusicVolume";
+        private const string ParamSfx = "Sfx";
+        private const string ParamVoice = "Voice";
+        private const string ParamAmbient = "Environment";
+        private const string ParamMusic = "Music";
 
         public AudioManager(IAudioSourcePool pool, AudioEventRegistry registry, AudioMixer mixer)
         {

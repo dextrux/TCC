@@ -6,10 +6,12 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.NoiseSyst
     public class NoiseDecaySettings
     {
         public LayerMask obstacleMask;
+        
+        //Reduz tanto do ruido por obstaculo
         [Range(0, 1)]public float attenuationPerObstacle;
         public int maxObstaclesPenetrated;
         
-        [Tooltip("X = Distância | Y = Intensidade")] //Curva que calcula a intensidade e distancia do barulho
+        //Curva que calcula a intensidade e distancia do barulho - X = Distância | Y = Intensidade
         public AnimationCurve curve = AnimationCurve.Linear(0, 1, 1, 0);
     }
 }

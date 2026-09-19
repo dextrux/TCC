@@ -12,8 +12,8 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.ZenjectIn
 {
     public class GYMInstaller : MonoInstaller
     {
-        [SerializeField] private AudioSetting audioSetting;
         [SerializeField] private NoiseDecaySettings noiseDecaySettings;
+        [SerializeField] private AudioSetting audioSetting;
         
         public override void InstallBindings() {
             BindServices();
