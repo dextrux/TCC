@@ -390,6 +390,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: LobbyAssembly::LobbyView
   _zooButton: {fileID: 8033010519385850714}
+  _GYMClientButton: {fileID: 3448793777126492716}
+  _GYMServerButton: {fileID: 2237343319213308298}
 --- !u!1 &7202888550542961671
 GameObject:
   m_ObjectHideFlags: 0
@@ -403,7 +405,7 @@ GameObject:
   - component: {fileID: 3380565905513473621}
   - component: {fileID: 2237343319213308298}
   m_Layer: 5
-  m_Name: PlayClientGymButton (1)
+  m_Name: PlayClientServerButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
