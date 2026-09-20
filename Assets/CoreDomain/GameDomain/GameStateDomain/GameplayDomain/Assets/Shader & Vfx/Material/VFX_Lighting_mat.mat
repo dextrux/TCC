@@ -26,7 +26,7 @@ Material:
     m_Ints: []
     m_Floats:
     - _BoltWidth: 0.02
-    - _Branches: 2
+    - _Branches: 1
     - _DoubleFlashChance: 0.3
     - _FlashDuration: 0.25
     - _FlickerAmount: 0.4
@@ -35,7 +35,7 @@ Material:
     - _Intensity: 5
     - _IntervalRandom: 0.011
     - _Seed: 0
-    - _StrikeInterval: 1.9
+    - _StrikeInterval: 1
     m_Colors:
     - _BoltColor: {r: 0.85, g: 0.9, b: 1, a: 1}
     - _GlowColor: {r: 0.5, g: 0.6, b: 1, a: 1}
