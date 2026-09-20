@@ -1,7 +1,7 @@
-using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.AudioSystem.Interfaces;
+using CoreDomain.GameDomain.Scripts.AudioSystem.Interfaces;
 using Zenject;
 
-namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.AudioSystem.Datas
+namespace CoreDomain.GameDomain.Scripts.AudioSystem.Datas
 {
     public class AudioPoolWarmup : IInitializable
     {

@@ -1,7 +1,7 @@
-using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.AudioSystem.Datas;
+using CoreDomain.GameDomain.Scripts.AudioSystem.Datas;
 using UnityEngine;
 
-namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.AudioSystem.Interfaces
+namespace CoreDomain.GameDomain.Scripts.AudioSystem.Interfaces
 {
     public interface IAudioManager
     {

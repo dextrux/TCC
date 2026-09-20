@@ -12,6 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a6beee3baeffeb409d416c52776d339, type: 3}
   m_Name: AudioEventRegistry_Example
   m_EditorClassIdentifier: GameplayAssembly::CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.AudioSystem.Datas.AudioEventRegistry
-  events:
-  - id: 0
-    audioEvent: {fileID: 11400000, guid: ffe89345cab9d5043ac76f25ba1d7b8a, type: 2}
+  events: []

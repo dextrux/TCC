@@ -1,13 +1,14 @@
 using UnityEngine;
 
-namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.AudioSystem.Datas
+namespace CoreDomain.GameDomain.Scripts.AudioSystem.Datas
 {
     public enum AudioCategory
     {
         Sfx,
         Voice,
         Ambient,
-        Music
+        Music,
+        Ui
     }
 
     [CreateAssetMenu(menuName = "Audio/Audio Event", fileName = "New AudioEvent")]

@@ -1,8 +1,8 @@
 using System.Collections.Generic;
-using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.AudioSystem.Interfaces;
+using CoreDomain.GameDomain.Scripts.AudioSystem.Interfaces;
 using UnityEngine.Audio;
 
-namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.AudioSystem.Services
+namespace CoreDomain.GameDomain.Scripts.AudioSystem.Services
 {
     public class AudioSourcePool : IAudioSourcePool
     {

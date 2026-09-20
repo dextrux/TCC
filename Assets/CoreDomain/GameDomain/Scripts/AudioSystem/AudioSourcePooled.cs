@@ -1,8 +1,8 @@
 using System;
-using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.AudioSystem.Datas;
+using CoreDomain.GameDomain.Scripts.AudioSystem.Datas;
 using UnityEngine;
 
-namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.AudioSystem
+namespace CoreDomain.GameDomain.Scripts.AudioSystem
 {
     [RequireComponent(typeof(AudioSource))]
     public class AudioSourcePooled : MonoBehaviour
@@ -73,7 +73,7 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.AudioSyst
         private void ConfigureFor3D(AudioEvent audioEvent)
         {
             source.spatialBlend = audioEvent.Is3D ? 1f : 0f;
-            source.spread = audioEvent.Spread; 
+            source.spread = Mathf.Approximately(source.spatialBlend, 1f) ? audioEvent.Spread : 0f;
             source.minDistance = audioEvent.MinDistance;
             source.maxDistance = audioEvent.MaxDistance;
             source.rolloffMode = AudioRolloffMode.Custom;

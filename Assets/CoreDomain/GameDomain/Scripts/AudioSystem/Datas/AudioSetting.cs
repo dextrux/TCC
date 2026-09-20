@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Audio;
 
-namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.AudioSystem.Datas
+namespace CoreDomain.GameDomain.Scripts.AudioSystem.Datas
 {
     [System.Serializable]
     public class AudioSetting

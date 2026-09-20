@@ -1,7 +1,7 @@
-using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.AudioSystem;
-using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.AudioSystem.Datas;
-using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.AudioSystem.Interfaces;
-using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.AudioSystem.Services;
+using CoreDomain.GameDomain.Scripts.AudioSystem;
+using CoreDomain.GameDomain.Scripts.AudioSystem.Datas;
+using CoreDomain.GameDomain.Scripts.AudioSystem.Interfaces;
+using CoreDomain.GameDomain.Scripts.AudioSystem.Services;
 using CoreDomain.GameDomain.Scripts.GameInitiator;
 using CoreDomain.GameDomain.Scripts.States.GamePlayState;
 using CoreDomain.GameDomain.Scripts.States.LobbyState;

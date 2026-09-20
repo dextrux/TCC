@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.AudioSystem.Datas
+namespace CoreDomain.GameDomain.Scripts.AudioSystem.Datas
 {
     public struct AudioSignal
     {

@@ -1,6 +1,6 @@
-using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.AudioSystem.Datas;
+using CoreDomain.GameDomain.Scripts.AudioSystem.Datas;
 
-namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.AudioSystem.Interfaces
+namespace CoreDomain.GameDomain.Scripts.AudioSystem.Interfaces
 {
     public interface IAudioEmitter
     {

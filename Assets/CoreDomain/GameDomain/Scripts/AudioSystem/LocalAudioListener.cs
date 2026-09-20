@@ -1,7 +1,7 @@
 using Unity.Netcode;
 using UnityEngine;
 
-namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.AudioSystem
+namespace CoreDomain.GameDomain.Scripts.AudioSystem
 {
     public class LocalAudioListener : NetworkBehaviour
     {
