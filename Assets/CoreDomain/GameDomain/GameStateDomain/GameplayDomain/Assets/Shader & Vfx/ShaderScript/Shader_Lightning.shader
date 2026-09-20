@@ -17,6 +17,10 @@ Shader "Custom/Lightning"
         _FlashDuration  ("Duracao de Cada Flash (segundos)", Range(0.05, 1)) = 0.25
         _DoubleFlashChance ("Chance de Flash Duplo (0-1)", Range(0, 1)) = 0.3
 
+        [Header(Descida do Raio)]
+        _StrikeSpeed ("Velocidade de Descida (topo para base)", Range(1, 200)) = 40
+        _TravelSoftness ("Suavidade da Ponta", Range(0.001, 0.2)) = 0.04
+
         [Header(Flicker)]
         _FlickerAmount ("Intensidade do Tremular", Range(0, 1)) = 0.4
         _FlickerSpeed  ("Velocidade do Tremular", Range(1, 60)) = 25
@@ -63,6 +67,9 @@ Shader "Custom/Lightning"
             float  _FlashDuration;
             float  _DoubleFlashChance;
 
+            float  _StrikeSpeed;
+            float  _TravelSoftness;
+
             float  _FlickerAmount;
             float  _FlickerSpeed;
 
@@ -103,10 +110,8 @@ Shader "Custom/Lightning"
                 return smoothstep(width, width * 0.15, d);
             }
 
-            // versao sem loop: calcula direto em qual "ciclo" o tempo atual
-            // esta, e onde dentro do ciclo o flash comeca. Funciona pra
-            // qualquer intervalo e qualquer duracao de jogo.
-            float strikeEnvelope(float time, out float strikeSeed)
+            // descer, 1 = ja desceu ate a base.
+            float strikeEnvelope(float time, out float strikeSeed, out float growth)
             {
                 float baseSeed = _Seed * 133.7;
 
@@ -121,14 +126,20 @@ Shader "Custom/Lightning"
                 float flashStart = jitter;
 
                 float env1 = 0.0;
+                float g1 = 0.0;
                 float t1 = localTime - flashStart;
                 if (t1 >= 0.0 && t1 < _FlashDuration)
                 {
                     float t = t1 / max(_FlashDuration, 0.001);
                     env1 = (1.0 - t) * (1.0 - t);
                 }
+                if (t1 >= 0.0)
+                {
+                    g1 = saturate(t1 * _StrikeSpeed);
+                }
 
                 float env2 = 0.0;
+                float g2 = 0.0;
                 float doubleRoll = hash11(strikeSeed + 50.0);
                 if (doubleRoll < _DoubleFlashChance)
                 {
@@ -139,7 +150,14 @@ Shader "Custom/Lightning"
                         float tn = t2 / max(_FlashDuration * 0.7, 0.001);
                         env2 = (1.0 - tn) * (1.0 - tn) * 0.8;
                     }
+                    if (t2 >= 0.0)
+                    {
+                        g2 = saturate(t2 * _StrikeSpeed);
+                    }
                 }
+
+                // usa o crescimento do flash que estiver mais "ativo" no momento
+                growth = (env1 >= env2) ? g1 : g2;
 
                 return saturate(env1 + env2);
             }
@@ -149,7 +167,8 @@ Shader "Custom/Lightning"
                 float time = _Time.y;
 
                 float strikeSeed;
-                float envelope = strikeEnvelope(time, strikeSeed);
+                float growth;
+                float envelope = strikeEnvelope(time, strikeSeed, growth);
 
                 float flickerNoise = hash11(floor(time * _FlickerSpeed) + strikeSeed * 7.0);
                 float flicker = lerp(1.0, flickerNoise, _FlickerAmount);
@@ -161,8 +180,13 @@ Shader "Custom/Lightning"
                 }
 
                 float2 uv = IN.uv;
-                float bolt = drawBolt(uv, 0.0, strikeSeed, _BoltWidth);
-                float glow = drawBolt(uv, 0.0, strikeSeed, _GlowWidth) * 0.5;
+
+                // frente da descida: comeca no topo (uv.y = 1) e desce para a base (uv.y = 0)
+                float strikeFrontY = 1.0 - growth;
+                float travelMask = smoothstep(strikeFrontY - _TravelSoftness, strikeFrontY + _TravelSoftness, uv.y);
+
+                float bolt = drawBolt(uv, 0.0, strikeSeed, _BoltWidth) * travelMask;
+                float glow = drawBolt(uv, 0.0, strikeSeed, _GlowWidth) * 0.5 * travelMask;
 
                 [unroll]
                 for (int i = 0; i < 6; i++)
@@ -178,8 +202,8 @@ Shader "Custom/Lightning"
                     float branchMask = smoothstep(startY, startY - 0.05, uv.y) *
                                         smoothstep(0.0, 0.1, uv.y);
 
-                    float branchBolt = drawBolt(uv, offset, branchSeed, _BoltWidth * 0.6) * branchMask;
-                    float branchGlow = drawBolt(uv, offset, branchSeed, _GlowWidth * 0.7) * 0.4 * branchMask;
+                    float branchBolt = drawBolt(uv, offset, branchSeed, _BoltWidth * 0.6) * branchMask * travelMask;
+                    float branchGlow = drawBolt(uv, offset, branchSeed, _GlowWidth * 0.7) * 0.4 * branchMask * travelMask;
 
                     bolt = max(bolt, branchBolt);
                     glow = max(glow, branchGlow);
