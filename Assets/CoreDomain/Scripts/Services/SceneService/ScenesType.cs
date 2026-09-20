@@ -5,8 +5,6 @@
         CoreScene,
         GamePlayScene,
         GameScene,
-        LobbyScene,
-        GYMScene,
-        ZooScene
+        LobbyScene
     }
 }

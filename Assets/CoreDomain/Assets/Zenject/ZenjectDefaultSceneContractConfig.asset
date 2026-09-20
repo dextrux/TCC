@@ -19,9 +19,5 @@ MonoBehaviour:
     Scene: {fileID: 102900000, guid: 404ba2d7374e05c4a9226e497fcde09e, type: 3}
   - ContractName: GameplayScene
     Scene: {fileID: 102900000, guid: 0c18fa363da74494191d45a4f10d80a0, type: 3}
-  - ContractName: GYMScene
-    Scene: {fileID: 102900000, guid: 7b40172ecbb8c5442acb0392e6085631, type: 3}
   - ContractName: LobbyScene
     Scene: {fileID: 102900000, guid: 5c7b6b799cb9f704d9e21b8a5fe6016e, type: 3}
-  - ContractName: ZooScene
-    Scene: {fileID: 102900000, guid: a840190de62e55b4c909d26b3023aea7, type: 3}

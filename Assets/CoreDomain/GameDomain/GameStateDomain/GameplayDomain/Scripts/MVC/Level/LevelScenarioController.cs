@@ -4,21 +4,19 @@ using CoreDomain.Scripts.Services.Logger.Base;
 using System.Threading;
 using UnityEngine;
 
-public class LevelScenarioController : MonoBehaviour {
-    private readonly ILevelsDataService _levelsDataService;
+public class LevelScenarioController : ILevelScenarioController {
     private readonly LevelFactory _levelFactory;
 
     private LevelTrackData _currentLevelTrackData;
-    public LevelScenarioView CurrentLevelTrackView => _currentLevelTrackData.LevelTrackView;
+    public LevelScenarioView CurrentLevelView => _currentLevelTrackData.LevelTrackView;
 
-    public LevelScenarioController(IAddressablesLoaderService addressablesLoaderService, ILevelsDataService levelsDataService) {
-        _levelsDataService = levelsDataService;
+    public LevelScenarioController(IAddressablesLoaderService addressablesLoaderService) {
         _levelFactory = new LevelFactory(addressablesLoaderService);
     }
 
-    public async Awaitable CreateLevelTrack(int levelNumber, CancellationTokenSource cancellationTokenSource) {
-        //LogService.LogTopic($"Create level {levelNumber} track , track adress: {trackAddress}", LogTopicType.LevelTrack);
-        //_currentLevelTrackData = new LevelTrackData(await _levelFactory.CreateLevel(levelNumber, cancellationTokenSource), trackAddress);
+    public async Awaitable CreateLevel(string leveltoCreate, CancellationTokenSource cancellationTokenSource) {
+        LogService.LogTopic($"Create level {leveltoCreate}, track adress: {leveltoCreate}", LogTopicType.LevelTrack);
+        _currentLevelTrackData = new LevelTrackData(await _levelFactory.CreateLevel(leveltoCreate, cancellationTokenSource), leveltoCreate);
     }
 
     public void DestroyTrack(bool shouldReleaseFromMemory) {
@@ -29,8 +27,8 @@ public class LevelScenarioController : MonoBehaviour {
         }
     }
 
-    private void ReleaseCurrentLevelTrackFromMemory(string trackAddress) {
-        _levelFactory.ReleaseTrackFromMemory(trackAddress);
+    private async void ReleaseCurrentLevelTrackFromMemory(string trackAddress) {
+        await _levelFactory.ReleaseLevelFromMemory();
     }
 
     private class LevelTrackData {

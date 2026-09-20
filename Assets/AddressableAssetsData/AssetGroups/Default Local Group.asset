@@ -14,7 +14,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
   m_GroupName: Default Local Group
   m_GUID: b4315cb6249b8ae4992cc488fcbd12c5
-  m_SerializeEntries: []
+  m_SerializeEntries:
+  - m_GUID: 7b40172ecbb8c5442acb0392e6085631
+    m_Address: GYMScene
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a840190de62e55b4c909d26b3023aea7
+    m_Address: ZooScene
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 02ddd7c7bc3068d44a50ba11c9ac81fd, type: 2}
   m_SchemaSet:

@@ -8,6 +8,7 @@ namespace CoreDomain.GameDomain.GameStateDomain.GamePlayDomain.Scripts.Commands 
     public class LoadLevelCommand : BaseCommand, ICommandAsync {
         private IStateMachineService _stateMachineService;
         private ILevelCancellationTokenService _levelCancellationTokenService;
+        private ILevelScenarioController _levelScenarioController;
 
         private LoadLevelCommandData _commandData;
 
@@ -18,16 +19,17 @@ namespace CoreDomain.GameDomain.GameStateDomain.GamePlayDomain.Scripts.Commands 
 
         public override void ResolveDependencies() {
             _levelCancellationTokenService = _diContainer.Resolve<ILevelCancellationTokenService>();
+            _levelScenarioController = _diContainer.Resolve<ILevelScenarioController>();
         }
 
         public async Awaitable Execute(CancellationTokenSource cancellationTokenSource) {
             _levelCancellationTokenService.InitCancellationToken();
-            int levelNumber = _commandData.LevelNumber;
-            await CreateLevel(levelNumber, cancellationTokenSource);
+            string levelTag = _commandData.Leveltag;
+            await CreateLevel(levelTag, cancellationTokenSource);
         }
 
-        private async Awaitable CreateLevel(int levelNumber, CancellationTokenSource cancellationTokenSource) {
-            //await _levelTrackController.CreateLevelTrack(levelNumber, cancellationTokenSource);
+        private async Awaitable CreateLevel(string levelTag, CancellationTokenSource cancellationTokenSource) {
+            await _levelScenarioController.CreateLevel(levelTag, cancellationTokenSource);
         }
     }
 }

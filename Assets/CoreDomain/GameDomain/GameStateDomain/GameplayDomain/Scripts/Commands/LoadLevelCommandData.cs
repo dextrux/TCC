@@ -1,9 +1,9 @@
 namespace CoreDomain.GameDomain.GameStateDomain.GamePlayDomain.Scripts.Commands {
     public class LoadLevelCommandData {
-        public readonly int LevelNumber;
+        public readonly string Leveltag;
 
-        public LoadLevelCommandData(int levelNumber) {
-            LevelNumber = levelNumber;
+        public LoadLevelCommandData(string levelTag) {
+            Leveltag = levelTag;
         }
     }
 }

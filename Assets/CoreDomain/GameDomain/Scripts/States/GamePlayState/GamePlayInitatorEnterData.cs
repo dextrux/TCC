@@ -4,11 +4,11 @@ namespace CoreDomain.GameDomain.Scripts.States.GamePlayState
 {
     public class GamePlayInitatorEnterData : IInitiatorEnterData
     {
-        public int LevelNumberToEnter;
+        public string LevelToEnter;
 
-        public GamePlayInitatorEnterData(int levelNumberToEnter)
+        public GamePlayInitatorEnterData(string levelNumberToEnter)
         {
-            LevelNumberToEnter = levelNumberToEnter;
+            LevelToEnter = levelNumberToEnter;
         }
     }
 }

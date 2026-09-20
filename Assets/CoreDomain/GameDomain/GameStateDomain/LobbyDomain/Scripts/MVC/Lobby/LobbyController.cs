@@ -16,8 +16,8 @@ public class LobbyController : ILobbyController
         _lobbyView.SetUp(LoadZooScene);
     }
 
-    private void LoadZooScene(ScenesType sceneToLoad) {
+    private void LoadZooScene(string sceneToLoad) {
         LogService.LogWarning("Tentando dar load na cena de zoo");
-        _stateMachineService.SwitchState(_gamePlayStateFactory.Create(new GamePlayInitatorEnterData((int)sceneToLoad)));
+        _stateMachineService.SwitchState(_gamePlayStateFactory.Create(new GamePlayInitatorEnterData(sceneToLoad)));
     }
 }

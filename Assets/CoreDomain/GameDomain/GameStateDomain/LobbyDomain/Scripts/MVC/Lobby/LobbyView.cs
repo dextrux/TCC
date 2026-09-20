@@ -7,13 +7,13 @@ public class LobbyView : MonoBehaviour
 {
     [SerializeField] private Button _zooButton;
 
-    private Action<ScenesType> OnClickZooButton;
-    public void SetUp(Action<ScenesType> OnZooButonCLick) {
+    private Action<string> OnClickZooButton;
+    public void SetUp(Action<string> OnZooButonCLick) {
         OnClickZooButton = OnZooButonCLick;
         _zooButton.onClick.AddListener(OnZooClick);
     }
 
     private void OnZooClick() {
-        OnClickZooButton.Invoke(ScenesType.ZooScene);
+        OnClickZooButton.Invoke("ZooScene");
     }
 }

@@ -14,12 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
   m_GroupName: Packed Assets
   m_GUID: 94550efbf0216bd42948502cf92b87cd
-  m_SerializeEntries:
-  - m_GUID: 0c18fa363da74494191d45a4f10d80a0
-    m_Address: Assets/CoreDomain/GameDomain/GameStateDomain/GameplayDomain/Assets/Scenes/GameplayScene.unity
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
+  m_SerializeEntries: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 02ddd7c7bc3068d44a50ba11c9ac81fd, type: 2}
   m_SchemaSet:
