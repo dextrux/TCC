@@ -19,7 +19,7 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.AudioSyst
         [Header("Playback")]
         [SerializeField] private AudioCategory category = AudioCategory.Sfx;
         [SerializeField, Range(0, 1)] private float volume = 1f;
-        [SerializeField, Range(0f, 360f)] private float spread = 80f;
+        [SerializeField, Range(0f, 360f)] private float spread = 80f; // 0 Mono - 360 Estereo - Da propria unity
         [SerializeField] private Vector2 pitchRange = new(0.95f, 1.05f);
         [SerializeField] private bool loop;
 
