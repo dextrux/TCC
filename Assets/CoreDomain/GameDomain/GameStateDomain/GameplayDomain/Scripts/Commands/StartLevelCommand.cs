@@ -10,12 +10,10 @@ namespace CoreDomain.GameDomain.GameStateDomain.GamePlayDomain.Scripts.Commands 
         //private IGameInputActionsController _gameInputActionsController;
         private IStateMachineService _stateMachineService;
         private ILevelCancellationTokenService _levelCancellationTokenService;
-        //private ILevelsDataService _levelsDataService;
 
         public override void ResolveDependencies() {
             //_gameInputActionsController = _diContainer.Resolve<IGameInputActionsController>();
             _levelCancellationTokenService = _diContainer.Resolve<ILevelCancellationTokenService>();
-            //_levelsDataService = _diContainer.Resolve<ILevelsDataService>();
         }
 
         public async Awaitable Execute(CancellationTokenSource cancellationTokenSource) {

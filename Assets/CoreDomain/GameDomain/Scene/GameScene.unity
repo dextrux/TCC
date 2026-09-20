@@ -163,6 +163,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dab1af5507f0e314bb2dd771507e74f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: GameDomain::GameInstaler
+  audioSetting:
+    sourcePrefab: {fileID: 3583015102906572792, guid: ae57504b6f08c2b418ed7040e2298f80, type: 3}
+    mixer: {fileID: 24100000, guid: 99cff6d8406804b05b127ec120f31efc, type: 2}
+    defaultGroup: {fileID: 24300002, guid: 99cff6d8406804b05b127ec120f31efc, type: 2}
+    registry: {fileID: 11400000, guid: bee006b8a740d6c49be2a5543d4f3bf3, type: 2}
+    networkAudioRelay: {fileID: 8521413645907993847, guid: 1cb980d8c0fe59345b79f35bd384e3c8, type: 3}
+    prewarmCount: 16
 --- !u!1 &251274429
 GameObject:
   m_ObjectHideFlags: 0
