@@ -6,7 +6,6 @@ using UnityEngine;
 namespace Mirror
 {
     /// <summary>Base NetworkConnection class for server-to-client and client-to-server connection.</summary>
-    [Serializable]
     public abstract class NetworkConnection
     {
         public const int LocalConnectionId = 0;

@@ -245,7 +245,21 @@ namespace EpicTransport {
             DontDestroyOnLoad(instance);
 
 #if UNITY_EDITOR
-            var libraryPath = "Assets/Netcode/MirrorTransports/EOSTransport/EOSSDK/" + Epic.OnlineServices.Common.LIBRARY_NAME;
+            var libraryName = Epic.OnlineServices.Common.LIBRARY_NAME;
+
+#if UNITY_EDITOR_WIN
+            if (!libraryName.EndsWith(".dll", StringComparison.OrdinalIgnoreCase))
+            {
+                libraryName += ".dll";
+            }
+#endif
+
+            var libraryPath = System.IO.Path.Combine(Application.dataPath, "Mirror", "Transports", "EOSTransport", "EOSSDK", libraryName);
+
+            if (!System.IO.File.Exists(libraryPath))
+            {
+                throw new Exception("EOS SDK library not found: " + libraryPath);
+            }
 
             libraryPointer = LoadLibrary(libraryPath);
             if (libraryPointer == IntPtr.Zero) {
