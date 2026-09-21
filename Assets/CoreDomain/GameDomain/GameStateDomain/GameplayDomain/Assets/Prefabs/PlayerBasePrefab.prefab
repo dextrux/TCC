@@ -13,9 +13,10 @@ GameObject:
   - component: {fileID: 6425026705084227973}
   - component: {fileID: -3644747347845958771}
   - component: {fileID: -7889066662977467837}
-  m_Layer: 0
+  - component: {fileID: 6496547516752202523}
+  m_Layer: 7
   m_Name: PlayerBasePrefab
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -150,6 +151,22 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0.9, z: 0}
+--- !u!114 &6496547516752202523
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 948410552570829733}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c102556ea4aa43548b0b0ac7f1f9b64b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: GameplayAssembly::PlayerSanity
+  maxSanity: 100
+  currentSanity: 0
+  isCrazy: 0
+  decreaseRate: 5
 --- !u!1 &1281289477717358962
 GameObject:
   m_ObjectHideFlags: 0
@@ -159,7 +176,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7203324813046769201}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: VisualRoot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -191,7 +208,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3061756675681841542}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: CameraPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -261,9 +278,29 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -8047435802642712224, guid: e8b7650c1b2b1c64087a5aca4d234629, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: -5474004388710895545, guid: e8b7650c1b2b1c64087a5aca4d234629, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: -702036219902402286, guid: e8b7650c1b2b1c64087a5aca4d234629, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: e8b7650c1b2b1c64087a5aca4d234629, type: 3}
       propertyPath: m_Name
       value: CharacterBlock
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: e8b7650c1b2b1c64087a5aca4d234629, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 3656415126725090418, guid: e8b7650c1b2b1c64087a5aca4d234629, type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

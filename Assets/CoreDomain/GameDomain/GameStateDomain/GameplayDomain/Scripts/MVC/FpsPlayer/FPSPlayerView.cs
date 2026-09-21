@@ -15,8 +15,8 @@ namespace Player.View {
             CameraTransform = Camera.main.transform;
             CameraTransform.SetParent(CameraPointTransform);
             CameraTransform.localPosition = Vector3.zero;
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
+            //Cursor.lockState = CursorLockMode.Locked;
+            //Cursor.visible = false;
         }
 
         public void Move(Vector3 motion) {
