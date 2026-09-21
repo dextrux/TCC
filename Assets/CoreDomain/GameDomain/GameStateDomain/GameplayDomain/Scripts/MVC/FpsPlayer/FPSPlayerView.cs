@@ -1,12 +1,23 @@
+using Unity.Netcode;
 using UnityEngine;
 
 namespace Player.View {
-    public class FPSPlayerView : MonoBehaviour {
+    public class FPSPlayerView : NetworkBehaviour {
         [field: SerializeField]
         public CharacterController CharacterController { get; private set; }
 
         [field: SerializeField]
         public Transform CameraTransform { get; private set; }
+        [field: SerializeField]
+        private Transform CameraPointTransform;
+
+        public void SetUp() {
+            CameraTransform = Camera.main.transform;
+            CameraTransform.SetParent(CameraPointTransform);
+            CameraTransform.localPosition = Vector3.zero;
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
 
         public void Move(Vector3 motion) {
             CharacterController.Move(motion);
