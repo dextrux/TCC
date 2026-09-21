@@ -1,0 +1,19 @@
+{
+    "name": "NetworkAssembly",
+    "rootNamespace": "",
+    "references": [
+        "GUID:30817c1a0e6d646d99c048fc403f5979",
+        "GUID:627104647b9c04b4ebb8978a92ecac63",
+        "GUID:46b3264a026243741a2b549d4a01dbe1",
+        "GUID:8f1b24476b429914ca7a4e96f755ed7d"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

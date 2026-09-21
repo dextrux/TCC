@@ -1,37 +1,53 @@
+using CoreDomain.Scripts.Services.Logger.Base;
 using Mirror;
 using UnityEngine;
+using Zenject;
 
 public class EOSMirrorNetworkManager : NetworkManager
 {
+    private DiContainer _container;
+
+    [Inject]
+    private void Setup(DiContainer container)
+    {
+        _container = container;
+    }
+
     public override void OnStartServer()
     {
         base.OnStartServer();
-        Debug.Log("Mirror server started.");
+        LogService.Log("Mirror server started.");
     }
 
     public override void OnStartHost()
     {
         base.OnStartHost();
-        Debug.Log("Mirror host started.");
+        LogService.Log("Mirror host started.");
     }
 
     public override void OnClientConnect()
     {
         base.OnClientConnect();
-        Debug.Log("Mirror client connected.");
+        LogService.Log("Mirror client connected.");
     }
 
     public override void OnServerAddPlayer(NetworkConnectionToClient connection)
     {
         if (playerPrefab == null)
         {
-            Debug.LogError("Player Prefab is not assigned.");
+            LogService.LogError("Player Prefab is not assigned.");
+            connection.Disconnect();
+            return;
+        }
+
+        if (_container == null)
+        {
+            LogService.LogError("Zenject container was not injected into EOSMirrorNetworkManager.");
             connection.Disconnect();
             return;
         }
 
         Transform startPosition = GetStartPosition();
-
         Vector3 spawnPosition = Vector3.zero;
         Quaternion spawnRotation = Quaternion.identity;
 
@@ -41,17 +57,17 @@ public class EOSMirrorNetworkManager : NetworkManager
             spawnRotation = startPosition.rotation;
         }
 
-        GameObject player = Instantiate(playerPrefab, spawnPosition, spawnRotation);
+        GameObject player = _container.InstantiatePrefab(playerPrefab, spawnPosition, spawnRotation, null);
         player.name = "NetworkPlayer_" + connection.connectionId;
 
         NetworkServer.AddPlayerForConnection(connection, player);
 
-        Debug.Log("Player spawned. Connection ID: " + connection.connectionId + " | Position: " + spawnPosition);
+        LogService.Log("Player spawned. Connection ID: " + connection.connectionId + " | Position: " + spawnPosition);
     }
 
     public override void OnServerDisconnect(NetworkConnectionToClient connection)
     {
-        Debug.Log("Player disconnected. Connection ID: " + connection.connectionId);
+        LogService.Log("Player disconnected. Connection ID: " + connection.connectionId);
         base.OnServerDisconnect(connection);
     }
 }
