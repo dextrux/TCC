@@ -30,10 +30,8 @@ namespace CoreDomain.GameDomain.Scripts.AudioSystem
 
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                PlayUI();
-            }
+            if (Input.GetKeyDown(KeyCode.F1)) PlayUI();
+            if (Input.GetKeyDown(KeyCode.F2)) StopUiAudio();
         }
     }
 }
