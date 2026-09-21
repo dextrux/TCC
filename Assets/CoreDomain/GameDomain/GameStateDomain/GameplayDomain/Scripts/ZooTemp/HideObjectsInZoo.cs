@@ -6,12 +6,12 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.ZooTemp
 {
     public class HideObjectsInZoo : MonoBehaviour
     {
-        public void Awake()
+        public void Start()
         {
             var audioUi = FindAnyObjectByType(typeof(AudioUi)) as AudioUi;
             var player = FindAnyObjectByType(typeof(FPSPlayerView)) as FPSPlayerView;
         
-            player!.gameObject.SetActive(false);
+            player!.transform.GetChild(0).gameObject.SetActive(false);
             audioUi!.transform.parent.gameObject.SetActive(false);
         }
     }
