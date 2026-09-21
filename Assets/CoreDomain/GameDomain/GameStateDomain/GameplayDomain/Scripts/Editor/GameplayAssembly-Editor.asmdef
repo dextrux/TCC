@@ -1,0 +1,16 @@
+{
+    "name": "GameplayAssembly-Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:3203812be102ae94dbf2bcc4955e2e9b"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

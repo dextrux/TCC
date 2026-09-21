@@ -12,8 +12,8 @@ PlayerSettings:
   targetDevice: 2
   useOnDemandResources: 0
   accelerometerFrequency: 60
-  companyName: DefaultCompany
-  productName: TCC
+  companyName: RipaNaChulipaGames
+  productName: "Cap\xE3o"
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
   m_SplashScreenBackgroundColor: {r: 0.13725491, g: 0.12156863, b: 0.1254902, a: 1}
@@ -143,7 +143,7 @@ PlayerSettings:
   loadStoreDebugModeEnabled: 0
   visionOSBundleVersion: 1.0
   tvOSBundleVersion: 1.0
-  bundleVersion: 0.1.0
+  bundleVersion: 0.0.1
   preloadedAssets:
   - {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   metroInputSource: 0
@@ -841,7 +841,7 @@ PlayerSettings:
     PS4: DOTWEEN_NOPHYSICS2D;DOTWEEN_UITOOLKIT;DOTWEEN
     PS5: DOTWEEN_NOPHYSICS2D;DOTWEEN_UITOOLKIT;DOTWEEN
     QNX: DOTWEEN_NOPHYSICS2D;DOTWEEN_UITOOLKIT;DOTWEEN
-    Standalone: DOTWEEN_NOPHYSICS2D;DOTWEEN_UITOOLKIT;DOTWEEN;MIRROR;MIRROR_89_OR_NEWER;MIRROR_90_OR_NEWER;MIRROR_93_OR_NEWER;MIRROR_96_OR_NEWER;EDGEGAP_PLUGIN_SERVERS
+    Standalone: DOTWEEN_NOPHYSICS2D;DOTWEEN_UITOOLKIT;DOTWEEN
     VisionOS: DOTWEEN_NOPHYSICS2D;DOTWEEN_UITOOLKIT;DOTWEEN
     WebGL: DOTWEEN_NOPHYSICS2D;DOTWEEN_UITOOLKIT;DOTWEEN
     Windows Store Apps: DOTWEEN_NOPHYSICS2D;DOTWEEN_UITOOLKIT;DOTWEEN

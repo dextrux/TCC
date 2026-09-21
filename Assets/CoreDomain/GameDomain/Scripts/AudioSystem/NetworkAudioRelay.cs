@@ -1,10 +1,10 @@
-using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.AudioSystem.Datas;
-using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.AudioSystem.Interfaces;
+using CoreDomain.GameDomain.Scripts.AudioSystem.Datas;
+using CoreDomain.GameDomain.Scripts.AudioSystem.Interfaces;
 using Unity.Netcode;
 using UnityEngine;
 using Zenject;
 
-namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.AudioSystem
+namespace CoreDomain.GameDomain.Scripts.AudioSystem
 {
     /// <summary>
     /// Fica no mesmo NetworkObject do servidor.

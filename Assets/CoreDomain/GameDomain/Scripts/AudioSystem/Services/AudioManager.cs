@@ -1,10 +1,10 @@
 using System.Collections.Generic;
-using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.AudioSystem.Datas;
-using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.AudioSystem.Interfaces;
+using CoreDomain.GameDomain.Scripts.AudioSystem.Datas;
+using CoreDomain.GameDomain.Scripts.AudioSystem.Interfaces;
 using UnityEngine;
 using UnityEngine.Audio;
 
-namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.AudioSystem.Services
+namespace CoreDomain.GameDomain.Scripts.AudioSystem.Services
 {
     [System.Serializable]
     public class AudioManager : IAudioManager

@@ -70,6 +70,7 @@ public class PlayerSanity : MonoBehaviour
             0f,
             maxSanity
         );
+        TempIndicatorGYM.Instance?.SetSanity( currentSanity );
     }
 
     private void CheckSanityState()

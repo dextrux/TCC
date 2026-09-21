@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.AudioSystem.Datas
+namespace CoreDomain.GameDomain.Scripts.AudioSystem.Datas
 {
     public enum AudioEventId
     {

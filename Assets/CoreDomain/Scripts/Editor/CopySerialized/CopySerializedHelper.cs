@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using UnityEditor;
 
 namespace CoreDomain.Scripts.Editor.CopySerialized
@@ -41,3 +42,4 @@ namespace CoreDomain.Scripts.Editor.CopySerialized
         }
     }
 }
+#endif
