@@ -12,6 +12,7 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.ZooTemp
             var player = FindAnyObjectByType(typeof(FPSPlayerView)) as FPSPlayerView;
         
             player!.transform.GetChild(0).gameObject.SetActive(false);
+            player!.transform.GetChild(2).gameObject.SetActive(false);
             audioUi!.transform.parent.gameObject.SetActive(false);
         }
     }
