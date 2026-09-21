@@ -2,6 +2,7 @@ using System.Threading;
 using CoreDomain.GameDomain.Scripts.States.GamePlayState;
 using CoreDomain.Scripts.Services.AudioService;
 using CoreDomain.Scripts.Services.CommandFactory;
+using CoreDomain.Scripts.Services.Logger.Base;
 using CoreDomain.Scripts.Services.NetworkService;
 using UnityEngine;
 
@@ -44,6 +45,7 @@ namespace CoreDomain.GameDomain.GameStateDomain.GamePlayDomain.Scripts.Commands
             {
                 case NetworkSessionMode.Host:
                 {
+                    CopyHostProductUserIdToClipboard();
                     _networkService.StartHost();
                     break;
                 }
@@ -54,6 +56,21 @@ namespace CoreDomain.GameDomain.GameStateDomain.GamePlayDomain.Scripts.Commands
                     break;
                 }
             }
+        }
+
+        private void CopyHostProductUserIdToClipboard()
+        {
+            string hostProductUserId = _networkService.LocalProductUserId;
+
+            if (string.IsNullOrWhiteSpace(hostProductUserId))
+            {
+                LogService.LogWarning("Host Product User ID is empty and could not be copied to clipboard.");
+                return;
+            }
+
+            GUIUtility.systemCopyBuffer = hostProductUserId;
+
+            LogService.Log("Host Product User ID copied to clipboard: " + hostProductUserId);
         }
     }
 }
