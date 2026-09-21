@@ -17,10 +17,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/CoreDomain/GameDomain/GameStateDomain/GameplayDomain/Assets/Scenes/GameplayScene.unity
     guid: 0c18fa363da74494191d45a4f10d80a0
-  - enabled: 0
+  - enabled: 1
     path: Assets/CoreDomain/GameDomain/GameStateDomain/GameplayDomain/Assets/Scenes/GYMScene.unity
     guid: 7b40172ecbb8c5442acb0392e6085631
-  - enabled: 0
+  - enabled: 1
     path: Assets/CoreDomain/GameDomain/GameStateDomain/GameplayDomain/Assets/Scenes/ZooScene.unity
     guid: a840190de62e55b4c909d26b3023aea7
   m_configObjects:

@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using UnityEditor;
 
 namespace CoreDomain.Scripts.Editor.DefaultSceneSelector
@@ -18,3 +19,4 @@ namespace CoreDomain.Scripts.Editor.DefaultSceneSelector
         }
     }
 }
+#endif
