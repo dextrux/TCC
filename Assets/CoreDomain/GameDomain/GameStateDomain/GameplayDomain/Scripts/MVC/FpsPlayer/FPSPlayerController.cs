@@ -1,46 +1,53 @@
+using CoreDomain.Scripts.Services.UpdateService;
 using Player.Input;
 using Player.Model;
 using Player.View;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace Player.Controller {
-    public class FPSPlayerController : MonoBehaviour {
+    public class FPSPlayerController : IFPSPlayerController, IUpdatable, IFixedUpdatable {
         [Header("References")]
-        [SerializeField]
         private FPSPlayerView _view;
-
-        [SerializeField]
         private FPSPlayerConfigurationSO _configuration;
-
         private FPSPlayerModel _model;
         private PlayerInputController _input;
+        private IUpdateSubscriptionService _updateSubscriptionService;
 
         private float _cameraPitch;
 
-        private void Awake() {
-            _model = new FPSPlayerModel();
-
-            _model = new FPSPlayerModel();
+        public FPSPlayerController(FPSPlayerConfigurationSO fPSPlayerConfigurationSO, IUpdateSubscriptionService updateSubscriptionService,
+            FPSPlayerView view) {
             _input = new PlayerInputController();
+            _model = new FPSPlayerModel();
+            _configuration = fPSPlayerConfigurationSO;
+            _view = GameObject.Instantiate(view);
+            _updateSubscriptionService = updateSubscriptionService;
         }
 
-        private void Update() {
+        public void ManagedUpdate() {
             _input.Update();
 
             HandleLook();
             HandleJump();
         }
 
-        private void FixedUpdate() {
+        public void ManagedFixedUpdate() {
             HandleMovement();
             HandleGravity();
+        }
+
+        public void SetUp() {
+            _view.SetUp();
+            _updateSubscriptionService.RegisterUpdatable(this);
+            _updateSubscriptionService.RegisterFixedUpdatable(this);
         }
 
         private void HandleMovement() {
             Vector2 input = _input.MoveInput;
 
-            Vector3 forward = transform.forward;
-            Vector3 right = transform.right;
+            Vector3 forward = _view.transform.forward;
+            Vector3 right = _view.transform.right;
 
             Vector3 direction =
                 forward * input.y +
