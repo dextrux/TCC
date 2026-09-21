@@ -1,18 +1,9 @@
 using CoreDomain.Scripts.Services.Logger.Base;
 using Mirror;
 using UnityEngine;
-using Zenject;
 
 public class EOSMirrorNetworkManager : NetworkManager
 {
-    private DiContainer _container;
-
-    [Inject]
-    private void Setup(DiContainer container)
-    {
-        _container = container;
-    }
-
     public override void OnStartServer()
     {
         base.OnStartServer();
@@ -40,14 +31,8 @@ public class EOSMirrorNetworkManager : NetworkManager
             return;
         }
 
-        if (_container == null)
-        {
-            LogService.LogError("Zenject container was not injected into EOSMirrorNetworkManager.");
-            connection.Disconnect();
-            return;
-        }
-
         Transform startPosition = GetStartPosition();
+
         Vector3 spawnPosition = Vector3.zero;
         Quaternion spawnRotation = Quaternion.identity;
 
@@ -57,7 +42,7 @@ public class EOSMirrorNetworkManager : NetworkManager
             spawnRotation = startPosition.rotation;
         }
 
-        GameObject player = _container.InstantiatePrefab(playerPrefab, spawnPosition, spawnRotation, null);
+        GameObject player = Instantiate(playerPrefab, spawnPosition, spawnRotation);
         player.name = "NetworkPlayer_" + connection.connectionId;
 
         NetworkServer.AddPlayerForConnection(connection, player);

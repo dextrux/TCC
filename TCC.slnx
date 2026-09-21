@@ -11,6 +11,7 @@
   <Project Path="Mirror.Examples.csproj" />
   <Project Path="kcp2k.csproj" />
   <Project Path="CoreAssembly.csproj" />
+  <Project Path="Zenject-Editor.csproj" />
   <Project Path="LobbyAssembly.csproj" />
   <Project Path="SimpleWebTransport.csproj" />
   <Project Path="Mirror.Authenticators.csproj" />
@@ -19,6 +20,7 @@
   <Project Path="Telepathy.csproj" />
   <Project Path="CorePluginsAssembly.csproj" />
   <Project Path="Zenject-TestFramework.csproj" />
+  <Project Path="GameplayAssembly-Editor.csproj" />
   <Project Path="Assembly-CSharp.csproj" />
   <Project Path="Mirror.CompilerSymbols.csproj" />
   <Project Path="NetworkAssembly.csproj" />

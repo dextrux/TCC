@@ -1,4 +1,3 @@
-using CoreDomain.Scripts.Services.SceneService;
 using System;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,30 +7,49 @@ public class LobbyView : MonoBehaviour
     [SerializeField] private Button _zooButton;
     [SerializeField] private Button _GYMClientButton;
     [SerializeField] private Button _GYMServerButton;
+    [SerializeField] private InputField _hostProductUserIdInputField;
 
-    private Action<string> OnClickButton;
+    private Action _onZooClick;
+    private Action _onGYMHostClick;
+    private Action<string> _onGYMClientClick;
 
-    public void SetUp(Action<string> OnButtonCLick)
+    public void SetUp(Action onZooClick, Action onGYMHostClick, Action<string> onGYMClientClick)
     {
-        OnClickButton = OnButtonCLick;
+        _onZooClick = onZooClick;
+        _onGYMHostClick = onGYMHostClick;
+        _onGYMClientClick = onGYMClientClick;
 
         _zooButton.onClick.AddListener(OnZooClick);
-        _GYMClientButton.onClick.AddListener(OnGYMClientClick);
         _GYMServerButton.onClick.AddListener(OnGYMServerClick);
+        _GYMClientButton.onClick.AddListener(OnGYMClientClick);
+    }
+
+    private void OnDestroy()
+    {
+        _zooButton.onClick.RemoveListener(OnZooClick);
+        _GYMServerButton.onClick.RemoveListener(OnGYMServerClick);
+        _GYMClientButton.onClick.RemoveListener(OnGYMClientClick);
     }
 
     private void OnZooClick()
     {
-        OnClickButton.Invoke("ZooScene");
+        _onZooClick?.Invoke();
     }
 
     private void OnGYMServerClick()
     {
-        OnClickButton.Invoke("GYMScene");
+        _onGYMHostClick?.Invoke();
     }
 
     private void OnGYMClientClick()
     {
-        OnClickButton.Invoke("GYMScene");
+        if (_hostProductUserIdInputField == null)
+        {
+            Debug.LogError("Host Product User ID input field is not assigned.");
+            return;
+        }
+
+        string hostProductUserId = _hostProductUserIdInputField.text.Trim();
+        _onGYMClientClick?.Invoke(hostProductUserId);
     }
 }
