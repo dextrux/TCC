@@ -34,7 +34,7 @@ Material:
     - _GlowWidth: 0.15
     - _Intensity: 5
     - _IntervalRandom: 0.011
-    - _Seed: 0
+    - _Seed: -1
     - _StrikeInterval: 1.9
     - _StrikeSpeed: 8.9
     - _TravelSoftness: 0.04
