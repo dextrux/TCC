@@ -26,17 +26,15 @@ namespace CoreDomain.GameDomain.Scripts.AudioSystem.Services
             _mixer = mixer;
         }
 
-        //Toca o audio naquela posicao
-        public void PlayAtPosition(AudioEvent audioEvent, Vector3 position)
+        public void PlayAtPosition(AudioEvent audioEvent, Vector3 position, float volumeMultiplier = 1f)
         {
             if (audioEvent == null) return;
 
             var source = _pool.GetSource();
             _activeSources.Add(source);
-            source.Play(audioEvent, position);
+            source.Play(audioEvent, position, volumeMultiplier);
         }
 
-        //Toca o audio na UI
         public void PlayUI(AudioEvent audioEvent)
         {
             if (audioEvent == null) return;
@@ -45,19 +43,17 @@ namespace CoreDomain.GameDomain.Scripts.AudioSystem.Services
             _activeSources.Add(source);
             source.Play2D(audioEvent);
         }
-
-        //Reporta o sinal detectado
+        
         public void ReportSignal(AudioSignal audioSignal)
         {
-            Debug.Log($"Sinal de audio reportado do game object {audioSignal.Source} na posicao {audioSignal.Position}");
+            Debug.Log($"Sinal de audio reportado do game object {audioSignal.Source} na posicao {audioSignal.Position} | volume x{audioSignal.VolumeMultiplier:0.00}");
 
             var audioEvent = _registry.GetById(audioSignal.Id);
             if (audioEvent == null) return;
 
-            PlayAtPosition(audioEvent, audioSignal.Position);
+            PlayAtPosition(audioEvent, audioSignal.Position, audioSignal.VolumeMultiplier);
         }
 
-        //Ajusta o volume no Mixer
         public void SetCategoryVolume(AudioCategory category, float volume)
         {
             var param = GetMixerParam(category);
@@ -66,7 +62,6 @@ namespace CoreDomain.GameDomain.Scripts.AudioSystem.Services
             _mixer.SetFloat(param, LinearToDecibel(volume));
         }
 
-        //Para todos os sons ativos em uma categoria
         public void StopAll(AudioCategory category)
         {
             for (var i = _activeSources.Count - 1; i >= 0; i--)

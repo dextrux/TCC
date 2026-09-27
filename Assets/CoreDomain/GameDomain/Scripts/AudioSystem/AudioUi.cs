@@ -7,7 +7,7 @@ namespace CoreDomain.GameDomain.Scripts.AudioSystem
 {
     public class AudioUi : MonoBehaviour
     {
-        [SerializeField] private AudioEvent audioEvent;
+        [SerializeField] private AudioEventRegistry audioEventRegistry;
         
         private IAudioManager _audioManager;
 
@@ -20,7 +20,7 @@ namespace CoreDomain.GameDomain.Scripts.AudioSystem
         
         public void PlayUI()
         {
-            _audioManager.PlayUI(audioEvent: this.audioEvent);
+            _audioManager.PlayUI(audioEvent: this.audioEventRegistry.GetById(AudioEventId.Test));
         }
 
         public void StopUiAudio()

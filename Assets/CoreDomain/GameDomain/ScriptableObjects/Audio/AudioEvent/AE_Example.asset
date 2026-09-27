@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3041ff304552d6e49884a001ca6eebc6, type: 3}
-  m_Name: AudioEvent_Example
+  m_Name: AE_Example
   m_EditorClassIdentifier: GameplayAssembly::CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.AudioSystem.Datas.AudioEvent
   clips:
   - {fileID: 8300000, guid: b7b99595e84a87f41a29caef2a1d83fe, type: 3}
