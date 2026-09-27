@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: VFX_Cloud_mat
-  m_Shader: {fileID: 4800000, guid: 67d29af2ab9cd6f4ea44130009cb1401, type: 3}
+  m_Name: VFX_MudMarks_mat
+  m_Shader: {fileID: 4800000, guid: 2eaf0029997278a48bf542b038328bc4, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -24,29 +24,21 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _MainTex:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 57f1d14500332a34786bd96f49845c39, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Density: 0.169
     - _DownwardBias: 0.6
-    - _EdgeDetail: 0.6
-    - _EdgeScale: 15.22
     - _EdgeSoftness: 0.5
     - _LightInfluence: 0.9
-    - _LobeCount: 5.97
-    - _LobeSpread: 0.6
     - _MudDecayTime: 25
     - _MudFadeCurve: 1.6
     - _MudRadius: 0.18
     - _MudRoughness: 0.9
-    - _NoiseScale: 3.5
-    - _Softness: 1
+    - _NoiseScale: 12
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _MainTint: {r: 1, g: 1, b: 1, a: 1}
     - _MudColor: {r: 0.17999998, g: 0.11999995, b: 0.06999998, a: 1}
-    - _ShadowTint: {r: 0.54999995, g: 0.6, b: 0.72, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
