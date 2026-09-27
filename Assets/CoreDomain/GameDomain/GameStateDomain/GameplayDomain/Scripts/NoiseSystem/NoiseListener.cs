@@ -34,12 +34,12 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.NoiseSyst
         private float _lastPerceivedIntensity;
         private float _alertTimer;
 #endregion Variables
-        
-        [Inject]
+
         public void Construct(INoiseManager noiseManager)
         {
             _noiseManager = noiseManager;
-            Debug.Log("Constructing NoiseListener");
+            var networkObject = GetComponent(typeof(NetworkObject)) as NetworkObject;
+            networkObject!.Spawn();
         }
         
         public override void OnNetworkSpawn()

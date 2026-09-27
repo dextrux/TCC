@@ -25,7 +25,7 @@ namespace CoreDomain.GameDomain.Scripts.AudioSystem.Datas
                 if (entry.id == id)
                     return entry.audioEvent;
             }
-
+            
             return null;
         }
 

@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: GameDomain::CoreDomain.GameDomain.Scripts.AudioSystem.Datas.AudioEventCategoryRegistry
   categoryName: TestCategory
   entries:
-  - id: 6
+  - id: 5
     audioEvent: {fileID: 11400000, guid: ffe89345cab9d5043ac76f25ba1d7b8a, type: 2}

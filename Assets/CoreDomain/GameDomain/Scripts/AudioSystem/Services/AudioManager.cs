@@ -49,7 +49,11 @@ namespace CoreDomain.GameDomain.Scripts.AudioSystem.Services
             Debug.Log($"Sinal de audio reportado do game object {audioSignal.Source} na posicao {audioSignal.Position} | volume x{audioSignal.VolumeMultiplier:0.00}");
 
             var audioEvent = _registry.GetById(audioSignal.Id);
-            if (audioEvent == null) return;
+            if (audioEvent == null)
+            {
+                Debug.Log($"AudioEvent {audioSignal.Id} nao encontrado");
+                return;
+            }
 
             PlayAtPosition(audioEvent, audioSignal.Position, audioSignal.VolumeMultiplier);
         }

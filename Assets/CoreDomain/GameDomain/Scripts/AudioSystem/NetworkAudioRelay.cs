@@ -18,7 +18,12 @@ namespace CoreDomain.GameDomain.Scripts.AudioSystem
 
         public void RelaySignal(AudioSignal audioSignal)
         {
-            if (!IsServer) return;
+            // if (!IsServer)
+            // {
+            //     Debug.LogError("[NetworkAudioRelay] RelaySignal");
+            //     return;
+            // }
+            Debug.Log("Repotando audio");
             PlayAudioClientRpc(audioSignal.Id, audioSignal.Position, audioSignal.VolumeMultiplier);
         }
 

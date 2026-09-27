@@ -35,8 +35,8 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 4bdbb19a22a096543b43a1bf502d04ca, type: 3}
   - {fileID: 8300000, guid: 4bdbb19a22a096543b43a1bf502d04ca, type: 3}
   - {fileID: 8300000, guid: c2cc3f6d7bc509946bbb745133036202, type: 3}
-  category: 4
-  volume: 0.6
+  category: 0
+  volume: 0.58
   spread: 80
   pitchRange: {x: 0.95, y: 1.05}
   loop: 0

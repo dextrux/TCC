@@ -25,6 +25,8 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.SoundSyst
         public void Construct(INoiseManager noiseManager, NetworkAudioRelay networkAudioRelay)
         {
             Debug.Log("Constructing SoundEmitter");
+            var networkObject = GetComponent(typeof(NetworkObject)) as NetworkObject;
+            networkObject!.Spawn();
             _noiseManager = noiseManager;
             _networkAudioRelay = networkAudioRelay;
         }
@@ -74,10 +76,11 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.SoundSyst
             var audioSignal = new AudioSignal(audioId, position, gameObject, volumeMultiplier);
             DebugSound.GetVolume(audioId, loudness);
             _networkAudioRelay.RelaySignal(audioSignal);
+            Debug.Log("[SoundEmitter] Audio enviado");
         }
 
         [ContextMenu("Emitir som de teste")]
-        private void DebugEmitSound()
+        public void DebugEmitSound()
         {
             if (!Application.isPlaying || !IsSpawned)
             {
@@ -85,7 +88,8 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.SoundSyst
                 return;
             }
 
-            EmitSound(AudioEventId.Test, maxLoudness * 0.5f);
+            var random = Random.Range(0f, maxLoudness);
+            EmitSound(AudioEventId.Test, random * 0.5f);
         }
     }
 }
