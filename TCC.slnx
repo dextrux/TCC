@@ -6,6 +6,7 @@
   <Project Path="Edgegap.csproj" />
   <Project Path="Mirror.Components.csproj" />
   <Project Path="GameDomain.csproj" />
+  <Project Path="NetworkAssembly.csproj" />
   <Project Path="Mirror.Editor.csproj" />
   <Project Path="CoreEditorAssembly.csproj" />
   <Project Path="Mirror.Examples.csproj" />
@@ -23,6 +24,5 @@
   <Project Path="GameplayAssembly-Editor.csproj" />
   <Project Path="Assembly-CSharp.csproj" />
   <Project Path="Mirror.CompilerSymbols.csproj" />
-  <Project Path="NetworkAssembly.csproj" />
   <Project Path="Assembly-CSharp-Editor.csproj" />
 </Solution>

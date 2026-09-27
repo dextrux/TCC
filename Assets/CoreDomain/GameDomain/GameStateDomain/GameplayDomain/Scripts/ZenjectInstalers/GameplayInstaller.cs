@@ -9,25 +9,29 @@ using Player.View;
 using UnityEngine;
 using Zenject;
 
-public class GameplayInstaller : MonoInstaller {
-
+public class GameplayInstaller : MonoInstaller
+{
     [SerializeField] private NoiseDecaySettings noiseDecaySettings;
     [SerializeField] private FPSPlayerView _playerView;
     [SerializeField] private FPSPlayerConfigurationSO _playerConfiguration;
-    public override void InstallBindings() {
+
+    public override void InstallBindings()
+    {
         BindServices();
         BindControllers();
     }
 
-    private void BindServices() {
+    private void BindServices()
+    {
         Container.BindInterfacesTo<LevelCancellationTokenService>().AsSingle().NonLazy();
         Container.Bind<IGamePlayInitiator>().To<GamePlayInitiator>().AsSingle().NonLazy();
         Container.Bind<NoiseDecaySettings>().FromInstance(noiseDecaySettings).AsSingle();
         Container.Bind<INoiseManager>().To<NoiseManager>().AsSingle();
     }
 
-    private void BindControllers() {
+    private void BindControllers()
+    {
         Container.BindInterfacesTo<LevelScenarioController>().AsSingle().NonLazy();
-        Container.BindInterfacesTo<FPSPlayerController>().AsSingle().WithArguments(_playerView, _playerConfiguration).NonLazy();
+        Container.BindInterfacesTo<FPSPlayerController>().AsSingle().WithArguments(_playerView, _playerConfiguration);
     }
 }

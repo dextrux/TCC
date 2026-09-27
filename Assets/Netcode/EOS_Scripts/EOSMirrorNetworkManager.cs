@@ -7,7 +7,17 @@ public class EOSMirrorNetworkManager : NetworkManager
     public override void OnStartServer()
     {
         base.OnStartServer();
+
+        NetworkServer.RegisterHandler<PlayerCameraInputMessage>(OnPlayerCameraInputMessage);
+
         LogService.Log("Mirror server started.");
+    }
+
+    public override void OnStopServer()
+    {
+        NetworkServer.UnregisterHandler<PlayerCameraInputMessage>();
+
+        base.OnStopServer();
     }
 
     public override void OnStartHost()
@@ -54,5 +64,23 @@ public class EOSMirrorNetworkManager : NetworkManager
     {
         LogService.Log("Player disconnected. Connection ID: " + connection.connectionId);
         base.OnServerDisconnect(connection);
+    }
+
+    private void OnPlayerCameraInputMessage(NetworkConnectionToClient connection, PlayerCameraInputMessage message)
+    {
+        if (connection.identity == null)
+        {
+            return;
+        }
+
+        MirrorPlayerCamera playerCamera = connection.identity.GetComponent<MirrorPlayerCamera>();
+
+        if (playerCamera == null)
+        {
+            LogService.LogWarning("MirrorPlayerCamera was not found on the connected player.");
+            return;
+        }
+
+        playerCamera.ServerApplyCameraInput(message.CameraInput);
     }
 }

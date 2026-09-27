@@ -4,36 +4,51 @@ using CoreDomain.GameDomain.Scripts.States.GamePlayState;
 using CoreDomain.Scripts.CoreInitiator.Base;
 using CoreDomain.Scripts.Services.CommandFactory;
 using CoreDomain.Scripts.Services.InitiatorInvokerService;
+using CoreDomain.Scripts.Services.NetworkService;
 using CoreDomain.Scripts.Services.SceneService;
 using CoreDomain.Scripts.Utils;
 using System.Threading;
 using UnityEngine;
 
-namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.Initiator {
-
-    public class GamePlayInitiator : ISceneInitiator, IGamePlayInitiator {
+namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.Initiator
+{
+    public class GamePlayInitiator : ISceneInitiator, IGamePlayInitiator
+    {
         private readonly ICommandFactory _commandFactory;
         private readonly ISceneInitiatorsService _sceneInitiatorsService;
+        private readonly INetworkPlayerCameraController _networkPlayerCameraController;
 
         public ScenesType SceneType => ScenesType.GamePlayScene;
 
-        public GamePlayInitiator(ICommandFactory commandFactory, ISceneInitiatorsService sceneInitiatorsService) {
+        public GamePlayInitiator(ICommandFactory commandFactory, ISceneInitiatorsService sceneInitiatorsService, INetworkPlayerCameraController networkPlayerCameraController)
+        {
             _commandFactory = commandFactory;
             _sceneInitiatorsService = sceneInitiatorsService;
+            _networkPlayerCameraController = networkPlayerCameraController;
             _sceneInitiatorsService.RegisterInitiator(this);
         }
 
-        public async Awaitable LoadEntryPoint(IInitiatorEnterData enterDataObject, CancellationTokenSource cancellationTokenSource) {
+        public async Awaitable LoadEntryPoint(IInitiatorEnterData enterDataObject, CancellationTokenSource cancellationTokenSource)
+        {
             GamePlayInitatorEnterData enterData = (GamePlayInitatorEnterData)enterDataObject;
             await _commandFactory.CreateCommandAsync<LoadGamePlayStateCommand>().SetEnterData(enterData).Execute(cancellationTokenSource);
         }
 
-        public async Awaitable StartEntryPoint(IInitiatorEnterData enterDataObject, CancellationTokenSource cancellationTokenSource) {
+        public async Awaitable StartEntryPoint(IInitiatorEnterData enterDataObject, CancellationTokenSource cancellationTokenSource)
+        {
             var enterData = (GamePlayInitatorEnterData)enterDataObject;
+
             await _commandFactory.CreateCommandAsync<StartGamePlayStateCommand>().SetEnterData(enterData).Execute(cancellationTokenSource);
+
+            if (enterData.SessionMode != NetworkSessionMode.Offline)
+            {
+                _networkPlayerCameraController.SetUp();
+            }
         }
 
-        public async Awaitable InitExitPoint(CancellationTokenSource cancellationTokenSource) {
+        public async Awaitable InitExitPoint(CancellationTokenSource cancellationTokenSource)
+        {
+            _networkPlayerCameraController.Dispose();
             _sceneInitiatorsService.UnregisterInitiator(this);
             _commandFactory.CreateCommandVoid<ExitGamePlayStateCommand>().Execute();
             await AwaitableUtils.CompletedTask;

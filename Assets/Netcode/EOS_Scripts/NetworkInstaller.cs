@@ -10,5 +10,6 @@ public class NetworkInstaller : MonoInstaller
     {
         Container.Bind<EOSMirrorNetworkManager>().FromInstance(_networkManager).AsSingle();
         Container.Bind<INetworkService>().To<EOSMirrorNetworkService>().AsSingle().NonLazy();
+        Container.Bind<INetworkPlayerCameraController>().To<EOSMirrorPlayerCameraController>().AsSingle().NonLazy();
     }
 }
