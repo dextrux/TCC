@@ -35,7 +35,7 @@ Material:
     - _Intensity: 5
     - _IntervalRandom: 0.011
     - _Seed: -1
-    - _StrikeInterval: 1.9
+    - _StrikeInterval: 14.77
     - _StrikeSpeed: 8.9
     - _TravelSoftness: 0.04
     m_Colors:
