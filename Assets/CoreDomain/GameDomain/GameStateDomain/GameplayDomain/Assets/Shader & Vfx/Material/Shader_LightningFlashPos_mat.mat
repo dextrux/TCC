@@ -32,7 +32,7 @@ Material:
     - _IntervalRandom: 0.011
     - _Seed: -1
     - _StrikeDelay: 0.112
-    - _StrikeInterval: 1.9
+    - _StrikeInterval: 14.77
     m_Colors:
     - _FlashColor: {r: 0.9, g: 0.93, b: 1, a: 1}
   m_BuildTextureStacks: []
