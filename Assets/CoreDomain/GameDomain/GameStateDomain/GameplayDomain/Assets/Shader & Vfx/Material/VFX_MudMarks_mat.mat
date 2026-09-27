@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: VFX_Lighting_mat
-  m_Shader: {fileID: 4800000, guid: 0a09c7f3dfc01a746a32c1214c5995e3, type: 3}
+  m_Name: VFX_MudMarks_mat
+  m_Shader: {fileID: 4800000, guid: 2eaf0029997278a48bf542b038328bc4, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -22,24 +22,23 @@ Material:
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
-    m_TexEnvs: []
+    m_TexEnvs:
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: 57f1d14500332a34786bd96f49845c39, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _BoltWidth: 0.02
-    - _Branches: 2
-    - _DoubleFlashChance: 0.3
-    - _FlashDuration: 0.25
-    - _FlickerAmount: 0.4
-    - _FlickerSpeed: 25
-    - _GlowWidth: 0.15
-    - _Intensity: 5
-    - _IntervalRandom: 0.011
-    - _Seed: -1
-    - _StrikeInterval: 1.9
-    - _StrikeSpeed: 8.9
-    - _TravelSoftness: 0.04
+    - _DownwardBias: 0.6
+    - _EdgeSoftness: 0.5
+    - _LightInfluence: 0.9
+    - _MudDecayTime: 25
+    - _MudFadeCurve: 1.6
+    - _MudRadius: 0.18
+    - _MudRoughness: 0.9
+    - _NoiseScale: 12
     m_Colors:
-    - _BoltColor: {r: 0.85, g: 0.9, b: 1, a: 1}
-    - _GlowColor: {r: 0.5, g: 0.6, b: 1, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _MudColor: {r: 0.17999998, g: 0.11999995, b: 0.06999998, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
