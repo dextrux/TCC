@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3041ff304552d6e49884a001ca6eebc6, type: 3}
-  m_Name: AudioEvent_Example
+  m_Name: AE_Example
   m_EditorClassIdentifier: GameplayAssembly::CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.AudioSystem.Datas.AudioEvent
   clips:
   - {fileID: 8300000, guid: b7b99595e84a87f41a29caef2a1d83fe, type: 3}
@@ -35,8 +35,8 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 4bdbb19a22a096543b43a1bf502d04ca, type: 3}
   - {fileID: 8300000, guid: 4bdbb19a22a096543b43a1bf502d04ca, type: 3}
   - {fileID: 8300000, guid: c2cc3f6d7bc509946bbb745133036202, type: 3}
-  category: 4
-  volume: 0.6
+  category: 0
+  volume: 0.58
   spread: 80
   pitchRange: {x: 0.95, y: 1.05}
   loop: 0

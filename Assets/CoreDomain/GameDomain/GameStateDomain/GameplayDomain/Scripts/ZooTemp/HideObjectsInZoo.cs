@@ -1,3 +1,4 @@
+using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.SoundSystem;
 using CoreDomain.GameDomain.Scripts.AudioSystem;
 using Player.View;
 using UnityEngine;
@@ -8,7 +9,7 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.ZooTemp
     {
         public void Start()
         {
-            var audioUi = FindAnyObjectByType(typeof(AudioUi)) as AudioUi;
+            var audioUi = FindAnyObjectByType(typeof(TestAudio)) as TestAudio;
             var player = FindAnyObjectByType(typeof(FPSPlayerView)) as FPSPlayerView;
         
             player!.transform.GetChild(0).gameObject.SetActive(false);

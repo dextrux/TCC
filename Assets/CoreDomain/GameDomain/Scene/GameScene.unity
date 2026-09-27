@@ -168,7 +168,7 @@ MonoBehaviour:
     mixer: {fileID: 24100000, guid: 99cff6d8406804b05b127ec120f31efc, type: 2}
     defaultGroup: {fileID: 24300002, guid: 99cff6d8406804b05b127ec120f31efc, type: 2}
     registry: {fileID: 11400000, guid: bee006b8a740d6c49be2a5543d4f3bf3, type: 2}
-    networkAudioRelay: {fileID: 8521413645907993847, guid: 1cb980d8c0fe59345b79f35bd384e3c8, type: 3}
+    networkAudioRelay: {fileID: 1366213404}
     prewarmCount: 16
 --- !u!1 &251274429
 GameObject:
@@ -236,9 +236,90 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &1366213403
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4408687996008021646, guid: 1cb980d8c0fe59345b79f35bd384e3c8, type: 3}
+      propertyPath: m_InScenePlaced
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4408687996008021646, guid: 1cb980d8c0fe59345b79f35bd384e3c8, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 471785467
+      objectReference: {fileID: 0}
+    - target: {fileID: 4408687996008021646, guid: 1cb980d8c0fe59345b79f35bd384e3c8, type: 3}
+      propertyPath: InScenePlacedSourceGlobalObjectIdHash
+      value: 3375837615
+      objectReference: {fileID: 0}
+    - target: {fileID: 6637671479978704258, guid: 1cb980d8c0fe59345b79f35bd384e3c8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 3.64072
+      objectReference: {fileID: 0}
+    - target: {fileID: 6637671479978704258, guid: 1cb980d8c0fe59345b79f35bd384e3c8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6637671479978704258, guid: 1cb980d8c0fe59345b79f35bd384e3c8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -5.07426
+      objectReference: {fileID: 0}
+    - target: {fileID: 6637671479978704258, guid: 1cb980d8c0fe59345b79f35bd384e3c8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6637671479978704258, guid: 1cb980d8c0fe59345b79f35bd384e3c8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6637671479978704258, guid: 1cb980d8c0fe59345b79f35bd384e3c8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6637671479978704258, guid: 1cb980d8c0fe59345b79f35bd384e3c8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6637671479978704258, guid: 1cb980d8c0fe59345b79f35bd384e3c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6637671479978704258, guid: 1cb980d8c0fe59345b79f35bd384e3c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6637671479978704258, guid: 1cb980d8c0fe59345b79f35bd384e3c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7758485632626507201, guid: 1cb980d8c0fe59345b79f35bd384e3c8, type: 3}
+      propertyPath: m_Name
+      value: NetworkAudioRelay
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 1cb980d8c0fe59345b79f35bd384e3c8, type: 3}
+--- !u!114 &1366213404 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8521413645907993847, guid: 1cb980d8c0fe59345b79f35bd384e3c8, type: 3}
+  m_PrefabInstance: {fileID: 1366213403}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52c3320415f236e428491b16039ca5cc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: GameplayAssembly::CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.AudioSystem.NetworkAudioRelay
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 251274431}
   - {fileID: 221256879}
+  - {fileID: 1366213403}

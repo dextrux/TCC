@@ -9,9 +9,9 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.NoiseSyst
     public class NoiseEmitter : NetworkBehaviour, INoiseEmitter
     {
 #region Loud Variables
-        [SerializeField] private float walkingLoudness;
-        [SerializeField] private float runningLoudness;
-        [SerializeField] private float crouchingLoudness;
+        [SerializeField] private float walkingLoudness = 5f;
+        [SerializeField] private float runningLoudness = 12f;
+        [SerializeField] private float crouchingLoudness = 2f;
         [SerializeField] private float crawlingLoudness = 0f;
 #endregion Loud Variables
         

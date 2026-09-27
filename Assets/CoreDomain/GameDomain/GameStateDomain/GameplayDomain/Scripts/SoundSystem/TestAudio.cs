@@ -3,29 +3,28 @@ using CoreDomain.GameDomain.Scripts.AudioSystem.Interfaces;
 using UnityEngine;
 using Zenject;
 
-namespace CoreDomain.GameDomain.Scripts.AudioSystem
+namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.SoundSystem
 {
-    public class AudioUi : MonoBehaviour
+    public class TestAudio : MonoBehaviour
     {
-        [SerializeField] private AudioEvent audioEvent;
-        
+        [SerializeField] private SoundEmitter audioObject;
         private IAudioManager _audioManager;
 
         [Inject]
         public void Construct(IAudioManager audioManager)
         {
-            Debug.Log("Constructing AudioUi");
             _audioManager = audioManager;
         }
-        
-        public void PlayUI()
+
+        private void PlayUI()
         {
-            _audioManager.PlayUI(audioEvent: this.audioEvent);
+            audioObject = FindAnyObjectByType(typeof(SoundEmitter)) as SoundEmitter;
+            audioObject!.DebugEmitSound();
         }
 
-        public void StopUiAudio()
+        private void StopUiAudio()
         {
-             _audioManager.StopAll(AudioCategory.Ui);
+            _audioManager.StopAll(AudioCategory.Ui);
         }
 
         private void Update()

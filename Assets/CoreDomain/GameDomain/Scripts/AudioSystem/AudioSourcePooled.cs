@@ -10,7 +10,7 @@ namespace CoreDomain.GameDomain.Scripts.AudioSystem
         public class Factory : Zenject.PlaceholderFactory<AudioSourcePooled> { }
 
         [SerializeField] private AudioSource source;
-        
+
         private Action<AudioSourcePooled> _onFinished;
 
         public bool IsPlaying => source != null && source.isPlaying;
@@ -23,14 +23,13 @@ namespace CoreDomain.GameDomain.Scripts.AudioSystem
             if (source == null) source = GetComponent<AudioSource>();
         }
 
-        //Trocar pro novo update
         private void Update()
         {
             if (!IsFree && !source.loop && !source.isPlaying)
                 ReturnToPool();
         }
 
-        public void Play(AudioEvent audioEvent, Vector3 position, Transform parent = null)
+        public void Play(AudioEvent audioEvent, Vector3 position, float volumeMultiplier = 1f)
         {
             if (audioEvent == null) return;
 
@@ -38,18 +37,18 @@ namespace CoreDomain.GameDomain.Scripts.AudioSystem
             transform.position = position;
 
             ConfigureFor3D(audioEvent);
-            ApplyCommonSettings(audioEvent);
+            ApplyCommonSettings(audioEvent, volumeMultiplier);
             source.Play();
         }
 
-        public void Play2D(AudioEvent audioEvent)
+        public void Play2D(AudioEvent audioEvent, float volumeMultiplier = 1f)
         {
             if (audioEvent == null) return;
 
             IsFree = false;
 
             source.spatialBlend = 0f;
-            ApplyCommonSettings(audioEvent);
+            ApplyCommonSettings(audioEvent, volumeMultiplier);
             source.Play();
         }
 
@@ -80,10 +79,10 @@ namespace CoreDomain.GameDomain.Scripts.AudioSystem
             source.SetCustomCurve(AudioSourceCurveType.CustomRolloff, audioEvent.RolloffCurve);
         }
 
-        private void ApplyCommonSettings(AudioEvent audioEvent)
+        private void ApplyCommonSettings(AudioEvent audioEvent, float volumeMultiplier)
         {
             source.clip = audioEvent.GetClip();
-            source.volume = audioEvent.Volume;
+            source.volume = audioEvent.Volume * Mathf.Clamp01(volumeMultiplier);
             source.pitch = audioEvent.GetRandomPitch();
             source.loop = audioEvent.Loop;
         }

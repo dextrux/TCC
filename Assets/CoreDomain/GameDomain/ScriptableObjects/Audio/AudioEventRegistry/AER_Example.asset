@@ -10,6 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4a6beee3baeffeb409d416c52776d339, type: 3}
-  m_Name: AudioEventRegistry_Example
+  m_Name: AER_Example
   m_EditorClassIdentifier: GameplayAssembly::CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.AudioSystem.Datas.AudioEventRegistry
-  events: []
+  subRegistries:
+  - {fileID: 11400000, guid: 8cfc1e57e8a57934584e41911b574b07, type: 2}
