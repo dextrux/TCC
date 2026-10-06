@@ -9,4 +9,5 @@
   <Project Path="CorePluginsAssembly.csproj" />
   <Project Path="Zenject-TestFramework.csproj" />
   <Project Path="GameplayAssembly-Editor.csproj" />
+  <Project Path="Assembly-CSharp.csproj" />
 </Solution>
