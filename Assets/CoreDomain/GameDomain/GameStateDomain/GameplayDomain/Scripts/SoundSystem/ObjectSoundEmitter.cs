@@ -14,12 +14,11 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.SoundSyst
 
         private void Awake() => _soundEmitter = GetComponent<SoundEmitter>();
 
-        private void OnCollisionEnter(Collision collision)
+        public void EmitImpact(float impactSpeed)
         {
-            var impactForce = collision.relativeVelocity.magnitude;
-            if (impactForce < minImpactForce) return;
+            if (impactSpeed < minImpactForce) return;
 
-            var loudness = Mathf.Clamp(impactForce * 0.8f, 0f, maxLoudnessOnImpact);
+            var loudness = Mathf.Clamp(impactSpeed * 0.8f, 0f, maxLoudnessOnImpact);
             _soundEmitter.EmitSound(impactSound.id, loudness);
         }
     }

@@ -1,4 +1,5 @@
 using System.Threading;
+using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Object.Interface;
 using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.NoiseSystem.Interfaces;
 using CoreDomain.GameDomain.GameStateDomain.GamePlayDomain.Scripts.Services.LevelCancellationToken;
 using CoreDomain.Scripts.Services.CommandFactory;
@@ -14,6 +15,7 @@ namespace CoreDomain.GameDomain.GameStateDomain.GamePlayDomain.Scripts.Commands 
         private IFPSPlayerController _fPSPlayerController;
         private INoiseManager _noiseManager;
         private ILevelScenarioController _levelScenarioController;
+        private IWorldObjectSpawner _worldObjectSpawner;
 
         public override void ResolveDependencies() {
             //_gameInputActionsController = _diContainer.Resolve<IGameInputActionsController>();
@@ -21,6 +23,7 @@ namespace CoreDomain.GameDomain.GameStateDomain.GamePlayDomain.Scripts.Commands 
             _fPSPlayerController = _diContainer.Resolve<IFPSPlayerController>();
             _levelScenarioController = _diContainer.Resolve<ILevelScenarioController>();
             _noiseManager = _diContainer.Resolve<INoiseManager>();
+            _worldObjectSpawner = _diContainer.Resolve<IWorldObjectSpawner>();
         }
 
         public async Awaitable Execute(CancellationTokenSource cancellationTokenSource) {
@@ -28,6 +31,7 @@ namespace CoreDomain.GameDomain.GameStateDomain.GamePlayDomain.Scripts.Commands 
             //_gameInputActionsController.RegisterAllInputListeners();
             //Inserir await para iniciar a fase com algum comando
             _levelScenarioController.CurrentLevelView.Setup(_noiseManager);
+            _worldObjectSpawner.StartSpawning();
         }
     }
 }

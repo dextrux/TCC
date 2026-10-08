@@ -39,7 +39,8 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.NoiseSyst
         {
             _noiseManager = noiseManager;
             var networkObject = GetComponent(typeof(NetworkObject)) as NetworkObject;
-            networkObject!.Spawn();
+            if (NetworkManager.Singleton.IsServer && !networkObject!.IsSpawned)
+                networkObject!.Spawn();
         }
         
         public override void OnNetworkSpawn()
