@@ -5,7 +5,7 @@ namespace CoreDomain.GameDomain.Scripts.AudioSystem.Interfaces
 {
     public interface IAudioManager
     {
-        void PlayAtPosition(AudioEvent audioEvent, Vector3 position);
+        void PlayAtPosition(AudioEvent audioEvent, Vector3 position, float volumeMultiplier = 1f);
         void PlayUI(AudioEvent audioEvent);
         void ReportSignal(AudioSignal audioSignal);
         void SetCategoryVolume(AudioCategory category, float volume);

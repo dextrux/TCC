@@ -81,7 +81,7 @@ namespace CoreDomain.GameDomain.Scripts.AudioSystem
         }
 
 #region AnimationEvents
-        public void EmitFootstepOnAnimation() => EmitAudio(AudioEventId.FootstepConcrete);
+        public void EmitFootstepOnAnimation() => EmitAudio(AudioEventId.Footstep);
         public void EmitDoorOpenOnAnimation() => EmitAudio(AudioEventId.DoorOpen);
         public void EmitDoorCloseOnAnimation() => EmitAudio(AudioEventId.DoorClose);
 #endregion AnimationEvents

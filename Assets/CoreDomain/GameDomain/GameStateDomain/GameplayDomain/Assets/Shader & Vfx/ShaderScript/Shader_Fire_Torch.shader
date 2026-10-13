@@ -1,4 +1,4 @@
-Shader "Custom/TorchFire3D"
+Shader "Custom/FireTorch"
 {
     Properties
     {

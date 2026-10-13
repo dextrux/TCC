@@ -5,6 +5,7 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.NoiseSyst
 {
     public interface INoiseListener
     {
+        public void Construct(INoiseManager noiseManager);
         Transform Transform { get; }
         float HearingRadius { get; }
         [Range(0, 1)] float MinPerceivedIntensity { get; }

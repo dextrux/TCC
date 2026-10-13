@@ -34,12 +34,19 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.NoiseSyst
         private float _lastPerceivedIntensity;
         private float _alertTimer;
 #endregion Variables
-        
-        [Inject]
-        public void Construct(INoiseManager noiseManager) => _noiseManager = noiseManager;
+
+        public void Construct(INoiseManager noiseManager)
+        {
+            _noiseManager = noiseManager;
+            var networkObject = GetComponent(typeof(NetworkObject)) as NetworkObject;
+            networkObject!.Spawn();
+        }
         
         public override void OnNetworkSpawn()
         {
+#if UNITY_EDITOR
+            Debug.Log($"{name} spawnou na rede. IsSpawned={IsSpawned}, IsOwner={IsOwner}, IsServer={IsServer}");
+#endif
             if (!NetworkManager.Singleton.IsServer) return;
             _noiseManager.RegisterListener(this);
         }
@@ -67,15 +74,14 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.NoiseSyst
 
             if (_lastPerceivedIntensity >= 0.9f)
                 Debug.Log("BARULHO MUITO ALTO.");
-            else if (_lastPerceivedIntensity > 0.6f)
+            else if (_lastPerceivedIntensity >= 0.4f)
                 Debug.Log("BARULHO ALTO.");
-            else if (_lastPerceivedIntensity < 0.3f) Debug.Log("BARULHO BAIXO.");
+            else if (_lastPerceivedIntensity < 0.4f) Debug.Log("BARULHO BAIXO.");
         }
 #region ReactionType
         //Criar funcoes para tipos de reacoes diferentes
 #endregion ReactionType
 
-        //Nao ta funcionando (?)
         private void OnDrawGizmos()
         {
             if (!showGizmos) return;

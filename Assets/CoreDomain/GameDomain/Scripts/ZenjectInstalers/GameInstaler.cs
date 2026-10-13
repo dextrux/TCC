@@ -34,7 +34,7 @@ public class GameInstaler : MonoInstaller {
         Container.Bind<IAudioSourcePool>().To<AudioSourcePool>().AsSingle();
         Container.Bind<IAudioManager>().To<AudioManager>().AsSingle().NonLazy();
 
-        Container.Bind<NetworkAudioRelay>().FromInstance(audioSetting.networkAudioRelay).AsSingle();
+        Container.Bind<NetworkAudioRelay>().FromInstance(audioSetting.networkAudioRelay).AsSingle().NonLazy();
 
         Container.Bind<IInitializable>()
             .To<AudioPoolWarmup>()

@@ -1,42 +1,53 @@
-using System;
 using UnityEngine;
 
 namespace CoreDomain.GameDomain.Scripts.AudioSystem.Datas
 {
-    public enum AudioEventId
-    {
-        None = 0,
-        FootstepConcrete,
-        FootstepGrass,
-        DoorOpen,
-        DoorClose,
-        Torch
-    }
-    
     [CreateAssetMenu(menuName = "Audio/Audio Event Registry", fileName = "AudioEventRegistry")]
     public class AudioEventRegistry : ScriptableObject
     {
-        [Serializable]
-        public struct Entry
-        {
-            public AudioEventId id;
-            public AudioEvent audioEvent;
-        }
-
-        [SerializeField] private Entry[] events;
+        [SerializeField] private AudioEventCategoryRegistry[] subRegistries;
 
         public AudioEvent GetById(AudioEventId id)
         {
-            foreach (var entry in events)
+            foreach (var subRegistry in subRegistries)
             {
-                if (entry.id == id)
-                    return entry.audioEvent;
+                if (subRegistry == null) continue;
+
+                var audioEvent = subRegistry.GetById(id);
+                if (audioEvent != null)
+                    return audioEvent;
             }
 
 #if UNITY_EDITOR
-            Debug.LogWarning($"[AudioEventRegistry] Nenhum AudioEvent encontrado para Id '{id}'.");
+            Debug.LogWarning($"[AudioEventRegistry] Nenhum AudioEvent encontrado para Id '{id}' em nenhuma categoria.");
 #endif
             return null;
         }
+
+#if UNITY_EDITOR
+        // Ajuda a pegar erro de configuracao no Editor: mesmo Id cadastrado
+        // em duas categorias diferentes ao mesmo tempo (ambiguidade).
+        [ContextMenu("Validar Ids duplicados entre categorias")]
+        private void ValidateDuplicateIds()
+        {
+            for (var i = 0; i < subRegistries.Length; i++)
+            {
+                for (var j = i + 1; j < subRegistries.Length; j++)
+                {
+                    var a = subRegistries[i];
+                    var b = subRegistries[j];
+                    if (a == null || b == null) continue;
+
+                    foreach (AudioEventId id in System.Enum.GetValues(typeof(AudioEventId)))
+                    {
+                        if (a.Contains(id) && b.Contains(id))
+                        {
+                            Debug.LogWarning($"[AudioEventRegistry] Id '{id}' esta duplicado em '{a.CategoryName}' e '{b.CategoryName}'.");
+                        }
+                    }
+                }
+            }
+        }
+#endif
     }
 }
