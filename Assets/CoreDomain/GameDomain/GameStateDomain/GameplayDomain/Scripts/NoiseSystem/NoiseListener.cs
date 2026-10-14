@@ -1,19 +1,18 @@
+
 using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.NoiseSystem.Datas;
 using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.NoiseSystem.Interfaces;
-using Unity.Netcode;
 using UnityEngine;
-using Zenject;
 
 namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.NoiseSystem
 {
-    public class NoiseListener : NetworkBehaviour, INoiseListener
+    public class NoiseListener : MonoBehaviour, INoiseListener
     {
 #region Settings Variables
         [Header("Noise Settings")]
-        [SerializeField] private float hearingRadius = 10f; 
+        [SerializeField] private float hearingRadius = 10f;
         [SerializeField, Range(0, 1)] private float minPerceivedIntensity;
 #endregion Settings Variables
-        
+
 #region Debug Variables
         [Header("Debug")]
         [SerializeField] private bool showGizmos;
@@ -37,66 +36,105 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.NoiseSyst
 
         public void Construct(INoiseManager noiseManager)
         {
+            if (_noiseManager != null && _noiseManager != noiseManager)
+            {
+                _noiseManager.UnregisterListener(this);
+            }
+
             _noiseManager = noiseManager;
-            var networkObject = GetComponent(typeof(NetworkObject)) as NetworkObject;
-            networkObject!.Spawn();
-        }
-        
-        public override void OnNetworkSpawn()
-        {
-#if UNITY_EDITOR
-            Debug.Log($"{name} spawnou na rede. IsSpawned={IsSpawned}, IsOwner={IsOwner}, IsServer={IsServer}");
-#endif
-            if (!NetworkManager.Singleton.IsServer) return;
-            _noiseManager.RegisterListener(this);
+
+            if (isActiveAndEnabled && _noiseManager != null)
+            {
+                _noiseManager.RegisterListener(this);
+            }
         }
 
-        public override void OnNetworkDespawn()
+        public void Release()
         {
-            if (!NetworkManager.Singleton.IsServer) return;
-            _noiseManager.UnregisterListener(this);
+            if (_noiseManager != null)
+            {
+                _noiseManager.UnregisterListener(this);
+                _noiseManager = null;
+            }
         }
-        
+
+        private void OnEnable()
+        {
+            if (_noiseManager != null)
+            {
+                _noiseManager.RegisterListener(this);
+            }
+        }
+
+        private void OnDisable()
+        {
+            if (_noiseManager != null)
+            {
+                _noiseManager.UnregisterListener(this);
+            }
+        }
+
+        private void OnDestroy()
+        {
+            Release();
+        }
+
         //Trocar o metodo do Update para o novo
         private void Update()
         {
-            if (_alertTimer > 0f) 
+            if (_alertTimer > 0f)
+            {
                 _alertTimer -= Time.deltaTime;
+            }
         }
-        
+
         public void OnNoiseHeard(NoiseSignal noiseSignal, float perceivedIntensity)
         {
             _lastPosition = noiseSignal.Position;
             _lastPerceivedIntensity = perceivedIntensity;
             _alertTimer = alertDuration;
-            
+
             Debug.Log($"Noise Listener - {name}\nRuido escutado em {_lastPosition} | Intensidade do ruido: {_lastPerceivedIntensity}");
 
             if (_lastPerceivedIntensity >= 0.9f)
+            {
                 Debug.Log("BARULHO MUITO ALTO.");
+            }
             else if (_lastPerceivedIntensity >= 0.4f)
+            {
                 Debug.Log("BARULHO ALTO.");
-            else if (_lastPerceivedIntensity < 0.4f) Debug.Log("BARULHO BAIXO.");
+            }
+            else if (_lastPerceivedIntensity < 0.4f)
+            {
+                Debug.Log("BARULHO BAIXO.");
+            }
         }
+
 #region ReactionType
         //Criar funcoes para tipos de reacoes diferentes
 #endregion ReactionType
 
         private void OnDrawGizmos()
         {
-            if (!showGizmos) return;
-            
+            if (!showGizmos)
+            {
+                return;
+            }
+
             var isAlert = _alertTimer > 0f;
             Gizmos.color = isAlert ? alertColor : idleColor;
             Gizmos.DrawWireSphere(transform.position, hearingRadius);
-            
+
             var fillColor = Gizmos.color;
             fillColor.a *= 0.3f;
             Gizmos.color = fillColor;
             Gizmos.DrawSphere(transform.position, hearingRadius);
 
-            if (!isAlert || !_lastPosition.HasValue) return;
-            
+            if (!isAlert || !_lastPosition.HasValue)
+            {
+                return;
+            }
+
             Gizmos.color = Color.Lerp(Color.yellow, Color.red, _lastPerceivedIntensity);
             Gizmos.DrawLine(transform.position, _lastPosition.Value);
             Gizmos.DrawSphere(_lastPosition.Value, 0.2f + _lastPerceivedIntensity * 0.3f);
