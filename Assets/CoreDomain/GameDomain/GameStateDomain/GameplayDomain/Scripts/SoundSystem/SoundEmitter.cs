@@ -1,8 +1,8 @@
 
-using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.NoiseSystem.Datas;
 using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.NoiseSystem.Interfaces;
 using CoreDomain.GameDomain.Scripts.AudioSystem.Datas;
 using CoreDomain.GameDomain.Scripts.AudioSystem.Interfaces;
+using CoreDomain.Scripts.Services.NetworkService;
 using UnityEngine;
 using Zenject;
 
@@ -16,16 +16,16 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.SoundSyst
     {
         [Tooltip("Valor de loudness que corresponde a volume 100% no audio. Valores acima disso satura em 1.")]
         [SerializeField] private float maxLoudness = 15f;
+        [Tooltip("Ative para sons de objetos cuja emissao deve ser decidida pelo servidor.")]
+        [SerializeField] private bool serverOnly;
 
-        private INoiseManager _noiseManager;
-        private IAudioManager _audioManager;
+        private INetworkSoundService _networkSoundService;
 
         [Inject]
-        public void Construct(INoiseManager noiseManager, IAudioManager audioManager)
+        public void Construct(INetworkSoundService networkSoundService)
         {
             Debug.Log("Constructing SoundEmitter");
-            _noiseManager = noiseManager;
-            _audioManager = audioManager;
+            _networkSoundService = networkSoundService;
         }
 
         // IAudioEmitter - so audio, sem gerar ruido pra IA
@@ -37,37 +37,36 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.SoundSyst
         // Toca audio e gera ruido
         public void EmitSound(AudioEventId audioId, float loudness)
         {
-            if (_noiseManager == null || _audioManager == null)
+            if (_networkSoundService == null)
             {
-                Debug.LogError("[SoundEmitter] Dependencies were not injected.");
+                Debug.LogError("[SoundEmitter] INetworkSoundService was not injected.");
                 return;
             }
 
             if (float.IsNaN(loudness) || float.IsInfinity(loudness) || loudness < 0f)
             {
-                Debug.LogWarning("[SoundEmitter] Invalid loudness value.");
+                Debug.LogWarning("[SoundEmitter] Invalid loudness.");
                 return;
             }
 
-            if (loudness > 0f)
-            {
-                var noiseSignal = new NoiseSignal(transform.position, loudness, gameObject);
-                _noiseManager.ReportSignal(noiseSignal);
-            }
-
-            if (audioId == AudioEventId.None)
+            if (audioId == AudioEventId.None && loudness <= 0f)
             {
                 return;
             }
 
-            var volumeMultiplier = loudness > 0f && maxLoudness > 0f
-                ? Mathf.Clamp01(loudness / maxLoudness)
-                : 1f;
+            // Evita emitir um passo quando o AnimationEvent indica parada.
+            if (audioId == AudioEventId.Footstep && loudness <= 0f)
+            {
+                return;
+            }
 
-            var audioSignal = new AudioSignal(audioId, transform.position, gameObject, volumeMultiplier);
-            DebugSound.GetVolume(audioId, loudness);
-            _audioManager.ReportSignal(audioSignal);
-            Debug.Log("[SoundEmitter] Local audio reported.");
+            if (serverOnly)
+            {
+                _networkSoundService.EmitServerSound((int)audioId, loudness, transform.position, gameObject);
+                return;
+            }
+
+            _networkSoundService.RequestSound((int)audioId, loudness, transform.position);
         }
 
         [ContextMenu("Emitir som de teste")]
@@ -75,7 +74,7 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.SoundSyst
         {
             if (!Application.isPlaying)
             {
-                Debug.LogWarning("Only available in Play Mode.");
+                Debug.LogWarning("So funciona em Play Mode.");
                 return;
             }
 

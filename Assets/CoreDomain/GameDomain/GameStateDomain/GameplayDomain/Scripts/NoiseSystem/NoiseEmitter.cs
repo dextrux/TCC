@@ -1,12 +1,13 @@
-using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.NoiseSystem.Datas;
+
 using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.NoiseSystem.Interfaces;
-using Unity.Netcode;
+using CoreDomain.GameDomain.Scripts.AudioSystem.Datas;
+using CoreDomain.Scripts.Services.NetworkService;
 using UnityEngine;
 using Zenject;
 
 namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.NoiseSystem
 {
-    public class NoiseEmitter : NetworkBehaviour, INoiseEmitter
+    public class NoiseEmitter : MonoBehaviour, INoiseEmitter
     {
 #region Loud Variables
         [SerializeField] private float walkingLoudness = 5f;
@@ -14,49 +15,46 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.NoiseSyst
         [SerializeField] private float crouchingLoudness = 2f;
         [SerializeField] private float crawlingLoudness = 0f;
 #endregion Loud Variables
-        
-        private INoiseManager _noiseManager;
+
+        [SerializeField] private bool serverOnly;
+
+        private INetworkSoundService _networkSoundService;
 
         [Inject]
-        public void Construct(INoiseManager noiseManager)
+        public void Construct(INetworkSoundService networkSoundService)
         {
-            _noiseManager = noiseManager;
+            _networkSoundService = networkSoundService;
         }
-        
-        public override void OnNetworkSpawn()
-        {
-#if UNITY_EDITOR
-            Debug.Log($"{name} spawnou na rede. IsSpawned={IsSpawned}, IsOwner={IsOwner}, IsServer={IsServer}");
-#endif
-        }
-        
+
         public void EmitNoise(float loudness)
         {
-            if (!IsOwner)
+            if (_networkSoundService == null)
             {
-#if UNITY_EDITOR
-                Debug.Log("Nao foi possivel emitir ruido pois nao eh o Owner");
-#endif
+                Debug.LogError("[NoiseEmitter] INetworkSoundService was not injected.");
                 return;
             }
-            
-            EmitNoiseServerRpc(loudness, transform.position);
+
+            if (float.IsNaN(loudness) || float.IsInfinity(loudness) || loudness <= 0f)
+            {
+                return;
+            }
+
+            if (serverOnly)
+            {
+                _networkSoundService.EmitServerSound((int)AudioEventId.None, loudness, transform.position, gameObject);
+                return;
+            }
+
+            _networkSoundService.RequestSound((int)AudioEventId.None, loudness, transform.position);
         }
-        
-        [ServerRpc]
-        private void EmitNoiseServerRpc(float loudness, Vector3 position)
-        {
-            var signal = new NoiseSignal(position, loudness, gameObject);
-            _noiseManager.ReportSignal(signal);
-        }
-        
+
         [ContextMenu("Emitir ruido de teste")]
         private void DebugEmitNoise()
         {
-            if (!Application.isPlaying || !IsSpawned)
+            if (!Application.isPlaying)
             {
 #if UNITY_EDITOR
-                Debug.LogWarning("So funciona em Play Mode com o objeto spawnado.");
+                Debug.LogWarning("So funciona em Play Mode.");
 #endif
                 return;
             }

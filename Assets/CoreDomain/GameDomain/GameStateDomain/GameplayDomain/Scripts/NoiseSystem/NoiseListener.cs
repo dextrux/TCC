@@ -36,25 +36,20 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.NoiseSyst
 
         public void Construct(INoiseManager noiseManager)
         {
-            if (_noiseManager == noiseManager)
-            {
-                return;
-            }
-
-            if (_noiseManager != null)
+            if (_noiseManager != null && _noiseManager != noiseManager)
             {
                 _noiseManager.UnregisterListener(this);
             }
 
             _noiseManager = noiseManager;
 
-            if (_noiseManager != null)
+            if (isActiveAndEnabled && _noiseManager != null)
             {
                 _noiseManager.RegisterListener(this);
             }
         }
 
-        private void OnDestroy()
+        public void Release()
         {
             if (_noiseManager != null)
             {
@@ -63,11 +58,34 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.NoiseSyst
             }
         }
 
+        private void OnEnable()
+        {
+            if (_noiseManager != null)
+            {
+                _noiseManager.RegisterListener(this);
+            }
+        }
+
+        private void OnDisable()
+        {
+            if (_noiseManager != null)
+            {
+                _noiseManager.UnregisterListener(this);
+            }
+        }
+
+        private void OnDestroy()
+        {
+            Release();
+        }
+
         //Trocar o metodo do Update para o novo
         private void Update()
         {
             if (_alertTimer > 0f)
+            {
                 _alertTimer -= Time.deltaTime;
+            }
         }
 
         public void OnNoiseHeard(NoiseSignal noiseSignal, float perceivedIntensity)
@@ -79,18 +97,29 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.NoiseSyst
             Debug.Log($"Noise Listener - {name}\nRuido escutado em {_lastPosition} | Intensidade do ruido: {_lastPerceivedIntensity}");
 
             if (_lastPerceivedIntensity >= 0.9f)
+            {
                 Debug.Log("BARULHO MUITO ALTO.");
+            }
             else if (_lastPerceivedIntensity >= 0.4f)
+            {
                 Debug.Log("BARULHO ALTO.");
-            else if (_lastPerceivedIntensity < 0.4f) Debug.Log("BARULHO BAIXO.");
+            }
+            else if (_lastPerceivedIntensity < 0.4f)
+            {
+                Debug.Log("BARULHO BAIXO.");
+            }
         }
+
 #region ReactionType
         //Criar funcoes para tipos de reacoes diferentes
 #endregion ReactionType
 
         private void OnDrawGizmos()
         {
-            if (!showGizmos) return;
+            if (!showGizmos)
+            {
+                return;
+            }
 
             var isAlert = _alertTimer > 0f;
             Gizmos.color = isAlert ? alertColor : idleColor;
@@ -101,7 +130,10 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.NoiseSyst
             Gizmos.color = fillColor;
             Gizmos.DrawSphere(transform.position, hearingRadius);
 
-            if (!isAlert || !_lastPosition.HasValue) return;
+            if (!isAlert || !_lastPosition.HasValue)
+            {
+                return;
+            }
 
             Gizmos.color = Color.Lerp(Color.yellow, Color.red, _lastPerceivedIntensity);
             Gizmos.DrawLine(transform.position, _lastPosition.Value);
