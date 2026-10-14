@@ -10,15 +10,13 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Objec
     public class ObjectSpawnPoint : MonoBehaviour
     {
         [SerializeField] private ObjectConfigurationSo configuration;
-        [SerializeField] private ObjectView prefab;
+        public ObjectConfigurationSo Configuration => configuration;
         
         [Header("Gizmos Configuration")]
         [Tooltip("The color used to display the color of the object")]
         [SerializeField] private Color color = Color.white;
         [SerializeField] private bool showGizmos = true;
 
-        public ObjectConfigurationSo Configuration => configuration;
-        public ObjectView Prefab => prefab;
 
         private void OnEnable() => ObjectSpawnPointRegistry.Register(this);
 
@@ -28,12 +26,10 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Objec
         {
             if (!showGizmos) return;
             
-            var mesh = prefab?.GetComponent<MeshFilter>().sharedMesh;
-            
-            if (mesh is null) return;
+            if (!configuration.prefab.TryGetComponent<MeshFilter>(out var meshFilter) || meshFilter.sharedMesh == null) return;
             
             Gizmos.color = color;
-            Gizmos.DrawMesh(mesh, transform.position, transform.rotation);
+            Gizmos.DrawMesh(meshFilter.sharedMesh, transform.position, transform.rotation);
         }
     }
 }

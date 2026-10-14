@@ -6,5 +6,7 @@ namespace Player.Input {
         Vector2 LookInput { get; }
 
         bool JumpPressed { get; }
+        bool InteractPressed { get; }
+        bool ThrowPressed { get; }
     }
 }

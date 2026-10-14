@@ -22,5 +22,10 @@ namespace Player.Model {
 
         [field: SerializeField]
         public float MaxPitch { get; private set; } = 80f;
+        
+        [Header("Interaction")]
+        [field: SerializeField]
+        public float InteractionRange { get; private set; } = 3f;
+        
     }
 }

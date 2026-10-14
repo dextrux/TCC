@@ -21,12 +21,16 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Objec
         [SerializeField] private Animator animator;
         private static readonly int OpenHash = Animator.StringToHash("Open");
         private readonly NetworkVariable<bool> _isOpen = new NetworkVariable<bool>(false);
+        private readonly NetworkVariable<bool> _isHeld = new NetworkVariable<bool>(false);
+        public bool IsHeld => _isHeld.Value;
         /// <summary>
         /// Disparado no servidor quando um cliente pede para interagir (clientId do remetente).
         /// </summary>
         public event Action<ulong> InteractRequested;
+        public event Action<Vector3, Vector3> ThrowRequested;
 
         private Rigidbody _rigidbody;
+        private MeshCollider _meshCollider;
         
         public Vector3 Position => _rigidbody.position;
 
@@ -34,6 +38,8 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Objec
         {
             _rigidbody = GetComponent<Rigidbody>();
             _rigidbody.isKinematic = true; // movimento eh calculado pelo Model, nao pela fisica da Unity
+            _meshCollider = GetComponent<MeshCollider>();
+            _meshCollider.convex = true; // tem que ser convexa para funcionar a colisao
         }
 
         public override void OnNetworkSpawn()
@@ -73,8 +79,23 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Objec
             _rigidbody.MovePosition(_rigidbody.position + displacement);
             return true;
         }
+
+        public void Teleport(Vector3 position)
+        {
+            if (!IsServer) return;
+            
+            _rigidbody.position = position;
+            transform.position = position;
+        }
         
         private void OnOpenChanged(bool previous, bool current) => ApplyOpen(current);
+        
+        public void SetHeld(bool held)
+        {
+            if (!IsServer) return;
+            
+            _isHeld.Value = held;
+        }
 
         public void SetOpen(bool open)
         {
@@ -94,5 +115,8 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Objec
         {
             InteractRequested?.Invoke(rpcParams.Receive.SenderClientId);
         }
+
+        [ServerRpc]
+        public void ThrowServerRpc(Vector3 origin, Vector3 direction) => ThrowRequested?.Invoke(origin, direction);
     }
 }

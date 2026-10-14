@@ -6,16 +6,22 @@ namespace Player.Input {
         public Vector2 LookInput { get; private set; }
 
         public bool JumpPressed { get; private set; }
+        public bool InteractPressed { get; private set; }
+        public bool ThrowPressed { get; private set; }
 
         public void Update() {
             ReadMovement();
             ReadLook();
             ReadJump();
+            ReadActions();
         }
 
         public void ConsumeJump() {
             JumpPressed = false;
         }
+        
+        public void ConsumeInteract() => InteractPressed = false;
+        public void ConsumeThrow() => ThrowPressed = false;
 
         private void ReadMovement() {
             float horizontal = 0f;
@@ -57,6 +63,12 @@ namespace Player.Input {
             if (UnityEngine.Input.GetKeyDown(KeyCode.Space)) {
                 JumpPressed = true;
             }
+        }
+
+        private void ReadActions()
+        {
+            if(UnityEngine.Input.GetKeyDown(KeyCode.E)) InteractPressed = true;
+            if(UnityEngine.Input.GetKeyDown(KeyCode.Mouse0)) ThrowPressed = true;
         }
     }
 }

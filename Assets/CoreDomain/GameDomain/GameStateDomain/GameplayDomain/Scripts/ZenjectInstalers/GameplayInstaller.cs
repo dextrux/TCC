@@ -1,4 +1,7 @@
 using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.Initiator;
+using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.InventorySystem.Interface;
+using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.InventorySystem.ScriptableObject;
+using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.InventorySystem.Services;
 using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Object.Services;
 using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.NoiseSystem.Datas;
 using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.NoiseSystem.Interfaces;
@@ -15,6 +18,7 @@ public class GameplayInstaller : MonoInstaller {
     [SerializeField] private NoiseDecaySettings noiseDecaySettings;
     [SerializeField] private FPSPlayerView _playerView;
     [SerializeField] private FPSPlayerConfigurationSO _playerConfiguration;
+    [SerializeField] private InventoryConfigurationSo _inventoryConfiguration;
     public override void InstallBindings() {
         BindServices();
         BindControllers();
@@ -26,6 +30,8 @@ public class GameplayInstaller : MonoInstaller {
         Container.Bind<NoiseDecaySettings>().FromInstance(noiseDecaySettings).AsSingle();
         Container.Bind<INoiseManager>().To<NoiseManager>().AsSingle();
         Container.Bind<ObjectFactory>().AsSingle();
+        Container.BindInstance(_inventoryConfiguration).AsSingle();
+        Container.Bind<IInventoryManager>().To<InventoryManager>().AsSingle();
     }
 
     private void BindControllers() {

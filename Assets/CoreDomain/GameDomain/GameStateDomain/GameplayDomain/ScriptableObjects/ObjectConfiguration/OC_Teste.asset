@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: OC_Teste
   m_EditorClassIdentifier: GameplayAssembly::CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Object.ScriptableObjects.ObjectConfigurationSo
   objectName: Objeto de Teste
-  objectType: 0
+  objectType: 2
   gravity: -9.81
   objectSpeedWhenThrown: 10
+  activateAction: open
+  deactivateAction: close

@@ -4,6 +4,7 @@ using Player.Model;
 using Player.View;
 using Unity.Netcode;
 using UnityEngine;
+using Zenject;
 
 namespace Player.Controller {
     public class FPSPlayerController : IFPSPlayerController, IUpdatable, IFixedUpdatable {
@@ -13,16 +14,22 @@ namespace Player.Controller {
         private FPSPlayerModel _model;
         private PlayerInputController _input;
         private IUpdateSubscriptionService _updateSubscriptionService;
+        
+        //RETIRAR DEPOIS QUE SAIR DO FAKE ONLINE
+        private readonly DiContainer _container;
 
         private float _cameraPitch;
 
         public FPSPlayerController(FPSPlayerConfigurationSO fPSPlayerConfigurationSO, IUpdateSubscriptionService updateSubscriptionService,
-            FPSPlayerView view) {
+            DiContainer container, FPSPlayerView view) {
             _input = new PlayerInputController();
             _model = new FPSPlayerModel();
             _configuration = fPSPlayerConfigurationSO;
-            _view = GameObject.Instantiate(view);
+            //_view = GameObject.Instantiate(view);
             _updateSubscriptionService = updateSubscriptionService;
+            _container = container;
+            
+            _view = _container.InstantiatePrefabForComponent<FPSPlayerView>(view);
         }
 
         public void ManagedUpdate() {
@@ -30,6 +37,8 @@ namespace Player.Controller {
 
             HandleLook();
             HandleJump();
+            HandleInteract();
+            HandleThrow();
         }
 
         public void ManagedFixedUpdate() {
@@ -38,9 +47,23 @@ namespace Player.Controller {
         }
 
         public void SetUp() {
+            SpawnPlayerIfNeeded();
             _view.SetUp();
             _updateSubscriptionService.RegisterUpdatable(this);
             _updateSubscriptionService.RegisterFixedUpdatable(this);
+        }
+        
+        /// <summary>
+        /// RETIRAR APOS ESTAR EM REDE
+        /// </summary>
+        private void SpawnPlayerIfNeeded() {
+            var networkManager = NetworkManager.Singleton;
+            if (networkManager == null || !networkManager.IsServer) return;
+
+            var networkObject = _view.GetComponent<NetworkObject>();
+            if (networkObject.IsSpawned) return;
+            
+            networkObject.SpawnAsPlayerObject(networkManager.LocalClientId);
         }
 
         private void HandleMovement() {
@@ -121,6 +144,27 @@ namespace Player.Controller {
             );
 
             _view.RotateCamera(_cameraPitch);
+        }
+
+        private void HandleInteract()
+        {
+            if (!_input.InteractPressed) return;
+            
+            _input.ConsumeInteract();
+            
+            if(_view.TryGetLookedObject(_configuration.InteractionRange, out var target))
+                target.InteractServerRpc();
+        }
+
+        public void HandleThrow()
+        {
+            if (!_input.ThrowPressed) return;
+            _input.ConsumeThrow();
+            
+            Debug.Log("Throw");
+            
+            if(_view.TryGetHeldObject(out var held))
+                held.ThrowServerRpc(_view.ThrowOrigin, _view.CameraForward);
         }
     }
 }

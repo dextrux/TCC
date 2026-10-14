@@ -16,7 +16,7 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Objec
         public event Action<string> ActionPerformed;
 
         void Setup();
-        void Throw(Vector3 direction);
+        void Throw(Vector3 origin, Vector3 direction);
         void OnInteract(ulong clientId);
         void Dispose();
     }

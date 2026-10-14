@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0608b0cfd54b412cab19e1580394ae87, type: 3}
+  m_Name: OC_OferendaTeste
+  m_EditorClassIdentifier: GameplayAssembly::CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Object.ScriptableObjects.ObjectConfigurationSo
+  objectName: Testando oferenda
+  itemId: 933979828
+  objectType: 1
+  maxStackSize: 1
+  gravity: -9.81
+  objectSpeedWhenThrown: 10
+  throwOriginHeight: 1.6
+  activateAction: open
+  deactivateAction: close
+  prefab: {fileID: 3020907175627601593, guid: ead8812c3c3fbe5479625a141b1decd8, type: 3}
+  icon: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  heldPrefab: {fileID: 2958775216039082789, guid: 005e152e33fb20947b2bf962d4904697, type: 3}
