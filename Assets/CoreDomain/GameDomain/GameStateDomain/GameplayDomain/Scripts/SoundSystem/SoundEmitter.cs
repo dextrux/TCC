@@ -1,9 +1,8 @@
+
 using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.NoiseSystem.Datas;
 using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.NoiseSystem.Interfaces;
-using CoreDomain.GameDomain.Scripts.AudioSystem;
 using CoreDomain.GameDomain.Scripts.AudioSystem.Datas;
 using CoreDomain.GameDomain.Scripts.AudioSystem.Interfaces;
-using Unity.Netcode;
 using UnityEngine;
 using Zenject;
 
@@ -13,29 +12,20 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.SoundSyst
     /// Usar esse script sempre que o Noise + Audio
     /// forem "conversar entre si
     /// </summary>
-    public class SoundEmitter : NetworkBehaviour, IAudioEmitter, INoiseEmitter
+    public class SoundEmitter : MonoBehaviour, IAudioEmitter, INoiseEmitter
     {
         [Tooltip("Valor de loudness que corresponde a volume 100% no audio. Valores acima disso satura em 1.")]
         [SerializeField] private float maxLoudness = 15f;
-        
+
         private INoiseManager _noiseManager;
-        private NetworkAudioRelay _networkAudioRelay;
+        private IAudioManager _audioManager;
 
         [Inject]
-        public void Construct(INoiseManager noiseManager, NetworkAudioRelay networkAudioRelay)
+        public void Construct(INoiseManager noiseManager, IAudioManager audioManager)
         {
             Debug.Log("Constructing SoundEmitter");
-            var networkObject = GetComponent(typeof(NetworkObject)) as NetworkObject;
-            networkObject!.Spawn();
             _noiseManager = noiseManager;
-            _networkAudioRelay = networkAudioRelay;
-        }
-
-        public override void OnNetworkSpawn()
-        {
-#if UNITY_EDITOR
-            Debug.Log($"{name} spawnou na rede. IsSpawned={IsSpawned}, IsOwner={IsOwner}, IsServer={IsServer}");
-#endif
+            _audioManager = audioManager;
         }
 
         // IAudioEmitter - so audio, sem gerar ruido pra IA
@@ -47,44 +37,45 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.SoundSyst
         // Toca audio e gera ruido
         public void EmitSound(AudioEventId audioId, float loudness)
         {
-            if (!IsOwner)
+            if (_noiseManager == null || _audioManager == null)
             {
-#if UNITY_EDITOR
-                Debug.Log("Nao foi possivel emitir som pois nao eh o Owner");
-#endif
+                Debug.LogError("[SoundEmitter] Dependencies were not injected.");
                 return;
             }
 
-            EmitSoundServerRpc(audioId, loudness, transform.position);
-        }
+            if (float.IsNaN(loudness) || float.IsInfinity(loudness) || loudness < 0f)
+            {
+                Debug.LogWarning("[SoundEmitter] Invalid loudness value.");
+                return;
+            }
 
-        [ServerRpc]
-        private void EmitSoundServerRpc(AudioEventId audioId, float loudness, Vector3 position)
-        {
             if (loudness > 0f)
             {
-                var noiseSignal = new NoiseSignal(position, loudness, gameObject);
+                var noiseSignal = new NoiseSignal(transform.position, loudness, gameObject);
                 _noiseManager.ReportSignal(noiseSignal);
             }
 
-            if (audioId == AudioEventId.None) return;
-            
-            var volumeMultiplier = loudness > 0f
+            if (audioId == AudioEventId.None)
+            {
+                return;
+            }
+
+            var volumeMultiplier = loudness > 0f && maxLoudness > 0f
                 ? Mathf.Clamp01(loudness / maxLoudness)
                 : 1f;
 
-            var audioSignal = new AudioSignal(audioId, position, gameObject, volumeMultiplier);
+            var audioSignal = new AudioSignal(audioId, transform.position, gameObject, volumeMultiplier);
             DebugSound.GetVolume(audioId, loudness);
-            _networkAudioRelay.RelaySignal(audioSignal);
-            Debug.Log("[SoundEmitter] Audio enviado");
+            _audioManager.ReportSignal(audioSignal);
+            Debug.Log("[SoundEmitter] Local audio reported.");
         }
 
         [ContextMenu("Emitir som de teste")]
         public void DebugEmitSound()
         {
-            if (!Application.isPlaying || !IsSpawned)
+            if (!Application.isPlaying)
             {
-                Debug.LogWarning("So funciona em Play Mode com o objeto spawnado.");
+                Debug.LogWarning("Only available in Play Mode.");
                 return;
             }
 
