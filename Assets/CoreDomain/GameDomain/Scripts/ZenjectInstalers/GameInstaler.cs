@@ -3,6 +3,7 @@ using CoreDomain.GameDomain.Scripts.AudioSystem.Datas;
 using CoreDomain.GameDomain.Scripts.AudioSystem.Interfaces;
 using CoreDomain.GameDomain.Scripts.AudioSystem.Services;
 using CoreDomain.GameDomain.Scripts.GameInitiator;
+using CoreDomain.GameDomain.Scripts.Inputs;
 using CoreDomain.GameDomain.Scripts.States.GamePlayState;
 using CoreDomain.GameDomain.Scripts.States.LobbyState;
 using UnityEngine;
@@ -10,6 +11,7 @@ using Zenject;
 
 public class GameInstaler : MonoInstaller {
     [SerializeField] private AudioSetting audioSetting;
+    [SerializeField] private InputManager _inputManager;
 
     public override void InstallBindings() {
         BindServices();
@@ -21,6 +23,7 @@ public class GameInstaler : MonoInstaller {
         Container.BindFactory<GamePlayInitatorEnterData, GamePlayState, GamePlayState.Factory>();
         Container.BindFactory<LobbyInitiatorEnterData, LobbyState, LobbyState.Factory>().AsSingle().NonLazy();
 
+        Container.Bind<IInputManager>().FromInstance(_inputManager).AsSingle();
         Container.Bind<AudioSetting>().FromInstance(audioSetting).AsSingle();
 
         Container.BindFactory<AudioSourcePooled, AudioSourcePooled.Factory>()

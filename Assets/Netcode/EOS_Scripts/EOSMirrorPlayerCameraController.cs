@@ -25,8 +25,7 @@ public class EOSMirrorPlayerCameraController : INetworkPlayerCameraController, I
 
         _isSetUp = true;
 
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        
 
         _updateSubscriptionService.RegisterUpdatable(this);
     }
@@ -42,8 +41,7 @@ public class EOSMirrorPlayerCameraController : INetworkPlayerCameraController, I
 
         _updateSubscriptionService.UnregisterUpdatable(this);
 
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
+        
     }
 
     public void ManagedUpdate()
@@ -70,6 +68,6 @@ public class EOSMirrorPlayerCameraController : INetworkPlayerCameraController, I
             CameraInput = cameraInput
         };
 
-        NetworkClient.Send(message, Channels.Unreliable);
+        //NetworkClient.Send(message, Channels.Unreliable);
     }
 }

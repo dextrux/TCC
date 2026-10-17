@@ -1,4 +1,5 @@
 using System.Threading;
+using CoreDomain.GameDomain.Scripts.Inputs;
 using CoreDomain.GameDomain.Scripts.States.LobbyState;
 using CoreDomain.Scripts.CoreInitiator;
 using CoreDomain.Scripts.CoreInitiator.Base;
@@ -15,15 +16,19 @@ namespace CoreDomain.GameDomain.Scripts.GameInitiator {
         private readonly ILoadingScreenController _loadingScreenController;
         private readonly LobbyState.Factory _lobbyStateFactory;
         private readonly ISceneInitiatorsService _sceneInitiatorsService;
+        private readonly IInputManager _inputManager;
 
         public ScenesType SceneType => ScenesType.GameScene;
 
-        public GameInitiator(IStateMachineService stateMachine, LobbyState.Factory LobbyStateFactory, ILoadingScreenController loadingScreenController, ISceneInitiatorsService sceneInitiatorsService) {
+        public GameInitiator(IStateMachineService stateMachine, LobbyState.Factory LobbyStateFactory,
+            ILoadingScreenController loadingScreenController, ISceneInitiatorsService sceneInitiatorsService,
+            IInputManager inputManager) {
             _stateMachine = stateMachine;
             _lobbyStateFactory = LobbyStateFactory;
             _loadingScreenController = loadingScreenController;
             _sceneInitiatorsService = sceneInitiatorsService;
             _sceneInitiatorsService.RegisterInitiator(this);
+            _inputManager = inputManager;
         }
 
         public async Awaitable LoadEntryPoint(IInitiatorEnterData enterDataObject, CancellationTokenSource cancellationTokenSource) {
@@ -31,6 +36,7 @@ namespace CoreDomain.GameDomain.Scripts.GameInitiator {
             _ = _loadingScreenController.SetLoadingSlider(0.5f, cancellationTokenSource);
             //To-Do colocar um load real assincono do level
             //await _levelsDataService.LoadLevelsData(cancellationTokenSource);
+            _inputManager.Setup();
             await _stateMachine.EnterInitialGameState(_lobbyStateFactory.Create(new LobbyInitiatorEnterData()), cancellationTokenSource);
         }
 

@@ -4,7 +4,11 @@
     "references": [
         "Zenject",
         "CoreAssembly",
-        "Unity.Netcode.Runtime"
+        "Unity.Netcode.Runtime",
+        "CorePluginsAssembly",
+        "Unity.InputSystem",
+        "NetworkAssembly",
+        "Mirror"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
