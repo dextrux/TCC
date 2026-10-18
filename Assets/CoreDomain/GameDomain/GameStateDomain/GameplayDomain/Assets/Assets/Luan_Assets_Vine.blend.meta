@@ -1,9 +1,13 @@
 fileFormatVersion: 2
 <<<<<<<< HEAD:Assets/CoreDomain/GameDomain/GameStateDomain/GameplayDomain/Assets/Assets/Luan_Assets_Vine.blend.meta
+<<<<<<<< HEAD:Assets/CoreDomain/GameDomain/GameStateDomain/GameplayDomain/Assets/Assets/Luan_Assets_Vine.blend.meta
 guid: 7409d53198a139540913c86c77726e9d
 ========
 guid: 25f03344dfdd844f88e89487c558fe35
 >>>>>>>> Fix-NetcodeAudioMirror:Assets/Mirror/Examples/Billiards/Table/BilliardTable Model.obj.meta
+========
+guid: f312dd1fd354db34ebc342b7256bf800
+>>>>>>>> origin/feature-assets-pickaxe-fances:Assets/CoreDomain/GameDomain/GameStateDomain/GameplayDomain/Assets/Assets/Luan_Assets_Florestais2.blend.meta
 ModelImporter:
   serializedVersion: 21300
   internalIDToNameTable: []

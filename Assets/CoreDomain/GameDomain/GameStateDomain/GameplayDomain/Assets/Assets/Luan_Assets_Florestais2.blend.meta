@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/CoreDomain/GameDomain/GameStateDomain/GameplayDomain/Assets/Assets/Luan_Assets_Florestais2.blend.meta
 guid: f312dd1fd354db34ebc342b7256bf800
+========
+guid: 7c98856095e683a4ca451d68e50b36f0
+>>>>>>>> origin/feature-assets-pickaxe-fances:Assets/CoreDomain/GameDomain/GameStateDomain/GameplayDomain/Assets/Assets/Assets_Said/pickaxes_fances.blend.meta
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
