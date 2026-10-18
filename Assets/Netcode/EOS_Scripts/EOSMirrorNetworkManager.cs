@@ -1,6 +1,7 @@
 
 using CoreDomain.Scripts.Services.Logger.Base;
 using CoreDomain.Scripts.Services.NetworkService;
+using CoreDomain.Scripts.Services.NetworkServices;
 using Mirror;
 using UnityEngine;
 using Zenject;
@@ -8,11 +9,15 @@ using Zenject;
 public class EOSMirrorNetworkManager : NetworkManager
 {
     private INetworkSoundService _networkSoundService;
+    private INetworkInventoryService _networkInventoryService;
+    private DiContainer _container;
 
     [Inject]
-    public void Construct(INetworkSoundService networkSoundService)
+    public void Construct(INetworkSoundService networkSoundService, INetworkInventoryService networkInventoryService, DiContainer container)
     {
         _networkSoundService = networkSoundService;
+        _networkInventoryService = networkInventoryService;
+        _container = container;
     }
 
     public override void OnStartServer()
@@ -22,6 +27,7 @@ public class EOSMirrorNetworkManager : NetworkManager
         NetworkServer.RegisterHandler<PlayerCameraInputMessage>(OnPlayerCameraInputMessage);
 
         _networkSoundService?.SetUp();
+        _networkInventoryService?.SetUp();
 
         LogService.Log("Mirror server started.");
     }
@@ -29,6 +35,7 @@ public class EOSMirrorNetworkManager : NetworkManager
     public override void OnStopServer()
     {
         _networkSoundService?.StopServer();
+        _networkInventoryService?.StopServer();
 
         NetworkServer.UnregisterHandler<PlayerCameraInputMessage>();
 
@@ -46,11 +53,13 @@ public class EOSMirrorNetworkManager : NetworkManager
         base.OnStartClient();
 
         _networkSoundService?.SetUp();
+        _networkInventoryService?.SetUp();
     }
 
     public override void OnStopClient()
     {
         _networkSoundService?.StopClient();
+        _networkInventoryService?.StopClient();
 
         base.OnStopClient();
     }
@@ -60,6 +69,7 @@ public class EOSMirrorNetworkManager : NetworkManager
         base.OnClientConnect();
 
         _networkSoundService?.SetUp();
+        _networkInventoryService?.SetUp();
 
         LogService.Log("Mirror client connected.");
     }
@@ -86,6 +96,7 @@ public class EOSMirrorNetworkManager : NetworkManager
 
         GameObject player = Instantiate(playerPrefab, spawnPosition, spawnRotation);
         player.name = "NetworkPlayer_" + connection.connectionId;
+        _container.InjectGameObject(player); //Caso nao tenha isso o inventario acusa como nao injetado (nao me pergunte pq)
 
         NetworkServer.AddPlayerForConnection(connection, player);
 
@@ -94,6 +105,7 @@ public class EOSMirrorNetworkManager : NetworkManager
 
     public override void OnServerDisconnect(NetworkConnectionToClient connection)
     {
+        _networkInventoryService?.RemovePlayer(connection.connectionId);
         LogService.Log("Player disconnected. Connection ID: " + connection.connectionId);
         base.OnServerDisconnect(connection);
     }

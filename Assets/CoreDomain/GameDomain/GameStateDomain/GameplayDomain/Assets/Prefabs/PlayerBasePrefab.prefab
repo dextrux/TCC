@@ -56,9 +56,12 @@ GameObject:
   - component: {fileID: 7243751819179576900}
   - component: {fileID: -369344412533385771}
   - component: {fileID: 6425026705084227973}
+  - component: {fileID: 6700450215300394431}
   - component: {fileID: -3644747347845958771}
   - component: {fileID: -7889066662977467837}
   - component: {fileID: 6496547516752202523}
+  - component: {fileID: 9159413193372154259}
+  - component: {fileID: 7612446273436377994}
   m_Layer: 7
   m_Name: PlayerBasePrefab
   m_TagString: Player
@@ -156,6 +159,23 @@ MonoBehaviour:
   SwitchTransformSpaceWhenParented: 0
   Interpolate: 1
   SlerpPosition: 0
+--- !u!114 &6700450215300394431
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 948410552570829733}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Mirror::Mirror.NetworkIdentity
+  sceneId: 0
+  _assetId: 4058498098
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0
 --- !u!114 &-3644747347845958771
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -213,6 +233,38 @@ MonoBehaviour:
   currentSanity: 0
   isCrazy: 0
   decreaseRate: 5
+--- !u!114 &9159413193372154259
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 948410552570829733}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab3db1f4e7700bf46aad9ee56337b6d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: GameplayAssembly::CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.InventorySystem.Hand.PlayerHandView
+  syncMethod: 0
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  handSocket: {fileID: 4317033687124040035}
+  itemCatalogSo: {fileID: 11400000, guid: 3b00ee8bcba109543a09131abe9a0ffa, type: 2}
+--- !u!114 &7612446273436377994
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 948410552570829733}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87fd053d0c7c3ed4299367187453ee3e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: GameplayAssembly::CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.InventorySystem.Hand.InventorySelectionInput
+  playerHandView: {fileID: 9159413193372154259}
+  hotKeyCount: 3
 --- !u!1 &1281289477717358962
 GameObject:
   m_ObjectHideFlags: 0
@@ -243,7 +295,39 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5070677258614531427}
+  - {fileID: 4317033687124040035}
   m_Father: {fileID: 7243751819179576900}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &3411178085234122156
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4317033687124040035}
+  m_Layer: 7
+  m_Name: HeldItem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4317033687124040035
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3411178085234122156}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7203324813046769201}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4180022018479372967
 GameObject:
