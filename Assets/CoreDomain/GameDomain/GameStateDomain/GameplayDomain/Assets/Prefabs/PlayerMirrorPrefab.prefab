@@ -11,6 +11,8 @@ GameObject:
   - component: {fileID: 7243751819179576900}
   - component: {fileID: 6464397679047487975}
   - component: {fileID: 600387203815570471}
+  - component: {fileID: 586391003152760491}
+  - component: {fileID: -8059019322514068765}
   m_Layer: 0
   m_Name: PlayerMirrorPrefab
   m_TagString: Untagged
@@ -78,6 +80,38 @@ MonoBehaviour:
   ownerHiddenRenderers:
   - {fileID: 3122761151489609277}
   - {fileID: 8182833186184711936}
+--- !u!114 &586391003152760491
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 948410552570829733}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab3db1f4e7700bf46aad9ee56337b6d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: GameplayAssembly::CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.InventorySystem.Hand.PlayerHandView
+  syncMethod: 0
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  handSocket: {fileID: 330828301622756989}
+  itemCatalogSo: {fileID: 11400000, guid: 3b00ee8bcba109543a09131abe9a0ffa, type: 2}
+--- !u!114 &-8059019322514068765
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 948410552570829733}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87fd053d0c7c3ed4299367187453ee3e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: GameplayAssembly::CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.InventorySystem.Hand.InventorySelectionInput
+  playerHandView: {fileID: 586391003152760491}
+  hotKeyCount: 3
 --- !u!1 &1281289477717358962
 GameObject:
   m_ObjectHideFlags: 0
@@ -108,6 +142,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2960306664472456530}
+  - {fileID: 330828301622756989}
   m_Father: {fileID: 7243751819179576900}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3273008625762883414
@@ -359,6 +394,37 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &3916703521046964240
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 330828301622756989}
+  m_Layer: 0
+  m_Name: HeldItem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &330828301622756989
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3916703521046964240}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.289, y: 0, z: 1.167}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7203324813046769201}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4110819629606399881
 GameObject:
   m_ObjectHideFlags: 0
