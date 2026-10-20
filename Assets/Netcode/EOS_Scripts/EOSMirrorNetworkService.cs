@@ -1,3 +1,5 @@
+
+using System;
 using System.Threading;
 using CoreDomain.Scripts.Services.Logger.Base;
 using CoreDomain.Scripts.Services.NetworkService;
@@ -82,7 +84,22 @@ public class EOSMirrorNetworkService : INetworkService
             return;
         }
 
-        _networkManager.networkAddress = hostProductUserId.Trim();
+        string address = hostProductUserId.Trim();
+
+        if (address.StartsWith("kcp://", StringComparison.OrdinalIgnoreCase))
+        {
+            if (!Uri.TryCreate(address, UriKind.Absolute, out Uri uri) || uri.Scheme != "kcp" || string.IsNullOrWhiteSpace(uri.Host) || uri.Port <= 0 || uri.Port > ushort.MaxValue)
+            {
+                LogService.LogError("Invalid KCP address: " + address);
+                return;
+            }
+
+            LogService.Log("Starting Mirror client using KCP: " + address);
+            _networkManager.StartClient(uri);
+            return;
+        }
+
+        _networkManager.networkAddress = address;
 
         LogService.Log("Starting Mirror client.");
         _networkManager.StartClient();
