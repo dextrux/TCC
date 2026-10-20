@@ -1,3 +1,4 @@
+
 using Unity.Netcode;
 using UnityEngine;
 using Mirror;
@@ -32,17 +33,26 @@ namespace CoreDomain.GameDomain.Scripts.Inputs {
         }
 
         private void OnLook(InputAction.CallbackContext obj) {
+            if (!NetworkClient.isConnected || !NetworkClient.ready || NetworkClient.localPlayer == null)
+            {
+                return;
+            }
+
             PlayerCameraInputMessage cameraMessage = new PlayerCameraInputMessage();
             cameraMessage.CameraInput = obj.ReadValue<Vector2>();
             NetworkClient.Send(cameraMessage, Channels.Unreliable);
         }
 
         private void OnMove(InputAction.CallbackContext obj) {
+            if (!NetworkClient.isConnected || !NetworkClient.ready || NetworkClient.localPlayer == null)
+            {
+                return;
+            }
+
             PlayerCameraInputMessage cameraMessage = new PlayerCameraInputMessage();
             cameraMessage.CameraInput = obj.ReadValue<Vector2>();
             NetworkClient.Send(cameraMessage, Channels.Unreliable);
         }
-
 
         public void Setup() {
             _playerInputActions = new GameInputActions();
