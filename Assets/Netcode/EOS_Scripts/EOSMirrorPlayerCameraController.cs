@@ -3,71 +3,14 @@ using CoreDomain.Scripts.Services.UpdateService;
 using Mirror;
 using UnityEngine;
 
-public class EOSMirrorPlayerCameraController : INetworkPlayerCameraController, IUpdatable
+public class EOSMirrorPlayerCameraController : INetworkPlayerCameraController
 {
     private readonly GameInputActions _gameInputActions;
-    private readonly IUpdateSubscriptionService _updateSubscriptionService;
-
     private bool _isSetUp;
 
-    public EOSMirrorPlayerCameraController(GameInputActions gameInputActions, IUpdateSubscriptionService updateSubscriptionService)
+    public EOSMirrorPlayerCameraController(GameInputActions gameInputActions)
     {
         _gameInputActions = gameInputActions;
-        _updateSubscriptionService = updateSubscriptionService;
     }
 
-    public void SetUp()
-    {
-        if (_isSetUp)
-        {
-            return;
-        }
-
-        _isSetUp = true;
-
-        
-
-        _updateSubscriptionService.RegisterUpdatable(this);
-    }
-
-    public void Dispose()
-    {
-        if (!_isSetUp)
-        {
-            return;
-        }
-
-        _isSetUp = false;
-
-        _updateSubscriptionService.UnregisterUpdatable(this);
-
-        
-    }
-
-    public void ManagedUpdate()
-    {
-        if (!NetworkClient.active)
-        {
-            return;
-        }
-
-        if (NetworkClient.localPlayer == null)
-        {
-            return;
-        }
-
-        Vector2 cameraInput = _gameInputActions.Player.Look.ReadValue<Vector2>();
-
-        if (cameraInput.sqrMagnitude <= Mathf.Epsilon)
-        {
-            return;
-        }
-
-        PlayerCameraInputMessage message = new PlayerCameraInputMessage
-        {
-            CameraInput = cameraInput
-        };
-
-        //NetworkClient.Send(message, Channels.Unreliable);
-    }
 }

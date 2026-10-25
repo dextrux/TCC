@@ -64,7 +64,6 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.Initiator
             bool offline = enterData.SessionMode == NetworkSessionMode.Offline;
 
             _networkSoundService.Configure(offline, PlayAudio, ReportNoise);
-
             // Inventario: o servico de rede nao conhece o IInventoryManager, entao a ligacao eh feita aqui
             _networkInventoryService.Configure(offline, SelectSlot, ScrollSlot, RemoveInventory);
             _inventoryManager.InventoryChanged += OnInventoryChanged;
@@ -82,11 +81,6 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.Initiator
                 Debug.Log($"[Initiator] StartSpawning | mode={enterData.SessionMode} | serverActive={Mirror.NetworkServer.active}");
                 _worldObjectSpawner.StartSpawning();
             }
-
-            if (enterData.SessionMode != NetworkSessionMode.Offline)
-            {
-                _networkPlayerCameraController.SetUp();
-            }
         }
 
         public async Awaitable InitExitPoint(CancellationTokenSource cancellationTokenSource)
@@ -98,7 +92,6 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.Initiator
             _inventoryManager.InventoryChanged -= OnInventoryChanged;
             _networkInventoryService.Configure(false, null, null, null);
 
-            _networkPlayerCameraController.Dispose();
             _sceneInitiatorsService.UnregisterInitiator(this);
             _commandFactory.CreateCommandVoid<ExitGamePlayStateCommand>().Execute();
             await AwaitableUtils.CompletedTask;

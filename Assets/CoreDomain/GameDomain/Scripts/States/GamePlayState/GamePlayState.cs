@@ -25,7 +25,7 @@ namespace CoreDomain.GameDomain.Scripts.States.GamePlayState
 
         public override async Awaitable StartState(CancellationTokenSource cancellationTokenSource)
         {
-            await base.LoadState(cancellationTokenSource);
+            await base.StartState(cancellationTokenSource);
             await _sceneLoaderService.StartScene(ScenesType.GamePlayScene, EnterData, cancellationTokenSource);
         }
 

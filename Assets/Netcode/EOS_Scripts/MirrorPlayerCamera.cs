@@ -1,8 +1,9 @@
+using CoreDomain.Scripts.Services.UpdateService;
 using Mirror;
 using UnityEngine;
+using Zenject;
 
-public class MirrorPlayerCamera : NetworkBehaviour
-{
+public class MirrorPlayerCamera : NetworkBehaviour {
     [Header("Camera")]
     [SerializeField] private Camera playerCamera;
     [SerializeField] private AudioListener playerAudioListener;
@@ -17,24 +18,30 @@ public class MirrorPlayerCamera : NetworkBehaviour
     [Header("Owner Visual")]
     [SerializeField] private Renderer[] ownerHiddenRenderers;
 
+    [Header("Movement")]
+    [SerializeField] private float moveSpeed = 5f;
+    [SerializeField] private float gravity = -9.81f;
+    [SerializeField] private CharacterController characterController;
+
+    private Vector3 velocity;
+    private bool isLocal = false;
+
     [SyncVar(hook = nameof(OnServerYawChanged))]
     private float _serverYaw;
 
     [SyncVar(hook = nameof(OnServerPitchChanged))]
     private float _serverPitch;
 
-    public override void OnStartServer()
-    {
+
+    public override void OnStartServer() {
         base.OnStartServer();
 
         _serverYaw = transform.eulerAngles.y;
 
-        if (cameraPivot != null)
-        {
+        if (cameraPivot != null) {
             float initialPitch = cameraPivot.localEulerAngles.x;
 
-            if (initialPitch > 180f)
-            {
+            if (initialPitch > 180f) {
                 initialPitch -= 360f;
             }
 
@@ -44,32 +51,28 @@ public class MirrorPlayerCamera : NetworkBehaviour
         ApplyCameraRotation(_serverYaw, _serverPitch);
     }
 
-    public override void OnStartClient()
-    {
+    public override void OnStartClient() {
         base.OnStartClient();
 
         SetCameraActive(false);
         ApplyCameraRotation(_serverYaw, _serverPitch);
     }
 
-    public override void OnStartLocalPlayer()
-    {
+    public override void OnStartLocalPlayer() {
         base.OnStartLocalPlayer();
 
         ActivateLocalCamera();
         HideOwnerVisuals();
+        isLocal = true;
     }
 
     [Server]
-    public void ServerApplyCameraInput(Vector2 cameraInput)
-    {
-        if (float.IsNaN(cameraInput.x) || float.IsNaN(cameraInput.y))
-        {
+    public void ServerApplyCameraInput(Vector2 cameraInput) {
+        if (float.IsNaN(cameraInput.x) || float.IsNaN(cameraInput.y)) {
             return;
         }
 
-        if (float.IsInfinity(cameraInput.x) || float.IsInfinity(cameraInput.y))
-        {
+        if (float.IsInfinity(cameraInput.x) || float.IsInfinity(cameraInput.y)) {
             return;
         }
 
@@ -82,84 +85,94 @@ public class MirrorPlayerCamera : NetworkBehaviour
         ApplyCameraRotation(_serverYaw, _serverPitch);
     }
 
-    private void OnServerYawChanged(float oldYaw, float newYaw)
-    {
+    [Server]
+    public void ServerApplyMovementInput(Vector2 movementInput) {
+        if (characterController == null) return;
+
+        if (float.IsNaN(movementInput.x) || float.IsNaN(movementInput.y)) return;
+        if (float.IsInfinity(movementInput.x) || float.IsInfinity(movementInput.y)) return;
+
+        Vector3 inputDir = new Vector3(movementInput.x, 0f, movementInput.y).normalized;
+        Vector3 moveDir = transform.TransformDirection(inputDir);
+        Vector3 movement = moveDir * moveSpeed;
+        //Gravity
+        if (characterController.isGrounded) {
+            velocity.y = -2f;
+        }
+        else {
+            velocity.y += gravity * Time.deltaTime;
+        }
+        movement.y = velocity.y;
+        velocity = movement;
+        Debug.LogWarning("Player Move: " + movement);
+    }
+
+    private void FixedUpdate() {
+        //if (isLocal && !isServer) return;
+        characterController.Move(velocity * Time.deltaTime);
+    }
+
+    private void OnServerYawChanged(float oldYaw, float newYaw) {
         ApplyCameraRotation(newYaw, _serverPitch);
     }
 
-    private void OnServerPitchChanged(float oldPitch, float newPitch)
-    {
+    private void OnServerPitchChanged(float oldPitch, float newPitch) {
         ApplyCameraRotation(_serverYaw, newPitch);
     }
 
-    private void ApplyCameraRotation(float yaw, float pitch)
-    {
+    private void ApplyCameraRotation(float yaw, float pitch) {
         transform.rotation = Quaternion.Euler(0f, yaw, 0f);
 
-        if (cameraPivot != null)
-        {
+        if (cameraPivot != null) {
             cameraPivot.localRotation = Quaternion.Euler(pitch, 0f, 0f);
         }
     }
 
-    private void ActivateLocalCamera()
-    {
+    private void ActivateLocalCamera() {
         Camera currentMainCamera = Camera.main;
 
-        if (currentMainCamera != null && currentMainCamera != playerCamera)
-        {
+        if (currentMainCamera != null && currentMainCamera != playerCamera) {
             currentMainCamera.enabled = false;
 
-            if (currentMainCamera.CompareTag("MainCamera"))
-            {
+            if (currentMainCamera.CompareTag("MainCamera")) {
                 currentMainCamera.tag = "Untagged";
             }
         }
 
         AudioListener[] audioListeners = FindObjectsByType<AudioListener>(FindObjectsInactive.Include, FindObjectsSortMode.None);
 
-        foreach (AudioListener currentListener in audioListeners)
-        {
+        foreach (AudioListener currentListener in audioListeners) {
             currentListener.enabled = currentListener == playerAudioListener;
         }
 
         SetCameraActive(true);
 
-        if (playerCamera != null)
-        {
+        if (playerCamera != null) {
             playerCamera.tag = "MainCamera";
         }
     }
 
-    private void SetCameraActive(bool active)
-    {
-        if (playerCamera != null)
-        {
+    private void SetCameraActive(bool active) {
+        if (playerCamera != null) {
             playerCamera.enabled = active;
 
-            if (!active && playerCamera.CompareTag("MainCamera"))
-            {
+            if (!active && playerCamera.CompareTag("MainCamera")) {
                 playerCamera.tag = "Untagged";
             }
         }
 
-        if (playerAudioListener != null)
-        {
+        if (playerAudioListener != null) {
             playerAudioListener.enabled = active;
         }
     }
 
-    private void HideOwnerVisuals()
-    {
-        if (ownerHiddenRenderers == null)
-        {
+    private void HideOwnerVisuals() {
+        if (ownerHiddenRenderers == null) {
             return;
         }
 
-        foreach (Renderer currentRenderer in ownerHiddenRenderers)
-        {
-            if (currentRenderer != null)
-            {
+        foreach (Renderer currentRenderer in ownerHiddenRenderers) {
+            if (currentRenderer != null) {
                 currentRenderer.enabled = false;
             }
         }

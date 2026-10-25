@@ -3,6 +3,8 @@ using CoreDomain.Scripts.Services.Logger.Base;
 using CoreDomain.Scripts.Services.NetworkService;
 using CoreDomain.Scripts.Services.NetworkServices;
 using Mirror;
+using System;
+using UnityEditor.MemoryProfiler;
 using UnityEngine;
 using Zenject;
 
@@ -25,6 +27,7 @@ public class EOSMirrorNetworkManager : NetworkManager
         base.OnStartServer();
 
         NetworkServer.RegisterHandler<PlayerCameraInputMessage>(OnPlayerCameraInputMessage);
+        NetworkServer.RegisterHandler<PlayerMovementInputMessage>(OnPlayerMovementInputMessage);
 
         _networkSoundService?.SetUp();
         _networkInventoryService?.SetUp();
@@ -32,12 +35,14 @@ public class EOSMirrorNetworkManager : NetworkManager
         LogService.Log("Mirror server started.");
     }
 
+
     public override void OnStopServer()
     {
         _networkSoundService?.StopServer();
         _networkInventoryService?.StopServer();
 
         NetworkServer.UnregisterHandler<PlayerCameraInputMessage>();
+        NetworkServer.UnregisterHandler<PlayerMovementInputMessage>();
 
         base.OnStopServer();
     }
@@ -126,5 +131,20 @@ public class EOSMirrorNetworkManager : NetworkManager
         }
 
         playerCamera.ServerApplyCameraInput(message.CameraInput);
+    }
+
+    private void OnPlayerMovementInputMessage(NetworkConnectionToClient connection, PlayerMovementInputMessage message) {
+        if (connection.identity == null) {
+            return;
+        }
+
+        MirrorPlayerCamera playerCamera = connection.identity.GetComponent<MirrorPlayerCamera>();
+
+        if (playerCamera == null) {
+            LogService.LogWarning("MirrorPlayerCamera was not found on the connected player.");
+            return;
+        }
+
+        playerCamera.ServerApplyMovementInput(message.MovementInput);
     }
 }

@@ -7,18 +7,22 @@ using CoreDomain.Scripts.Services.InitiatorInvokerService;
 using CoreDomain.Scripts.Services.SceneService;
 using CoreDomain.Scripts.Utils;
 using UnityEngine;
+using CoreDomain.GameDomain.Scripts.Inputs;
 
 namespace CoreDomain.GameDomain.GameStateDomain.LobbyDomain.Scripts.Initiator {
     public class LobbyInitiator : ISceneInitiator, ILobbyInitiator {
         private readonly ICommandFactory _commandFactory;
         private readonly ISceneInitiatorsService _sceneInitiatorsService;
+        private readonly IInputManager _inputManager;
         public ScenesType SceneType => ScenesType.LobbyScene;
 
 
-        public LobbyInitiator(ICommandFactory commandFactory, ISceneInitiatorsService sceneInitiatorsService) {
+        public LobbyInitiator(ICommandFactory commandFactory, ISceneInitiatorsService sceneInitiatorsService,
+            IInputManager inputManager) {
             _sceneInitiatorsService = sceneInitiatorsService;
             _commandFactory = commandFactory;
             _sceneInitiatorsService.RegisterInitiator(this);
+            _inputManager = inputManager;
         }
 
         public async Awaitable LoadEntryPoint(IInitiatorEnterData enterDataObject, CancellationTokenSource cancellationTokenSource) {
@@ -27,10 +31,12 @@ namespace CoreDomain.GameDomain.GameStateDomain.LobbyDomain.Scripts.Initiator {
         }
 
         public Awaitable StartEntryPoint(IInitiatorEnterData enterDataObject, CancellationTokenSource cancellationTokenSource) {
+            _inputManager.EnableUIInput();
             return AwaitableUtils.CompletedTask;
         }
 
         public Awaitable InitExitPoint(CancellationTokenSource cancellationTokenSource) {
+            _inputManager.DisableUIInput();
             _sceneInitiatorsService.UnregisterInitiator(this);
             _commandFactory.CreateCommandVoid<ExitLobbyStateCommand>().Execute();
             return AwaitableUtils.CompletedTask;

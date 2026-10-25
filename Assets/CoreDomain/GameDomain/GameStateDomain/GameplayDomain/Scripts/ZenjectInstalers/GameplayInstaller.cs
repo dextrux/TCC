@@ -7,17 +7,12 @@ using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.NoiseSystem.D
 using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.NoiseSystem.Interfaces;
 using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.NoiseSystem.Services;
 using CoreDomain.GameDomain.GameStateDomain.GamePlayDomain.Scripts.Services.LevelCancellationToken;
-using Player.Controller;
-using Player.Model;
-using Player.View;
 using UnityEngine;
 using Zenject;
 
 public class GameplayInstaller : MonoInstaller
 {
     [SerializeField] private NoiseDecaySettings noiseDecaySettings;
-    [SerializeField] private FPSPlayerView _playerView;
-    [SerializeField] private FPSPlayerConfigurationSO _playerConfiguration;
     [SerializeField] private InventoryConfigurationSo _inventoryConfiguration;
 
     public override void InstallBindings()
@@ -41,7 +36,6 @@ public class GameplayInstaller : MonoInstaller
     private void BindControllers()
     {
         Container.BindInterfacesTo<LevelScenarioController>().AsSingle().NonLazy();
-        Container.BindInterfacesTo<FPSPlayerController>().AsSingle().WithArguments(_playerView, _playerConfiguration);
         Container.BindInterfacesTo<WorldObjectSpawner>().AsSingle();
     }
 }
