@@ -14,18 +14,20 @@ namespace Netcode.EOS_Scripts.Services
         private Action<int, int> _selectSlot;
         private Action<int, int> _scroll;
         private Action<int> _removePlayer;
+        private Action<int, Vector3, Vector3> _throw;
 
         private bool _offline;
         private bool _handlersRegistered;
 
         public event Action<int> OfflineHeldItemChanged;
 
-        public void Configure(bool offline, Action<int, int> selectSlot, Action<int, int> scroll, Action<int> removePlayer)
+        public void Configure(bool offline, Action<int, int> selectSlot, Action<int, int> scroll, Action<int> removePlayer, Action<int, Vector3, Vector3> throwAction)
         {
             _offline = offline;
             _selectSlot = selectSlot;
             _scroll = scroll;
             _removePlayer = removePlayer;
+            _throw = throwAction;
         }
 
         public void SetUp()
@@ -34,6 +36,7 @@ namespace Netcode.EOS_Scripts.Services
             
             NetworkServer.RegisterHandler<InventorySelectSlotMessage>(OnSelectSlotMessage);
             NetworkServer.RegisterHandler<InventoryScrollMessage>(OnScrollMessage);
+            NetworkServer.RegisterHandler<ThrowSelectedMessage>(OnThrowMessage);
             _handlersRegistered = true;
         }
 
@@ -43,6 +46,7 @@ namespace Netcode.EOS_Scripts.Services
 
             NetworkServer.UnregisterHandler<InventorySelectSlotMessage>();
             NetworkServer.UnregisterHandler<InventoryScrollMessage>();
+            NetworkServer.UnregisterHandler<ThrowSelectedMessage>();
             _handlersRegistered = false;
         }
 
@@ -96,6 +100,19 @@ namespace Netcode.EOS_Scripts.Services
             target?.ServerSetHeldItem(itemId);
         }
 
+        public void RequestThrow(Vector3 origin, Vector3 aimPoint)
+        {
+            if (_offline)
+            {
+                _throw?.Invoke(OfflineConnectionId, origin, aimPoint);
+                return;
+            }
+            
+            if(!NetworkClient.isConnected) return;
+            
+            NetworkClient.Send(new ThrowSelectedMessage { Origin = origin, AimPoint = aimPoint });
+        }
+
         private void OnSelectSlotMessage(NetworkConnectionToClient connection, InventorySelectSlotMessage message)
         {
             if (connection == null || connection.identity == null) return;
@@ -108,6 +125,13 @@ namespace Netcode.EOS_Scripts.Services
             if (connection == null || connection.identity == null) return;
 
             _scroll?.Invoke(connection.connectionId, Mathf.Clamp(message.Direction, -1, 1));
+        }
+
+        private void OnThrowMessage(NetworkConnectionToClient connection, ThrowSelectedMessage message)
+        {
+            if (connection == null || connection.identity == null) return;
+            
+            _throw?.Invoke(connection.connectionId, message.Origin, message.AimPoint);
         }
     }
 }

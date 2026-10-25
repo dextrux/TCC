@@ -24,7 +24,7 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.Inventory
         
 #if UNITY_EDITOR
         /// <summary>
-        /// Preenche a lista com os objetos do tipo inventario e do tipo oferenda
+        /// Preenche a lista com os objetos que vao para o inventario (oferenda, inventario e arremessavel)
         /// </summary>
         [ContextMenu("Find All Items")]
         public void FindAllItems()
@@ -36,7 +36,7 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.Inventory
                 var path = UnityEditor.AssetDatabase.GUIDToAssetPath(guid);
                 var asset = UnityEditor.AssetDatabase.LoadAssetAtPath<ObjectConfigurationSo>(path);
 
-                if (asset != null && asset.ObjectType is ObjectType.OfferingObject or ObjectType.InventoryObject)
+                if (asset != null && asset.ObjectType is ObjectType.OfferingObject or ObjectType.InventoryObject or ObjectType.ThrowableObject)
                     found.Add(asset);
             }
             

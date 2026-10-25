@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 namespace CoreDomain.Scripts.Services.NetworkServices
 {
@@ -6,7 +7,7 @@ namespace CoreDomain.Scripts.Services.NetworkServices
     {
         event Action<int> OfflineHeldItemChanged;
         
-        void Configure(bool offline, Action<int, int> selectSlot, Action<int, int> scroll, Action<int> removePlayer);
+        void Configure(bool offline, Action<int, int> selectSlot, Action<int, int> scroll, Action<int> removePlayer, Action<int, Vector3, Vector3> throwAction);
 
         void SetUp();
         void StopServer();
@@ -18,5 +19,6 @@ namespace CoreDomain.Scripts.Services.NetworkServices
         void RequestScroll(int direction);
         
         void NotifyHeldItemChanged(int connectionId, int itemId);
+        void RequestThrow(Vector3 origin, Vector3 aimPoint);
     }
 }

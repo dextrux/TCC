@@ -13,6 +13,7 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.Inventory
         
         [SyncVar(hook = nameof(OnHeldItemChanged))]
         private int _heldItemId;
+        public int HeldItemId { get; private set; }
 
         private INetworkInventoryService _networkInventoryService;
         private GameObject _heldInstance;
@@ -56,6 +57,7 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.Inventory
 
         private void ApplyVisual(int itemId)
         {
+            HeldItemId = itemId;
             ClearVisual();
 
             if (itemId == 0 || itemCatalogSo == null || handSocket == null) return;

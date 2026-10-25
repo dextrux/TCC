@@ -39,6 +39,57 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.Inventory
             var length = _slots.Length;
             Selected(((SelectedIndex + direction) % length + length) % length) ;
         }
+        
+        public int GetTotal(int itemId)
+        {
+            var total = 0;
+            foreach (var slot in _slots)
+                if (!slot.IsEmpty() && slot.ItemId == itemId) total += slot.Count;
+
+            return total;
+        }
+
+        public bool HasItem(int itemId, int amount = 1) => amount > 0 && GetTotal(itemId) >= amount;
+        
+        public bool IsHolding(int itemId) => !SelectedStack.IsEmpty() && SelectedStack.ItemId == itemId;
+
+        // Retira do slot SELECIONADO (TryRemove retira do ultimo slot que tiver o item)
+        public bool TryRemoveSelected(int amount, out int itemId)
+        {
+            itemId = 0;
+
+            var stack = SelectedStack;
+            if (amount <= 0 || stack.IsEmpty() || stack.Count < amount) return false;
+
+            itemId = stack.ItemId;
+            _slots[SelectedIndex] = new ItemStack(itemId, stack.Count - amount);
+            OnInventoryChanged?.Invoke();
+            return true;
+        }
+
+        /// <summary>
+        /// Retira um item aleatorio entre os que passam no filtro, em quantidade aleatoria
+        /// (de 1 ate o total que o jogador possui daquele item)
+        /// </summary>
+        public bool TryTakeRandom(Func<int, bool> filter, out ItemStack taken)
+        {
+            taken = default;
+
+            var candidates = new List<int>();
+            foreach (var slot in _slots)
+                if (!slot.IsEmpty() && filter(slot.ItemId) && !candidates.Contains(slot.ItemId))
+                    candidates.Add(slot.ItemId);
+
+            if (candidates.Count == 0) return false;
+
+            var itemId = candidates[UnityEngine.Random.Range(0, candidates.Count)];
+            var amount = UnityEngine.Random.Range(1, GetTotal(itemId) + 1);
+
+            if (!TryRemove(itemId, amount)) return false;
+
+            taken = new ItemStack(itemId, amount);
+            return true;
+        }
 
         private bool CanAdd(int itemId, int amount, int maxStacks)
         {
@@ -91,7 +142,7 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.Inventory
             return true;
         }
 
-        public bool TryRemove(int itemId, int amount)
+        private bool TryRemove(int itemId, int amount)
         {
             if (amount <= 0) return false;
 

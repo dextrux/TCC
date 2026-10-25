@@ -14,13 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: GameplayAssembly::CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Object.ScriptableObject.ObjectConfigurationSo
   objectName: Teste
   itemId: -172376213
-  objectType: 1
+  objectType: 2
   maxStackSize: 1
   gravity: -9.81
   throwForce: 10
   throwHeight: 1.6
   activateAction: 
   deactivateAction: 
+  requiredHeldItem: {fileID: 0}
+  blockedAction: 
   prefab: {fileID: -2293452257426385421, guid: c6b7787ade10c1e4faa9b39202900bad, type: 3}
   icon: {fileID: 21300000, guid: 4b66f21097323d44ab40669b2fb9c53d, type: 3}
   heldPrefab: {fileID: 851460086002158032, guid: b1931422fb2970d47b2515138d97e34e, type: 3}

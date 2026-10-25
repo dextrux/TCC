@@ -22,13 +22,12 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Objec
         private bool _isSetup;
         private bool _isCollected;
 
-        private int? _holder;
         public event Action<Vector3, float> OnImpact;
         public event Action<string> OnActionPerfom;
 
         public ObjectController(ObjectConfigurationSo configuration,
             IUpdateSubscriptionService updateSubscriptionService,
-            ObjectView view , IInventoryManager inventoryManager)
+            ObjectView view, IInventoryManager inventoryManager)
         {
             _configuration = configuration;
             _view = view;
@@ -36,29 +35,31 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Objec
             _updateSubscriptionService = updateSubscriptionService;
             _inventoryManager = inventoryManager;
         }
-        
+
         public void Setup()
         {
             if (_isSetup) return;
             _isSetup = true;
-            
+
             _view.InteractRequested += OnInteract;
-            _view.ThrowRequested += OnThrowRequest;
-            
-            if(_view.TryGetComponent<ObjectSoundEmitter>(out var objectSoundEmitter))
+
+            if (_view.TryGetComponent<ObjectSoundEmitter>(out var objectSoundEmitter))
                 OnImpact += (_, impactSpeed) => objectSoundEmitter.EmitImpact(impactSpeed);
 
             if (_view.TryGetComponent<InteractableSoundEmitter>(out var interactableSoundEmitter))
                 OnActionPerfom += interactableSoundEmitter.EmitAction;
-            
+
             _updateSubscriptionService.RegisterFixedUpdatable(this);
         }
 
+        /// <summary>
+        /// Chamado pelo servidor quando o objeto e lancado (ver InventoryActionService).
+        /// </summary>
         public void Throw(Vector3 origin, Vector3 direction)
         {
             if (_configuration.ObjectType != ObjectType.ThrowableObject) return;
             if (direction.sqrMagnitude <= Mathf.Epsilon) return;
-            
+
             _view.Teleport(origin);
             _model.Throw(direction.normalized * _configuration.ThrowForce);
         }
@@ -70,12 +71,11 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Objec
                 case ObjectType.InteractObject:
                     HandleInteract(connectionId);
                     break;
+                // Tudo que nao e interagivel vai para o inventario, que decide o que fazer com o item
                 case ObjectType.OfferingObject:
+                case ObjectType.ThrowableObject:
                 case ObjectType.InventoryObject:
                     HandleInventory(connectionId);
-                    break;
-                case ObjectType.ThrowableObject:
-                    HandlePickup(connectionId);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -84,37 +84,43 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Objec
 
         private void HandleInteract(int connectionId)
         {
-            LogService.Log($"[ObjectController] Player {connectionId} is interacting with {_configuration.ObjectName}.]");
+            // O requisito vale so para ACIONAR (acender, abrir...). Desligar nao exige o item
+            if (!_model.IsOpen && !MeetsRequirement(connectionId))
+            {
+                LogService.Log($"[ObjectController] Player {connectionId} need {_configuration.RequiredHeldItem.ObjectName} in hands to use {_configuration.ObjectName}.");
+
+                if (!string.IsNullOrEmpty(_configuration.BlockedAction))
+                    OnActionPerfom?.Invoke(_configuration.BlockedAction);
+                return;
+            }
+
+            LogService.Log($"[ObjectController] Player {connectionId} is interacting with {_configuration.ObjectName}.");
             _model.ToggleOpen();
             _view.SetOpen(_model.IsOpen);
             OnActionPerfom?.Invoke(_model.IsOpen ? _configuration.ActivateAction : _configuration.DeactivateAction);
         }
 
-        private void HandlePickup(int connectionId)
+        private bool MeetsRequirement(int connectionId)
         {
-            if(_holder.HasValue) return;
-            if (!NetworkServer.connections.TryGetValue(connectionId, out var connection)) return;
-            
-            LogService.Log($"[ObjectController] Player {connectionId} is picking up {_configuration.ObjectName}.");
-            _holder = connectionId;
-            _view.SetHeld(true);
-            _view.netIdentity.AssignClientAuthority(connection);
+            var required = _configuration.RequiredHeldItem;
+            return required == null || _inventoryManager.IsHolding(connectionId, required.ItemId);
         }
 
         private void HandleInventory(int connectionId)
         {
-            if (_isCollected) return;
-            
+            // Objeto durante arremesso nao pode ser coletado
+            if (_isCollected || _model.IsThrown) return;
+
             LogService.Log($"[ObjectController] Player {connectionId} is adding to inventory {_configuration.ObjectName}.");
             var added = _inventoryManager.TryAddItem(connectionId, _configuration.ItemId,
                 1, _configuration.MaxStackSize);
-            
-            if(!added)
+
+            if (!added)
             {
                 LogService.Log($"[ObjectController] Player {connectionId} failed to add {_configuration.ObjectName} in inventory.");
                 return;
             }
-            
+
             _isCollected = true;
             Dispose();
         }
@@ -122,20 +128,11 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Objec
         private void HandleImpact()
         {
             var impactSpeed = _model.Velocity.magnitude;
-            
+
             _model.Stop();
             OnImpact?.Invoke(_view.Position, impactSpeed);
         }
-        private void OnThrowRequest(Vector3 origin, Vector3 direction)
-        {
-            if (!_holder.HasValue) return;
 
-            _holder = null;
-            _view.SetHeld(false);
-            _view.netIdentity.RemoveClientAuthority();
-            
-            Throw(origin, direction);
-        }
         public void ManagedFixedUpdate()
         {
             if (!_model.IsThrown) return;
@@ -151,14 +148,13 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Objec
 
         public void Dispose()
         {
-            if(!_isSetup) return;
+            if (!_isSetup) return;
             _isSetup = false;
-            
+
             _view.InteractRequested -= OnInteract;
-            _view.ThrowRequested -= OnThrowRequest;
             _updateSubscriptionService.UnregisterFixedUpdatable(this);
-            
-            if(_view != null && NetworkServer.active)
+
+            if (_view != null && NetworkServer.active)
                 NetworkServer.Destroy(_view.gameObject);
         }
     }

@@ -28,6 +28,12 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Objec
         [SerializeField] private string activateAction;
         [SerializeField] private string deactivateAction;
 
+        [Header("Interaction Requirement")]
+        //Objeto necessario para interagir - chaves, pederneira etc
+        [SerializeField] private ObjectConfigurationSo requiredHeldItem;
+        //Som quando falta o item na mao
+        [SerializeField] private string blockedAction;
+
         [Header("Visual Configuration")] 
         [SerializeField] private ObjectView prefab;
         [SerializeField] private Sprite icon;
@@ -42,6 +48,8 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Objec
         public float ThrowHeight => throwHeight;
         public string ActivateAction => activateAction;
         public string DeactivateAction => deactivateAction;
+        public ObjectConfigurationSo RequiredHeldItem => requiredHeldItem;
+        public string BlockedAction => blockedAction;
         public ObjectView Prefab => prefab;
         public Sprite Icon => icon;
         public GameObject HeldPrefab => heldPrefab;
