@@ -34,7 +34,6 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.Inventory
 
         private void Update()
         {
-            return;
             if (_networkInventoryService == null || playerHandView == null) return;
 
             // Offline: nao ha NetworkClient. Online: so o player local.

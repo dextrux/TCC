@@ -53,7 +53,8 @@ public class MirrorPlayerCamera : NetworkBehaviour {
 
     public override void OnStartClient() {
         base.OnStartClient();
-
+        
+        Debug.Log("CAMERA CLIENT");
         SetCameraActive(false);
         ApplyCameraRotation(_serverYaw, _serverPitch);
     }

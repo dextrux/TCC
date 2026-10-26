@@ -227,8 +227,8 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-  _playerView: {fileID: -3644747347845958771, guid: 28b0d4fb227e9dc4892d65093e1ff64d, type: 3}
-  _playerConfiguration: {fileID: 11400000, guid: 595a505383d5e804aa10993984fe2463, type: 2}
+  _inventoryConfiguration: {fileID: 11400000, guid: ea213d0738a1fd54981cb56156651672, type: 2}
+  _itemCatalogSo: {fileID: 11400000, guid: 3b00ee8bcba109543a09131abe9a0ffa, type: 2}
 --- !u!4 &221256879
 Transform:
   m_ObjectHideFlags: 0
@@ -395,8 +395,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d79ddfc5223d43948ac0cf4c0204675c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: GameplayAssembly::CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.SoundSystem.SoundEmitter
-  ShowTopMostFoldoutHeaderGroup: 1
   maxLoudness: 15
+  serverOnly: 0
 --- !u!4 &1717183737
 Transform:
   m_ObjectHideFlags: 0
