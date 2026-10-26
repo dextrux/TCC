@@ -17,13 +17,9 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Objec
         private static readonly int OpenHash = Animator.StringToHash("Open");
         
         [SyncVar(hook = "OnOpenChanged")] private bool _isOpen;
-        [SyncVar] private bool _isHeld;
-        
-        public bool IsHeld => _isHeld;
 
         //Quando cliente pedir para interagir
         public event Action<int> InteractRequested;
-        public event Action<Vector3, Vector3> ThrowRequested;
         
         private Rigidbody _rigidbody;
         private MeshCollider _meshCollider;
@@ -77,12 +73,6 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Objec
 
         private void OnOpenChanged(bool previous, bool current) => ApplyOpen(current);
         
-        public void SetHeld(bool held)
-        {
-            if (!isServer) return;
-            _isHeld = held;
-        }
-        
         public void SetOpen(bool open)
         {
             if(!isServer) return;
@@ -101,8 +91,5 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Objec
             if (sender == null) return;
             InteractRequested?.Invoke(sender.connectionId);
         }
-        
-        [Command]
-        public void CmdThrow(Vector3 origin, Vector3 direction) => ThrowRequested?.Invoke(origin, direction);
     }
 }

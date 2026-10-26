@@ -12,5 +12,8 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.Inventory
         PlayerInventory GetOrCreateInventory(int connectionId);
         bool TryAddItem(int connectionId, int itemId, int amount, int maxStacks);
         bool Remove(int connectionId);
+        bool HasItem(int connectionId, int itemId, int amount = 1);
+        bool IsHolding(int connectionId, int itemId);
+        bool TryTakeRandomOffering(int connectionId, out ItemStack taken);
     }
 }

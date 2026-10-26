@@ -17,6 +17,7 @@ using System;
 using System.Threading;
 using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Object.Interface;
 using CoreDomain.Scripts.Services.NetworkServices;
+using Mirror;
 using UnityEngine;
 
 namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.Initiator
@@ -29,6 +30,7 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.Initiator
         private readonly INetworkSoundService _networkSoundService;
         private readonly INetworkInventoryService _networkInventoryService;
         private readonly IInventoryManager _inventoryManager;
+        private readonly IInventoryActionManager _inventoryActionManager;
         private readonly IAudioManager _audioManager;
         private readonly INoiseManager _noiseManager;
         private readonly ILevelScenarioController _levelScenarioController;
@@ -36,7 +38,7 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.Initiator
 
         public ScenesType SceneType => ScenesType.GamePlayScene;
 
-        public GamePlayInitiator(ICommandFactory commandFactory, ISceneInitiatorsService sceneInitiatorsService, INetworkPlayerCameraController networkPlayerCameraController, INetworkSoundService networkSoundService, IAudioManager audioManager, INoiseManager noiseManager, ILevelScenarioController levelScenarioController, INetworkInventoryService networkInventoryService, IInventoryManager inventoryManager, IWorldObjectSpawner worldObjectSpawner)
+        public GamePlayInitiator(ICommandFactory commandFactory, ISceneInitiatorsService sceneInitiatorsService, INetworkPlayerCameraController networkPlayerCameraController, INetworkSoundService networkSoundService, IAudioManager audioManager, INoiseManager noiseManager, ILevelScenarioController levelScenarioController, INetworkInventoryService networkInventoryService, IInventoryManager inventoryManager, IWorldObjectSpawner worldObjectSpawner, IInventoryActionManager inventoryActionManager)
         {
             _commandFactory = commandFactory;
             _sceneInitiatorsService = sceneInitiatorsService;
@@ -48,6 +50,7 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.Initiator
             _networkInventoryService = networkInventoryService;
             _inventoryManager = inventoryManager;
             _worldObjectSpawner = worldObjectSpawner;
+            _inventoryActionManager = inventoryActionManager;
             _sceneInitiatorsService.RegisterInitiator(this);
         }
 
@@ -65,8 +68,10 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.Initiator
 
             _networkSoundService.Configure(offline, PlayAudio, ReportNoise);
             // Inventario: o servico de rede nao conhece o IInventoryManager, entao a ligacao eh feita aqui
-            _networkInventoryService.Configure(offline, SelectSlot, ScrollSlot, RemoveInventory);
+            _networkInventoryService.Configure(offline, SelectSlot, ScrollSlot, RemoveInventory, OnThrowRequested);
             _inventoryManager.InventoryChanged += OnInventoryChanged;
+            var id = NetworkConnection.LocalConnectionId;
+            _inventoryManager.TryAddItem(id, -172376213, 1, 1);
 
             await _commandFactory.CreateCommandAsync<StartGamePlayStateCommand>().SetEnterData(enterData).Execute(cancellationTokenSource);
 
@@ -90,7 +95,7 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.Initiator
             _networkSoundService.Configure(false, null, null);
 
             _inventoryManager.InventoryChanged -= OnInventoryChanged;
-            _networkInventoryService.Configure(false, null, null, null);
+            _networkInventoryService.Configure(false, null, null, null, null);
 
             _sceneInitiatorsService.UnregisterInitiator(this);
             _commandFactory.CreateCommandVoid<ExitGamePlayStateCommand>().Execute();
@@ -141,6 +146,11 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.Initiator
         {
             var stack = inventory.SelectedStack;
             _networkInventoryService.NotifyHeldItemChanged(connectionId, stack.IsEmpty() ? 0 : stack.ItemId);
+        }
+
+        private void OnThrowRequested(int connectionId, Vector3 origem, Vector3 aimPoint)
+        {
+            _inventoryActionManager.TryThrowSelected(connectionId, origem, aimPoint);
         }
     }
 }

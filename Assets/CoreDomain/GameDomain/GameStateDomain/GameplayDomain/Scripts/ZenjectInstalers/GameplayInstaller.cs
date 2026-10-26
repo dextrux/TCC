@@ -14,6 +14,7 @@ public class GameplayInstaller : MonoInstaller
 {
     [SerializeField] private NoiseDecaySettings noiseDecaySettings;
     [SerializeField] private InventoryConfigurationSo _inventoryConfiguration;
+    [SerializeField] private ItemCatalogSo _itemCatalogSo;
 
     public override void InstallBindings()
     {
@@ -29,7 +30,9 @@ public class GameplayInstaller : MonoInstaller
         Container.Bind<INoiseManager>().To<NoiseManager>().AsSingle();
         
         Container.BindInstance(_inventoryConfiguration).AsSingle();
+        Container.BindInstance(_itemCatalogSo).AsSingle();
         Container.Bind<IInventoryManager>().To<InventoryManager>().AsSingle();
+        Container.BindInterfacesTo<InventoryActionManager>().AsSingle();
         Container.Bind<ObjectFactory>().AsSingle();
     }
 

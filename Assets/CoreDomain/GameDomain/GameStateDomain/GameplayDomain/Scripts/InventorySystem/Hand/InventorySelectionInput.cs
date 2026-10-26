@@ -53,5 +53,7 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.Inventory
             if (scroll > 0f) _networkInventoryService.RequestScroll(-1); // scroll pra cima = slot anterior
             else if (scroll < 0f) _networkInventoryService.RequestScroll(1); // scroll pra baixo = proximo slot
         }
+        
+        
     }
 }
