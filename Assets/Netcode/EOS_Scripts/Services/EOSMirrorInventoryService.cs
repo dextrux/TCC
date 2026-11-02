@@ -15,19 +15,22 @@ namespace Netcode.EOS_Scripts.Services
         private Action<int, int> _scroll;
         private Action<int> _removePlayer;
         private Action<int, Vector3, Vector3> _throw;
+        private Action<int> _useSelected;
 
         private bool _offline;
         private bool _handlersRegistered;
 
         public event Action<int> OfflineHeldItemChanged;
+        public event Action<bool> OfflineHeldItemActiveChanged;
 
-        public void Configure(bool offline, Action<int, int> selectSlot, Action<int, int> scroll, Action<int> removePlayer, Action<int, Vector3, Vector3> throwAction)
+        public void Configure(bool offline, Action<int, int> selectSlot, Action<int, int> scroll, Action<int> removePlayer, Action<int, Vector3, Vector3> throwAction, Action<int> useSelected)
         {
             _offline = offline;
             _selectSlot = selectSlot;
             _scroll = scroll;
             _removePlayer = removePlayer;
             _throw = throwAction;
+            _useSelected =  useSelected;
         }
 
         public void SetUp()
@@ -37,6 +40,7 @@ namespace Netcode.EOS_Scripts.Services
             NetworkServer.RegisterHandler<InventorySelectSlotMessage>(OnSelectSlotMessage);
             NetworkServer.RegisterHandler<InventoryScrollMessage>(OnScrollMessage);
             NetworkServer.RegisterHandler<ThrowSelectedMessage>(OnThrowMessage);
+            NetworkServer.RegisterHandler<UseSelectedMessage>(OnUseSelectedMessage);
             _handlersRegistered = true;
         }
 
@@ -47,6 +51,7 @@ namespace Netcode.EOS_Scripts.Services
             NetworkServer.UnregisterHandler<InventorySelectSlotMessage>();
             NetworkServer.UnregisterHandler<InventoryScrollMessage>();
             NetworkServer.UnregisterHandler<ThrowSelectedMessage>();
+            NetworkServer.UnregisterHandler<UseSelectedMessage>();
             _handlersRegistered = false;
         }
 
@@ -83,6 +88,20 @@ namespace Netcode.EOS_Scripts.Services
             NetworkClient.Send(new InventoryScrollMessage { Direction = direction });
         }
 
+        public void RequestUseSelected()
+        {
+            if (_offline)
+            {
+                _useSelected.Invoke(OfflineConnectionId);
+                return;
+            }
+            
+            
+            if(!NetworkClient.isConnected) return;
+            
+            NetworkClient.Send(new UseSelectedMessage());
+        }
+        
         public void NotifyHeldItemChanged(int connectionId, int itemId)
         {
             if (_offline)
@@ -90,14 +109,36 @@ namespace Netcode.EOS_Scripts.Services
                 if (connectionId == OfflineConnectionId) OfflineHeldItemChanged?.Invoke(itemId);
                 return;
             }
-
+ 
             // Online so o servidor escreve o SyncVar (clientes puros nao tem inventario)
-            if (!NetworkServer.active) return;
-            if (!NetworkServer.connections.TryGetValue(connectionId, out var connection)) return;
-            if (connection.identity == null) return;
+            if (!TryGetHeldTarget(connectionId, out var target)) return;
+ 
+            target.ServerSetHeldItem(itemId);
+        }
+ 
+        public void NotifyHeldItemActiveChanged(int connectionId, bool active)
+        {
+            if (_offline)
+            {
+                if (connectionId == OfflineConnectionId) OfflineHeldItemActiveChanged?.Invoke(active);
+                return;
+            }
+ 
+            if (!TryGetHeldTarget(connectionId, out var target)) return;
+ 
+            target.ServerSetHeldItemActive(active);
+        }
 
-            var target = connection.identity.GetComponent<INetworkHeldItemTarget>();
-            target?.ServerSetHeldItem(itemId);
+        private static bool TryGetHeldTarget(int connectionId, out INetworkHeldItemTarget target)
+        {
+            target = null;
+            
+            if(!NetworkServer.active) return false;
+            if(!NetworkServer.connections.TryGetValue(connectionId, out var connection)) return false;
+            if(connection.identity == null) return false;
+            
+            target = connection.identity.GetComponent<INetworkHeldItemTarget>();
+            return target != null;
         }
 
         public void RequestThrow(Vector3 origin, Vector3 aimPoint)
@@ -132,6 +173,20 @@ namespace Netcode.EOS_Scripts.Services
             if (connection == null || connection.identity == null) return;
             
             _throw?.Invoke(connection.connectionId, message.Origin, message.AimPoint);
+        }
+
+        private void OnUseSelectedMessage(NetworkConnectionToClient connection, UseSelectedMessage message)
+        {
+            if (connection == null || connection.identity == null) return;
+
+            try
+            {
+                _useSelected?.Invoke(connection.connectionId);
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+            }
         }
     }
 }

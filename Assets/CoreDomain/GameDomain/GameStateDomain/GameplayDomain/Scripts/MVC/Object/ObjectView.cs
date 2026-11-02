@@ -1,4 +1,5 @@
 using System;
+using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.InventorySystem.Interface;
 using Mirror;
 using UnityEngine;
 
@@ -24,6 +25,8 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Objec
         private Rigidbody _rigidbody;
         private MeshCollider _meshCollider;
         
+        private IHeldItemActivatable[] _activatables;
+        
         public Vector3 Position => _rigidbody.position;
 
         private void Awake()
@@ -33,7 +36,8 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Objec
             animator = GetComponent<Animator>();
             _rigidbody.isKinematic = true;
             _meshCollider.convex = true;
-
+            
+            _activatables = GetComponentsInChildren<IHeldItemActivatable>(true);
         }
 
         public override void OnStartClient()
@@ -81,8 +85,10 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Objec
         
         private void ApplyOpen(bool open)
         {
-            if(animator.runtimeAnimatorController == null) return;
-            animator.SetBool(OpenHash, open);
+            if (animator != null) animator.SetBool(OpenHash, open);
+
+            if (_activatables == null) return;
+            foreach (var activatable in _activatables) activatable.SetActive(open);
         }
 
         [Command(requiresAuthority = false)]

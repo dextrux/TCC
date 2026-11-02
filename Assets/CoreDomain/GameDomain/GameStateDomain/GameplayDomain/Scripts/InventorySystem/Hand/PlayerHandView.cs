@@ -1,4 +1,6 @@
+using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.InventorySystem.Interface;
 using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.InventorySystem.ScriptableObject;
+using CoreDomain.Scripts.Services.Logger.Base;
 using CoreDomain.Scripts.Services.NetworkServices;
 using Mirror;
 using UnityEngine;
@@ -14,6 +16,9 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.Inventory
         [SyncVar(hook = nameof(OnHeldItemChanged))]
         private int _heldItemId;
         public int HeldItemId { get; private set; }
+        
+        
+        [SyncVar(hook = nameof(OnHeldActiveChanged))] private bool _heldItemActive;
 
         private INetworkInventoryService _networkInventoryService;
         private GameObject _heldInstance;
@@ -51,9 +56,16 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.Inventory
         /// Chamado pelo servico no servidor.
         /// </summary>
         [Server]
-        public void ServerSetHeldItem(int itemId) => _heldItemId = itemId;
-
+        public void ServerSetHeldItem(int itemId)
+        {
+            if(itemId != _heldItemId) _heldItemActive = false;
+            _heldItemId = itemId;
+        }
+        [Server]
+        public void ServerSetHeldItemActive(bool active) => _heldItemActive = active;   
+        
         private void OnHeldItemChanged(int previous, int current) => ApplyVisual(current);
+        private void OnHeldActiveChanged(bool previous, bool current) => ApplyActive(current);
 
         private void ApplyVisual(int itemId)
         {
@@ -61,11 +73,23 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.Inventory
             ClearVisual();
 
             if (itemId == 0 || itemCatalogSo == null || handSocket == null) return;
-            if (!itemCatalogSo.TryGet(itemId, out var configuration) || configuration.HeldPrefab == null) return;
+            if (!itemCatalogSo.TryGet(itemId, out var configuration) || configuration.HeldPrefab == null)
+            {
+                LogService.LogError($"{nameof(PlayerHandView)}: Could not find configuration for {itemId}");
+                return;
+            }
 
             _heldInstance = Instantiate(configuration.HeldPrefab, handSocket);
             _heldInstance.transform.localPosition = Vector3.zero;
             _heldInstance.transform.localRotation = Quaternion.identity;
+            
+            ApplyActive(netId != 0 && _heldItemActive);
+        }
+        
+        private void ApplyActive(bool active)
+        {
+            if (_heldInstance == null) return;
+            if (_heldInstance.TryGetComponent<IHeldItemActivatable>(out var item)) item.SetActive(active);
         }
 
         private void ClearVisual()

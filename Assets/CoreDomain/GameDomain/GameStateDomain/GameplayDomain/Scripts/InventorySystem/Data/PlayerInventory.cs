@@ -67,6 +67,11 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.Inventory
             return true;
         }
 
+        public void RemoveItem(int itemId, int amount = 1)
+        {
+            TryRemove(itemId, amount);
+        }
+
         /// <summary>
         /// Retira um item aleatorio entre os que passam no filtro, em quantidade aleatoria
         /// (de 1 ate o total que o jogador possui daquele item)
@@ -100,15 +105,13 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.Inventory
             {
                 if(slot.IsEmpty()) space += maxStacks;
                 else if(slot.ItemId == itemId) space += Mathf.Max(0, maxStacks - slot.Count);
-                
-                if(space >= amount)
-                {
-                    LogService.Log($"[PlayerInventory] Trying adding item {itemId}");
-                    return true;
-                }
+
+                if (space < amount) continue;
+                LogService.Log($"[PlayerInventory] Trying adding item {itemId}");
+                return true;
             }
 
-            LogService.Log("[PlayerInventory] Nao foi possivel adicionar o item");
+            LogService.Log("[PlayerInventory] Item {itemId} hasn't been added");
             return false;
         }
 
@@ -139,6 +142,7 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.Inventory
             }
             
             OnInventoryChanged?.Invoke();
+            LogService.Log($"[PlayerInventory] item {itemId} has been added");
             return true;
         }
 
