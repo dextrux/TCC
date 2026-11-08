@@ -12,13 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9eb8f842877d4c33b85b5f3ae6b708dc, type: 3}
   m_Name: SO_Object_TorchInventoryTest
   m_EditorClassIdentifier: GameplayAssembly::CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Object.ScriptableObject.ObjectConfigurationSo
-  objectName: a
+  objectName: Torch
   itemId: 1422698970
   objectType: 3
   maxStackSize: 1
   gravity: -9.81
   throwForce: 10
   throwHeight: 1.6
+  canBeActivated: 1
   activateAction: 
   deactivateAction: 
   requiredItemToActivate: {fileID: 11400000, guid: e0f25f508e0775f48ad3af5c44208833, type: 2}
