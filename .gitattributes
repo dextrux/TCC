@@ -66,10 +66,6 @@
 *.physicMaterial        unity-yaml
 *.physicsMaterial2D     unity-yaml
 
-# terrain
-*.asset binary
-*.terrainlayer text eol=lf
-
 # Exclude from GitHub stats and diffs: third-party plugins, packages lock file
 Assets/Plugins/**           linguist-generated
 Packages/packages-lock.json linguist-generated
