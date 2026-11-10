@@ -21,6 +21,7 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Objec
 
         //Quando cliente pedir para interagir
         public event Action<int> InteractRequested;
+        public event Action DeactivateRequested;
         
         private Rigidbody _rigidbody;
         private MeshCollider _meshCollider;
@@ -81,6 +82,7 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Objec
         {
             if(!isServer) return;
             _isOpen = open;
+            ApplyOpen(open);
         }
         
         private void ApplyOpen(bool open)
@@ -97,5 +99,8 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Objec
             if (sender == null) return;
             InteractRequested?.Invoke(sender.connectionId);
         }
+        
+        [Server]
+        public void RequestDeactivate() => DeactivateRequested?.Invoke();
     }
 }

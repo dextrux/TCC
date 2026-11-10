@@ -26,6 +26,7 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Objec
         
         [Header("Interaction Configuration")]
         [SerializeField] private bool canBeActivated;
+        [SerializeField] private bool deactivatesOnImpact;
         [SerializeField] private string activateAction;
         [SerializeField] private string deactivateAction;
 
@@ -51,6 +52,7 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Objec
         public float ThrowForce => throwForce;
         public float ThrowHeight => throwHeight;
         public bool CanBeActivated => canBeActivated;
+        public bool DeactivatesOnImpact => deactivatesOnImpact;
         public string ActivateAction => activateAction;
         public string DeactivateAction => deactivateAction;
         public ObjectConfigurationSo RequiredItemToActivate => requiredItemToActivate;
