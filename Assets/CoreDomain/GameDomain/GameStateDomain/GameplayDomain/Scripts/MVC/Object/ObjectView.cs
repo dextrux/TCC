@@ -1,7 +1,7 @@
 using System;
-using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.InventorySystem.Interface;
 using Mirror;
 using UnityEngine;
+using IHeldItemActivatable = CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.InventorySystem.Interface.IHeldItemActivatable;
 
 namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Object
 {
