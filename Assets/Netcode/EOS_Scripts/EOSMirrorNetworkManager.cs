@@ -12,6 +12,8 @@ public class EOSMirrorNetworkManager : NetworkManager
     private INetworkInventoryService _networkInventoryService;
     private DiContainer _container;
 
+    //z
+    private INetworkQuickTimeEventService _networkQuickTimeEventService;
     [Inject]
     public void Construct(INetworkSoundService networkSoundService, INetworkInventoryService networkInventoryService, DiContainer container)
     {
@@ -19,13 +21,27 @@ public class EOSMirrorNetworkManager : NetworkManager
         _networkInventoryService = networkInventoryService;
         _container = container;
     }
-
+    [Inject]
+    public void Construct(
+        INetworkSoundService networkSoundService,
+        INetworkInventoryService networkInventoryService,
+        INetworkQuickTimeEventService networkQuickTimeEventService,
+        DiContainer container)
+    {
+        _networkSoundService = networkSoundService;
+        _networkInventoryService = networkInventoryService;
+        _networkQuickTimeEventService = networkQuickTimeEventService;
+        _container = container;
+    }
     public override void OnStartServer()
     {
         base.OnStartServer();
 
         NetworkServer.RegisterHandler<PlayerCameraInputMessage>(OnPlayerCameraInputMessage);
         NetworkServer.RegisterHandler<PlayerMovementInputMessage>(OnPlayerMovementInputMessage);
+
+        //z
+        _networkQuickTimeEventService?.SetUp();
 
         _networkSoundService?.SetUp();
         _networkInventoryService?.SetUp();
@@ -38,6 +54,9 @@ public class EOSMirrorNetworkManager : NetworkManager
     {
         _networkSoundService?.StopServer();
         _networkInventoryService?.StopServer();
+
+        //z
+        _networkQuickTimeEventService?.StopServer();
 
         NetworkServer.UnregisterHandler<PlayerCameraInputMessage>();
         NetworkServer.UnregisterHandler<PlayerMovementInputMessage>();
@@ -63,6 +82,9 @@ public class EOSMirrorNetworkManager : NetworkManager
     {
         _networkSoundService?.StopClient();
         _networkInventoryService?.StopClient();
+
+        //z
+        _networkQuickTimeEventService?.StopClient();
 
         base.OnStopClient();
     }
