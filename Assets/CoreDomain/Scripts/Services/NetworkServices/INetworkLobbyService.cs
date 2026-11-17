@@ -9,6 +9,7 @@ namespace CoreDomain.Scripts.Services.NetworkService
         bool IsBusy { get; }
         bool IsConnected { get; }
         bool IsHost { get; }
+        bool IsLocalSession { get; }
 
         string LobbyCode { get; }
         string HostProductUserId { get; }
@@ -22,6 +23,10 @@ namespace CoreDomain.Scripts.Services.NetworkService
 
         void CreateLobby();
         void JoinLobby(string code);
+
+        void CreateLocalHost();
+        void JoinLocalHost(string address);
+
         void StartGame();
         void LeaveLobby();
     }

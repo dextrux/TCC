@@ -37,13 +37,14 @@ public class EOSMirrorLobbyService : INetworkLobbyService
     private string _pendingCode = "";
     private string _lobbyCode = "";
     private string _hostProductUserId = "";
-    private string _status = "Aguardando Epic Online Services...";
+    private string _status = "Aguardando conexão...";
 
     private int _codeAttempts;
     private int _connectedPlayers;
 
     private bool _isHost;
     private bool _isConnected;
+    private bool _isLocalSession;
     private bool _gameStarted;
     private bool _fallbackSearchActive;
 
@@ -51,6 +52,7 @@ public class EOSMirrorLobbyService : INetworkLobbyService
     public bool IsBusy => _operation != LobbyOperation.None;
     public bool IsConnected => _isConnected;
     public bool IsHost => _isHost;
+    public bool IsLocalSession => _isLocalSession;
 
     public string LobbyCode => _lobbyCode;
     public string HostProductUserId => _hostProductUserId;
@@ -78,11 +80,12 @@ public class EOSMirrorLobbyService : INetworkLobbyService
 
     public void CreateLobby()
     {
-        if (!CanBeginOperation())
+        if (!CanBeginOperation(true))
         {
             return;
         }
 
+        _isLocalSession = false;
         _isHost = false;
         _codeAttempts = 0;
         _fallbackSearchActive = false;
@@ -90,14 +93,14 @@ public class EOSMirrorLobbyService : INetworkLobbyService
 
         SetStatus("Procurando um código disponível...");
 
-        Debug.Log("[Lobby] Criando sala. Product User ID local: " + _networkService.LocalProductUserId);
+        Debug.Log("[Lobby] Criando sala EOS. Product User ID: " + _networkService.LocalProductUserId);
 
         SearchNewCode();
     }
 
     public void JoinLobby(string code)
     {
-        if (!CanBeginOperation())
+        if (!CanBeginOperation(true))
         {
             return;
         }
@@ -108,6 +111,7 @@ public class EOSMirrorLobbyService : INetworkLobbyService
             return;
         }
 
+        _isLocalSession = false;
         _isHost = false;
         _fallbackSearchActive = false;
         _pendingCode = code.Trim().ToUpperInvariant();
@@ -115,10 +119,122 @@ public class EOSMirrorLobbyService : INetworkLobbyService
 
         SetStatus("Procurando sala " + _pendingCode + "...");
 
-        Debug.Log("[Lobby] Procurando código: " + _pendingCode);
-        Debug.Log("[Lobby] Product User ID local: " + _networkService.LocalProductUserId);
-
         SearchLobby(_pendingCode);
+    }
+
+    public void CreateLocalHost()
+    {
+        if (!CanBeginOperation(false))
+        {
+            return;
+        }
+
+        if (!_networkService.SupportsLocalKcp)
+        {
+            Fail("O transporte KCP não está disponível.");
+            return;
+        }
+
+        _isLocalSession = true;
+        _isHost = true;
+        _isConnected = false;
+        _gameStarted = false;
+        _fallbackSearchActive = false;
+
+        _connectedPlayers = 0;
+        _hostProductUserId = "";
+        _lobbyCode = "127.0.0.1:" + _networkService.LocalKcpPort;
+
+        _operation = LobbyOperation.ConnectingHost;
+
+        _networkManager.maxConnections = DefaultMaxPlayers;
+
+        SetStatus("Iniciando servidor KCP...");
+
+        Debug.Log("[Lobby] Criando host local KCP: " + _lobbyCode);
+
+        _networkService.StartLocalHost();
+    }
+
+    public void JoinLocalHost(string address)
+    {
+        if (!CanBeginOperation(false))
+        {
+            return;
+        }
+
+        if (!_networkService.SupportsLocalKcp)
+        {
+            Fail("O transporte KCP não está disponível.");
+            return;
+        }
+
+        if (!TryNormalizeKcpAddress(address, out string normalizedAddress))
+        {
+            Fail("Endereço KCP inválido. Exemplo: 127.0.0.1:7777");
+            return;
+        }
+
+        _isLocalSession = true;
+        _isHost = false;
+        _isConnected = false;
+        _gameStarted = false;
+        _fallbackSearchActive = false;
+
+        _hostProductUserId = "";
+        _lobbyCode = normalizedAddress;
+        _operation = LobbyOperation.ConnectingClient;
+
+        SetStatus("Conectando ao servidor KCP...");
+
+        Debug.Log("[Lobby] Conectando por KCP: " + normalizedAddress);
+
+        _networkService.StartClient(normalizedAddress);
+    }
+
+    private bool TryNormalizeKcpAddress(string address, out string normalizedAddress)
+    {
+        normalizedAddress = "";
+
+        if (string.IsNullOrWhiteSpace(address))
+        {
+            return false;
+        }
+
+        address = address.Trim();
+
+        if (!address.Contains("://"))
+        {
+            address = "kcp://" + address;
+        }
+
+        if (!Uri.TryCreate(address, UriKind.Absolute, out Uri uri))
+        {
+            return false;
+        }
+
+        if (!string.Equals(uri.Scheme, "kcp", StringComparison.OrdinalIgnoreCase) || string.IsNullOrWhiteSpace(uri.Host))
+        {
+            return false;
+        }
+
+        if (uri.AbsolutePath != "/" || !string.IsNullOrEmpty(uri.Query) || !string.IsNullOrEmpty(uri.Fragment))
+        {
+            return false;
+        }
+
+        int port = uri.Port > 0 ? uri.Port : _networkService.LocalKcpPort;
+
+        if (port <= 0 || port > ushort.MaxValue)
+        {
+            return false;
+        }
+
+        UriBuilder builder = new UriBuilder("kcp", uri.Host, port);
+
+        normalizedAddress = builder.Uri.AbsoluteUri;
+
+        return true;
     }
 
     public void StartGame()
@@ -149,7 +265,7 @@ public class EOSMirrorLobbyService : INetworkLobbyService
 
     public void LeaveLobby()
     {
-        if (_eosLobby != null && _eosLobby.ConnectedToLobby)
+        if (!_isLocalSession && _eosLobby != null && _eosLobby.ConnectedToLobby)
         {
             _eosLobby.LeaveLobby();
         }
@@ -173,7 +289,7 @@ public class EOSMirrorLobbyService : INetworkLobbyService
         {
             _connectedPlayers = _networkManager.GetConnectedPlayerCount();
 
-            SetStatus("Sala criada. Aguardando jogadores...");
+            SetStatus(_isLocalSession ? "Servidor KCP iniciado. Aguardando jogadores..." : "Sala EOS criada. Aguardando jogadores...");
 
             _networkManager.BroadcastLobbyPlayerCount();
         }
@@ -182,7 +298,7 @@ public class EOSMirrorLobbyService : INetworkLobbyService
             SetStatus("Conectado à sala. Aguardando o host...");
         }
 
-        Debug.Log("[Lobby] Conexão Mirror estabelecida. Host: " + _isHost);
+        Debug.Log("[Lobby] Mirror conectado. Modo: " + (_isLocalSession ? "KCP" : "EOS"));
     }
 
     public void HandleMirrorDisconnected()
@@ -192,7 +308,7 @@ public class EOSMirrorLobbyService : INetworkLobbyService
             return;
         }
 
-        if (_eosLobby != null && _eosLobby.ConnectedToLobby)
+        if (!_isLocalSession && _eosLobby != null && _eosLobby.ConnectedToLobby)
         {
             _eosLobby.LeaveLobby();
         }
@@ -233,7 +349,7 @@ public class EOSMirrorLobbyService : INetworkLobbyService
         GameStarted?.Invoke();
     }
 
-    private bool CanBeginOperation()
+    private bool CanBeginOperation(bool requiresEOS)
     {
         if (IsBusy || _isConnected || NetworkClient.active || NetworkServer.active)
         {
@@ -241,16 +357,19 @@ public class EOSMirrorLobbyService : INetworkLobbyService
             return false;
         }
 
-        if (!_networkService.IsInitialized)
+        if (requiresEOS)
         {
-            SetStatus("Epic Online Services ainda não está inicializado.");
-            return false;
-        }
+            if (!_networkService.IsInitialized)
+            {
+                SetStatus("Epic Online Services ainda não está inicializado.");
+                return false;
+            }
 
-        if (_eosLobby == null)
-        {
-            SetStatus("EOSLobby não está configurado.");
-            return false;
+            if (_eosLobby == null)
+            {
+                SetStatus("EOSLobby não está configurado.");
+                return false;
+            }
         }
 
         return true;
@@ -310,7 +429,7 @@ public class EOSMirrorLobbyService : INetworkLobbyService
 
         SetStatus("Verificando salas públicas disponíveis...");
 
-        Debug.LogWarning("[Lobby] Busca por código sem resultados. Iniciando pesquisa diagnóstica sem filtro personalizado.");
+        Debug.LogWarning("[Lobby] Pesquisa por código sem resultados. Procurando salas públicas.");
 
         _eosLobby.FindLobbies(DiagnosticSearchLimit);
     }
@@ -319,7 +438,7 @@ public class EOSMirrorLobbyService : INetworkLobbyService
     {
         int resultCount = lobbies != null ? lobbies.Count : 0;
 
-        Debug.Log("[Lobby] Pesquisa EOS concluída. Resultados: " + resultCount + " | Operação: " + _operation + " | Busca alternativa: " + _fallbackSearchActive);
+        Debug.Log("[Lobby] Pesquisa EOS concluída. Resultados: " + resultCount + " | Operação: " + _operation);
 
         if (_operation == LobbyOperation.CreatingCode)
         {
@@ -354,15 +473,11 @@ public class EOSMirrorLobbyService : INetworkLobbyService
 
         if (matchingLobby != null)
         {
-            Debug.Log("[Lobby] Sala encontrada na pesquisa alternativa: " + _pendingCode);
-
             JoinEOSLobby(matchingLobby);
             return;
         }
 
         Fail("Nenhuma sala encontrada com esse código.");
-
-        Debug.LogWarning("[Lobby] A sala não foi encontrada nas duas pesquisas. Confira o Product User ID, Deployment ID e se o host permanece conectado.");
     }
 
     private LobbyDetails FindMatchingLobby(List<LobbyDetails> lobbies, string expectedCode)
@@ -372,8 +487,6 @@ public class EOSMirrorLobbyService : INetworkLobbyService
             return null;
         }
 
-        int loggedLobbies = 0;
-
         foreach (LobbyDetails details in lobbies)
         {
             if (details == null)
@@ -381,18 +494,7 @@ public class EOSMirrorLobbyService : INetworkLobbyService
                 continue;
             }
 
-            string foundCode = "";
-
-            bool hasRoomCode = TryGetRoomCode(details, out foundCode);
-
-            if (loggedLobbies < 10)
-            {
-                Debug.Log("[Lobby] Sala pública encontrada. Código: " + (hasRoomCode ? foundCode : "(atributo ausente)") + " | Lobby ID: " + GetEOSLobbyId(details));
-
-                loggedLobbies++;
-            }
-
-            if (hasRoomCode && string.Equals(foundCode, expectedCode, StringComparison.OrdinalIgnoreCase))
+            if (TryGetRoomCode(details, out string foundCode) && string.Equals(foundCode, expectedCode, StringComparison.OrdinalIgnoreCase))
             {
                 return details;
             }
@@ -434,30 +536,11 @@ public class EOSMirrorLobbyService : INetworkLobbyService
         return !string.IsNullOrWhiteSpace(code);
     }
 
-    private string GetEOSLobbyId(LobbyDetails details)
-    {
-        if (details == null)
-        {
-            return "";
-        }
-
-        LobbyDetailsCopyInfoOptions options = new LobbyDetailsCopyInfoOptions();
-
-        Result result = details.CopyInfo(ref options, out LobbyDetailsInfo? info);
-
-        if (result != Result.Success || !info.HasValue)
-        {
-            return "";
-        }
-
-        return info.Value.LobbyId.ToString();
-    }
-
     private void CreateEOSLobby()
     {
         _operation = LobbyOperation.CreatingLobby;
 
-        SetStatus("Criando sala...");
+        SetStatus("Criando sala EOS...");
 
         AttributeData[] attributes = new AttributeData[]
         {
@@ -485,11 +568,6 @@ public class EOSMirrorLobbyService : INetworkLobbyService
 
         _hostProductUserId = info.Value.LobbyOwnerUserId.ToString();
 
-        Debug.Log("[Lobby] Código encontrado: " + _pendingCode);
-        Debug.Log("[Lobby] EOS Lobby ID: " + info.Value.LobbyId);
-        Debug.Log("[Lobby] Host Product User ID: " + _hostProductUserId);
-        Debug.Log("[Lobby] Client Product User ID: " + _networkService.LocalProductUserId);
-
         if (_hostProductUserId == _networkService.LocalProductUserId)
         {
             Fail("O host e o cliente possuem o mesmo Product User ID do EOS.");
@@ -499,7 +577,7 @@ public class EOSMirrorLobbyService : INetworkLobbyService
         _fallbackSearchActive = false;
         _operation = LobbyOperation.JoiningLobby;
 
-        SetStatus("Entrando na sala...");
+        SetStatus("Entrando na sala EOS...");
 
         _eosLobby.JoinLobby(details);
     }
@@ -511,6 +589,7 @@ public class EOSMirrorLobbyService : INetworkLobbyService
             return;
         }
 
+        _isLocalSession = false;
         _lobbyCode = _pendingCode;
         _hostProductUserId = _networkService.LocalProductUserId;
         _isHost = true;
@@ -518,34 +597,9 @@ public class EOSMirrorLobbyService : INetworkLobbyService
 
         _networkManager.maxConnections = DefaultMaxPlayers;
 
-        Debug.Log("[Lobby] Sala EOS criada com sucesso.");
-        Debug.Log("[Lobby] Código criado: " + _lobbyCode);
-        Debug.Log("[Lobby] Host Product User ID: " + _hostProductUserId);
+        Debug.Log("[Lobby] Sala EOS criada: " + _lobbyCode);
 
-        if (_eosLobby.ConnectedLobbyDetails != null)
-        {
-            string publishedCode;
-
-            bool hasPublishedCode = TryGetRoomCode(_eosLobby.ConnectedLobbyDetails, out publishedCode);
-
-            Debug.Log("[Lobby] EOS Lobby ID criado: " + GetEOSLobbyId(_eosLobby.ConnectedLobbyDetails));
-
-            if (hasPublishedCode)
-            {
-                Debug.Log("[Lobby] Código publicado no EOS: " + publishedCode);
-
-                if (publishedCode != _lobbyCode)
-                {
-                    Debug.LogWarning("[Lobby] O código publicado é diferente do código exibido na interface.");
-                }
-            }
-            else
-            {
-                Debug.LogWarning("[Lobby] Não foi possível confirmar o atributo id_jogo no lobby criado.");
-            }
-        }
-
-        SetStatus("Iniciando servidor Mirror...");
+        SetStatus("Iniciando servidor EOS...");
 
         _networkService.StartHost();
     }
@@ -567,10 +621,11 @@ public class EOSMirrorLobbyService : INetworkLobbyService
             return;
         }
 
+        _isLocalSession = false;
         _lobbyCode = _pendingCode;
         _operation = LobbyOperation.ConnectingClient;
 
-        SetStatus("Conectando ao servidor...");
+        SetStatus("Conectando ao servidor EOS...");
 
         _networkService.StartClient(_hostProductUserId);
     }
@@ -611,6 +666,7 @@ public class EOSMirrorLobbyService : INetworkLobbyService
 
         _isConnected = false;
         _isHost = false;
+        _isLocalSession = false;
         _gameStarted = false;
         _fallbackSearchActive = false;
 
@@ -627,7 +683,6 @@ public class EOSMirrorLobbyService : INetworkLobbyService
     private void SetStatus(string message)
     {
         _status = message;
-
         LobbyChanged?.Invoke();
     }
 }

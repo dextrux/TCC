@@ -24,7 +24,7 @@ public class LobbyController : ILobbyController
 
         _lobbyView = GameObject.Instantiate(lobbyView, viewParent);
 
-        _lobbyView.SetUp(LoadZooScene, CreateLobby, JoinLobby, StartGame, LeaveLobby);
+        _lobbyView.SetUp(LoadZooScene, CreateLobby, JoinLobby, StartGame, LeaveLobby, CreateLocalHost, JoinLocalHost);
 
         _networkLobbyService.LobbyChanged += RefreshLobbyView;
         _networkLobbyService.GameStarted += HandleGameStarted;
@@ -60,6 +60,26 @@ public class LobbyController : ILobbyController
         }
 
         _networkLobbyService.JoinLobby(code);
+    }
+
+    private void CreateLocalHost()
+    {
+        if (_transitioning)
+        {
+            return;
+        }
+
+        _networkLobbyService.CreateLocalHost();
+    }
+
+    private void JoinLocalHost(string address)
+    {
+        if (_transitioning)
+        {
+            return;
+        }
+
+        _networkLobbyService.JoinLocalHost(address);
     }
 
     private void StartGame()
@@ -101,7 +121,7 @@ public class LobbyController : ILobbyController
             return;
         }
 
-        _lobbyView.Refresh(_networkLobbyService.IsBusy, _networkLobbyService.IsConnected, _networkLobbyService.IsHost, _networkLobbyService.ConnectedPlayers, _networkLobbyService.MaxPlayers, _networkLobbyService.LobbyCode, _networkLobbyService.Status);
+        _lobbyView.Refresh(_networkLobbyService.IsBusy, _networkLobbyService.IsConnected, _networkLobbyService.IsHost, _networkLobbyService.ConnectedPlayers, _networkLobbyService.MaxPlayers, _networkLobbyService.LobbyCode, _networkLobbyService.Status, _networkLobbyService.IsLocalSession);
     }
 
     private void SwitchToGameplay(string sceneToLoad, NetworkSessionMode sessionMode, string hostProductUserId)
@@ -114,7 +134,6 @@ public class LobbyController : ILobbyController
         _transitioning = true;
 
         _inputManager.DisableUIInput();
-
         _lobbyView.gameObject.SetActive(false);
 
         GamePlayInitatorEnterData enterData = new GamePlayInitatorEnterData(sceneToLoad, sessionMode, hostProductUserId);

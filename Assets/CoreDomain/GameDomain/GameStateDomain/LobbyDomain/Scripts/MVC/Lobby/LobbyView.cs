@@ -15,6 +15,9 @@ public class LobbyView : MonoBehaviour
     [SerializeField] private Button _GYMClientButton;
     [SerializeField] private Button _GYMServerButton;
 
+    [Header("Connection Mode")]
+    [SerializeField] private Toggle _useLocalKcpToggle;
+
     [Header("Lobby Input")]
     [SerializeField] private TMP_InputField _hostProductUserIdInputField;
 
@@ -33,24 +36,30 @@ public class LobbyView : MonoBehaviour
     private Action<string> _onGYMClientClick;
     private Action _onStartGameClick;
     private Action _onLeaveLobbyClick;
+    private Action _onKcpHostClick;
+    private Action<string> _onKcpClientClick;
 
     private string _currentLobbyCode = "";
 
     private bool _showLobbyPanel;
     private bool _wasConnected;
 
+    private bool UseLocalKcp => _useLocalKcpToggle != null && _useLocalKcpToggle.isOn;
+
     private void Awake()
     {
         SetLobbyPanelVisible(false);
     }
 
-    public void SetUp(Action onZooClick, Action onGYMHostClick, Action<string> onGYMClientClick, Action onStartGameClick, Action onLeaveLobbyClick)
+    public void SetUp(Action onZooClick, Action onGYMHostClick, Action<string> onGYMClientClick, Action onStartGameClick, Action onLeaveLobbyClick, Action onKcpHostClick, Action<string> onKcpClientClick)
     {
         _onZooClick = onZooClick;
         _onGYMHostClick = onGYMHostClick;
         _onGYMClientClick = onGYMClientClick;
         _onStartGameClick = onStartGameClick;
         _onLeaveLobbyClick = onLeaveLobbyClick;
+        _onKcpHostClick = onKcpHostClick;
+        _onKcpClientClick = onKcpClientClick;
 
         _zooButton.onClick.AddListener(OnZooClick);
         _GYMServerButton.onClick.AddListener(OnGYMServerClick);
@@ -72,7 +81,7 @@ public class LobbyView : MonoBehaviour
         }
     }
 
-    public void Refresh(bool isBusy, bool isConnected, bool isHost, int connectedPlayers, int maxPlayers, string lobbyCode, string status)
+    public void Refresh(bool isBusy, bool isConnected, bool isHost, int connectedPlayers, int maxPlayers, string lobbyCode, string status, bool isLocalSession)
     {
         _currentLobbyCode = lobbyCode;
 
@@ -91,6 +100,11 @@ public class LobbyView : MonoBehaviour
         _zooButton.interactable = canSelectMode;
         _GYMServerButton.interactable = canSelectMode;
         _GYMClientButton.interactable = canSelectMode;
+
+        if (_useLocalKcpToggle != null)
+        {
+            _useLocalKcpToggle.interactable = canSelectMode;
+        }
 
         if (_hostProductUserIdInputField != null)
         {
@@ -121,7 +135,18 @@ public class LobbyView : MonoBehaviour
 
         if (_lobbyCodeText != null)
         {
-            _lobbyCodeText.text = string.IsNullOrEmpty(lobbyCode) ? "Código: ------" : "Código: " + lobbyCode;
+            if (string.IsNullOrEmpty(lobbyCode))
+            {
+                _lobbyCodeText.text = "Aguardando sala...";
+            }
+            else if (isLocalSession)
+            {
+                _lobbyCodeText.text = "Endereço KCP: " + lobbyCode;
+            }
+            else
+            {
+                _lobbyCodeText.text = "Código: " + lobbyCode;
+            }
         }
 
         if (_playersText != null)
@@ -189,22 +214,29 @@ public class LobbyView : MonoBehaviour
 
         SetLobbyPanelVisible(true);
 
-        _onGYMHostClick?.Invoke();
+        if (UseLocalKcp)
+        {
+            _onKcpHostClick?.Invoke();
+        }
+        else
+        {
+            _onGYMHostClick?.Invoke();
+        }
     }
 
     private void OnGYMClientClick()
     {
         if (_hostProductUserIdInputField == null)
         {
-            Debug.LogError("Lobby code input field is not assigned.");
+            Debug.LogError("Connection input field is not assigned.");
             return;
         }
 
-        string lobbyCode = _hostProductUserIdInputField.text.Trim().ToUpperInvariant();
+        string address = _hostProductUserIdInputField.text.Trim();
 
-        if (string.IsNullOrEmpty(lobbyCode))
+        if (string.IsNullOrWhiteSpace(address))
         {
-            Debug.LogWarning("Lobby code is empty.");
+            Debug.LogWarning("Connection address is empty.");
             return;
         }
 
@@ -212,7 +244,14 @@ public class LobbyView : MonoBehaviour
 
         SetLobbyPanelVisible(true);
 
-        _onGYMClientClick?.Invoke(lobbyCode);
+        if (UseLocalKcp)
+        {
+            _onKcpClientClick?.Invoke(address);
+        }
+        else
+        {
+            _onGYMClientClick?.Invoke(address.ToUpperInvariant());
+        }
     }
 
     private void OnStartGameClick()
