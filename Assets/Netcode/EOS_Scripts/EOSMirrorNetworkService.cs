@@ -124,4 +124,9 @@ public class EOSMirrorNetworkService : INetworkService
             _networkManager.StopServer();
         }
     }
+
+    public void NotifyGameplayReady()
+    {
+        _networkManager.NotifyGameplayReady();
+    }
 }

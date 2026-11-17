@@ -10,8 +10,10 @@ namespace CoreDomain.Scripts.Services.NetworkService
         bool IsInitialized { get; }
 
         Awaitable WaitUntilInitialized(CancellationTokenSource cancellationTokenSource);
+
         void StartHost();
         void StartClient(string hostProductUserId);
         void Disconnect();
+        void NotifyGameplayReady();
     }
 }

@@ -1,4 +1,7 @@
-public interface ILobbyController
+
+using System;
+
+public interface ILobbyController : IDisposable
 {
     
 }
