@@ -16,6 +16,9 @@ public class NetworkInstaller : MonoInstaller
         Container.Bind<INetworkSoundService>().To<EOSMirrorSoundService>().AsSingle().NonLazy();
         Container.Bind<INetworkInventoryService>().To<EOSMirrorInventoryService>().AsSingle().NonLazy();
 
+        //qualquer coisa apagar z
+        Container.Bind<INetworkQuickTimeEventService>().To<EOSMirrorQuickTimeEventService>().AsSingle().NonLazy();
+
         Container.QueueForInject(_networkManager);
     }
 }
