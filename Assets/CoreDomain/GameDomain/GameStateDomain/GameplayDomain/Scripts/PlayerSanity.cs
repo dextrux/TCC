@@ -25,17 +25,20 @@ public class PlayerSanity : MonoBehaviour
 
         if (currentLight != null)
         {
-            float regeneration = currentLight.GetRegenerationRate(transform.position);
+            var regeneration = currentLight.GetRegenerationRate(transform.position);
 
-            ChangeSanity(regeneration * Time.deltaTime);
+            IncreaseSanity(ref regeneration);
         }
         else
         {
-            ChangeSanity(-decreaseRate * Time.deltaTime);
+            DecreaseSanity();
         }
 
         CheckSanityState();
     }
+
+    public void DecreaseSanity() => ChangeSanity(-decreaseRate * Time.deltaTime);
+    private void IncreaseSanity(ref float regeneration) => ChangeSanity(regeneration * Time.deltaTime);
 
     private void FindClosestLight()
     {
