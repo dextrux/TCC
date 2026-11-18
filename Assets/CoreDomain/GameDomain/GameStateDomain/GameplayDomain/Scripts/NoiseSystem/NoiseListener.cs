@@ -1,16 +1,19 @@
 
+using System;
 using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.NoiseSystem.Datas;
 using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.NoiseSystem.Interfaces;
 using UnityEngine;
 
 namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.NoiseSystem
 {
-    public class NoiseListener : MonoBehaviour, INoiseListener
+    public class NoiseListener : MonoBehaviour, ICompetingNoiseListener
     {
 #region Settings Variables
         [Header("Noise Settings")]
         [SerializeField] private float hearingRadius = 10f;
         [SerializeField, Range(0, 1)] private float minPerceivedIntensity;
+        [Tooltip("Se varios ouvintes que competem ouvirem o mesmo ruido, so o mais proximo reage (inimigos)")]
+        [SerializeField] private bool competeForNoise;
 #endregion Settings Variables
 
 #region Debug Variables
@@ -25,6 +28,18 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.NoiseSyst
         public Transform Transform => transform;
         public float HearingRadius => hearingRadius;
         public float MinPerceivedIntensity => minPerceivedIntensity;
+        public bool CompetesForNoise => competeForNoise;
+
+        // Disparado quando ESTE ouvinte deve reagir ao ruido
+        public event Action<NoiseSignal, float> NoiseHeard;
+
+        private Func<Vector3, float> _responseCostProvider;
+
+        // O dono (ex.: inimigo) pode trocar o custo padrao (distancia reta) por distancia na NavMesh
+        public void SetResponseCostProvider(Func<Vector3, float> provider) => _responseCostProvider = provider;
+
+        public float GetResponseCost(Vector3 noisePosition)
+            => _responseCostProvider?.Invoke(noisePosition) ?? Vector3.Distance(transform.position, noisePosition);
 #endregion INoiseListener Implementation
 
 #region Variables
@@ -43,35 +58,27 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.NoiseSyst
 
             _noiseManager = noiseManager;
 
-            if (isActiveAndEnabled && _noiseManager != null)
-            {
-                _noiseManager.RegisterListener(this);
-            }
+            if (!isActiveAndEnabled || _noiseManager == null) return;
+            
+            _noiseManager.RegisterListener(this);
         }
 
         public void Release()
         {
-            if (_noiseManager != null)
-            {
-                _noiseManager.UnregisterListener(this);
-                _noiseManager = null;
-            }
+            if (_noiseManager == null) return;
+            
+            _noiseManager.UnregisterListener(this);
+            _noiseManager = null;
         }
 
         private void OnEnable()
         {
-            if (_noiseManager != null)
-            {
-                _noiseManager.RegisterListener(this);
-            }
+            _noiseManager?.RegisterListener(this);
         }
 
         private void OnDisable()
         {
-            if (_noiseManager != null)
-            {
-                _noiseManager.UnregisterListener(this);
-            }
+            _noiseManager?.UnregisterListener(this);
         }
 
         private void OnDestroy()
@@ -96,18 +103,20 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.NoiseSyst
 
             Debug.Log($"Noise Listener - {name}\nRuido escutado em {_lastPosition} | Intensidade do ruido: {_lastPerceivedIntensity}");
 
-            if (_lastPerceivedIntensity >= 0.9f)
+            switch (_lastPerceivedIntensity)
             {
-                Debug.Log("BARULHO MUITO ALTO.");
+                case >= 0.9f:
+                    Debug.Log("BARULHO MUITO ALTO.");
+                    break;
+                case >= 0.4f:
+                    Debug.Log("BARULHO ALTO.");
+                    break;
+                case < 0.4f:
+                    Debug.Log("BARULHO BAIXO.");
+                    break;
             }
-            else if (_lastPerceivedIntensity >= 0.4f)
-            {
-                Debug.Log("BARULHO ALTO.");
-            }
-            else if (_lastPerceivedIntensity < 0.4f)
-            {
-                Debug.Log("BARULHO BAIXO.");
-            }
+
+            NoiseHeard?.Invoke(noiseSignal, perceivedIntensity);
         }
 
 #region ReactionType

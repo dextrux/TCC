@@ -2,6 +2,7 @@ using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.Initiator;
 using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.InventorySystem.Interface;
 using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.InventorySystem.ScriptableObject;
 using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.InventorySystem.Services;
+using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Enemy.Services;
 using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Object.Services;
 using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.NoiseSystem.Datas;
 using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.NoiseSystem.Interfaces;
@@ -28,17 +29,18 @@ public class GameplayInstaller : MonoInstaller
         Container.Bind<IGamePlayInitiator>().To<GamePlayInitiator>().AsSingle().NonLazy();
         Container.Bind<NoiseDecaySettings>().FromInstance(noiseDecaySettings).AsSingle();
         Container.Bind<INoiseManager>().To<NoiseManager>().AsSingle();
-        
         Container.BindInstance(_inventoryConfiguration).AsSingle();
         Container.BindInstance(_itemCatalogSo).AsSingle();
         Container.Bind<IInventoryManager>().To<InventoryManager>().AsSingle();
-        Container.BindInterfacesTo<InventoryActionManager>().AsSingle();
         Container.Bind<ObjectFactory>().AsSingle();
+        Container.Bind<EnemyFactory>().AsSingle();
     }
 
     private void BindControllers()
     {
         Container.BindInterfacesTo<LevelScenarioController>().AsSingle().NonLazy();
         Container.BindInterfacesTo<WorldObjectSpawner>().AsSingle();
+        Container.BindInterfacesTo<WorldEnemySpawner>().AsSingle();
+        Container.BindInterfacesTo<InventoryActionManager>().AsSingle();
     }
 }

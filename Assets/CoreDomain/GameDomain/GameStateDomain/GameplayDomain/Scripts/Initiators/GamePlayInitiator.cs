@@ -15,6 +15,7 @@ using CoreDomain.Scripts.Services.SceneService;
 using CoreDomain.Scripts.Utils;
 using System;
 using System.Threading;
+using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Enemy.Interface;
 using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Object.Interface;
 using CoreDomain.Scripts.Services.NetworkServices;
 using Mirror;
@@ -35,10 +36,11 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.Initiator
         private readonly INoiseManager _noiseManager;
         private readonly ILevelScenarioController _levelScenarioController;
         private readonly IWorldObjectSpawner _worldObjectSpawner;
+        private readonly IWorldEnemySpawner _worldEnemySpawner;
 
         public ScenesType SceneType => ScenesType.GamePlayScene;
 
-        public GamePlayInitiator(ICommandFactory commandFactory, ISceneInitiatorsService sceneInitiatorsService, INetworkPlayerCameraController networkPlayerCameraController, INetworkSoundService networkSoundService, IAudioManager audioManager, INoiseManager noiseManager, ILevelScenarioController levelScenarioController, INetworkInventoryService networkInventoryService, IInventoryManager inventoryManager, IWorldObjectSpawner worldObjectSpawner, IInventoryActionManager inventoryActionManager)
+        public GamePlayInitiator(ICommandFactory commandFactory, ISceneInitiatorsService sceneInitiatorsService, INetworkPlayerCameraController networkPlayerCameraController, INetworkSoundService networkSoundService, IAudioManager audioManager, INoiseManager noiseManager, ILevelScenarioController levelScenarioController, INetworkInventoryService networkInventoryService, IInventoryManager inventoryManager, IWorldObjectSpawner worldObjectSpawner, IInventoryActionManager inventoryActionManager, IWorldEnemySpawner worldEnemySpawner)
         {
             _commandFactory = commandFactory;
             _sceneInitiatorsService = sceneInitiatorsService;
@@ -50,6 +52,7 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.Initiator
             _networkInventoryService = networkInventoryService;
             _inventoryManager = inventoryManager;
             _worldObjectSpawner = worldObjectSpawner;
+            _worldEnemySpawner = worldEnemySpawner;
             _inventoryActionManager = inventoryActionManager;
             _sceneInitiatorsService.RegisterInitiator(this);
         }
@@ -80,19 +83,15 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.Initiator
             //Somente Offline e Host processam a percepcao de ruido pela IA.
             if (enterData.SessionMode == NetworkSessionMode.Offline || enterData.SessionMode == NetworkSessionMode.Host)
             {
-                _levelScenarioController.CurrentLevelView.Setup(_noiseManager);
-            }
-
-            if (enterData.SessionMode == NetworkSessionMode.Host)
-            {
-                Debug.Log($"[Initiator] StartSpawning | mode={enterData.SessionMode} | serverActive={Mirror.NetworkServer.active}");
                 _worldObjectSpawner.StartSpawning();
+                _worldEnemySpawner.StartSpawning();
+                //_levelScenarioController.CurrentLevelView.Setup(_noiseManager);
             }
         }
 
         public async Awaitable InitExitPoint(CancellationTokenSource cancellationTokenSource)
         {
-            _levelScenarioController.CurrentLevelView.Release();
+            //_levelScenarioController.CurrentLevelView.Release();
 
             _networkSoundService.Configure(false, null, null);
 
