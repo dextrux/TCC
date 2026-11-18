@@ -120,6 +120,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: GameplayAssembly::CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.InventorySystem.Hand.InventorySelectionInput
   playerHandView: {fileID: 586391003152760491}
   hotKeyCount: 3
+  useKey: 101
 --- !u!114 &660655162880320453
 MonoBehaviour:
   m_ObjectHideFlags: 0

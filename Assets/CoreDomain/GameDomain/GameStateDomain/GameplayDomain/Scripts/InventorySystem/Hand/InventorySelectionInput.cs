@@ -14,6 +14,7 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.Inventory
     {
         [SerializeField] private PlayerHandView playerHandView;
         [SerializeField] private int hotKeyCount = 3;
+        [SerializeField] private KeyCode useKey = KeyCode.E;
 
         private INetworkInventoryService _networkInventoryService;
         
@@ -39,6 +40,12 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.Inventory
             // Offline: nao ha NetworkClient. Online: so o player local.
             var canControl = !NetworkClient.active || playerHandView.isLocalPlayer;
             if (!canControl) return;
+
+            if (Input.GetKeyDown(useKey))
+            {
+                _networkInventoryService.RequestUseSelected();
+                return;
+            }
 
             for (var i = 0; i < hotKeyCount; i++)
             {

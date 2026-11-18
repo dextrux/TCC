@@ -68,10 +68,12 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.Initiator
 
             _networkSoundService.Configure(offline, PlayAudio, ReportNoise);
             // Inventario: o servico de rede nao conhece o IInventoryManager, entao a ligacao eh feita aqui
-            _networkInventoryService.Configure(offline, SelectSlot, ScrollSlot, RemoveInventory, OnThrowRequested);
+            _networkInventoryService.Configure(offline, SelectSlot, ScrollSlot, RemoveInventory, OnThrowRequested, OnUseRequested);
             _inventoryManager.InventoryChanged += OnInventoryChanged;
             var id = NetworkConnection.LocalConnectionId;
-            _inventoryManager.TryAddItem(id, -172376213, 1, 1);
+            _inventoryManager.TryAddItem(id, 1422698970, 1, 1); //TOCHA
+            _inventoryManager.TryAddItem(id, -520986800, 100, 999); //PEDERNEIRA   
+            _inventoryManager.TryAddItem(id, -172376213, 1, 1); //ITEM TESTE
 
             await _commandFactory.CreateCommandAsync<StartGamePlayStateCommand>().SetEnterData(enterData).Execute(cancellationTokenSource);
 
@@ -95,7 +97,7 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.Initiator
             _networkSoundService.Configure(false, null, null);
 
             _inventoryManager.InventoryChanged -= OnInventoryChanged;
-            _networkInventoryService.Configure(false, null, null, null, null);
+            _networkInventoryService.Configure(false, null, null, null, null, null);
 
             _sceneInitiatorsService.UnregisterInitiator(this);
             _commandFactory.CreateCommandVoid<ExitGamePlayStateCommand>().Execute();
@@ -139,18 +141,28 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.Initiator
 
         private void RemoveInventory(int connectionId)
         {
+            _inventoryActionManager.TryUseSelected(connectionId, out bool active);
             _inventoryManager.Remove(connectionId);
         }
 
         private void OnInventoryChanged(int connectionId, PlayerInventory inventory)
         {
             var stack = inventory.SelectedStack;
-            _networkInventoryService.NotifyHeldItemChanged(connectionId, stack.IsEmpty() ? 0 : stack.ItemId);
+            var heldItemId = stack.IsEmpty() ? 0 : stack.ItemId;
+            
+            _inventoryActionManager.OnHeldItemChanged(connectionId, heldItemId);
+            _networkInventoryService.NotifyHeldItemChanged(connectionId, heldItemId);
         }
 
         private void OnThrowRequested(int connectionId, Vector3 origem, Vector3 aimPoint)
         {
             _inventoryActionManager.TryThrowSelected(connectionId, origem, aimPoint);
+        }
+
+        private void OnUseRequested(int connectionId)
+        {
+            if(_inventoryActionManager.TryUseSelected(connectionId, out bool active))
+                _networkInventoryService.NotifyHeldItemActiveChanged(connectionId, active);
         }
     }
 }

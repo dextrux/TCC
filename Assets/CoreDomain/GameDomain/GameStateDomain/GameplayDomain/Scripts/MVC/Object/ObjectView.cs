@@ -1,6 +1,7 @@
 using System;
 using Mirror;
 using UnityEngine;
+using IHeldItemActivatable = CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.InventorySystem.Interface.IHeldItemActivatable;
 
 namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Object
 {
@@ -20,9 +21,12 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Objec
 
         //Quando cliente pedir para interagir
         public event Action<int> InteractRequested;
+        public event Action DeactivateRequested;
         
         private Rigidbody _rigidbody;
         private MeshCollider _meshCollider;
+        
+        private IHeldItemActivatable[] _activatables;
         
         public Vector3 Position => _rigidbody.position;
 
@@ -33,7 +37,8 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Objec
             animator = GetComponent<Animator>();
             _rigidbody.isKinematic = true;
             _meshCollider.convex = true;
-
+            
+            _activatables = GetComponentsInChildren<IHeldItemActivatable>(true);
         }
 
         public override void OnStartClient()
@@ -77,12 +82,15 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Objec
         {
             if(!isServer) return;
             _isOpen = open;
+            ApplyOpen(open);
         }
         
         private void ApplyOpen(bool open)
         {
-            if(animator.runtimeAnimatorController == null) return;
-            animator.SetBool(OpenHash, open);
+            if (animator != null) animator.SetBool(OpenHash, open);
+
+            if (_activatables == null) return;
+            foreach (var activatable in _activatables) activatable.SetActive(open);
         }
 
         [Command(requiresAuthority = false)]
@@ -91,5 +99,8 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Objec
             if (sender == null) return;
             InteractRequested?.Invoke(sender.connectionId);
         }
+        
+        [Server]
+        public void RequestDeactivate() => DeactivateRequested?.Invoke();
     }
 }

@@ -21,6 +21,7 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Objec
 
         private bool _isSetup;
         private bool _isCollected;
+        private bool _pendingDispose;
 
         public event Action<Vector3, float> OnImpact;
         public event Action<string> OnActionPerfom;
@@ -42,6 +43,7 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Objec
             _isSetup = true;
 
             _view.InteractRequested += OnInteract;
+            _view.DeactivateRequested += OnDeactivateRequested;
 
             if (_view.TryGetComponent<ObjectSoundEmitter>(out var objectSoundEmitter))
                 OnImpact += (_, impactSpeed) => objectSoundEmitter.EmitImpact(impactSpeed);
@@ -62,6 +64,13 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Objec
 
             _view.Teleport(origin);
             _model.Throw(direction.normalized * _configuration.ThrowForce);
+        }
+
+        private void OnDeactivateRequested()
+        {
+            if (_model.IsOpen) _model.ToggleOpen();
+            _view.SetOpen(false);
+            OnActionPerfom?.Invoke(_configuration.DeactivateAction);
         }
 
         public void OnInteract(int connectionId)
@@ -125,25 +134,38 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Objec
             Dispose();
         }
 
-        private void HandleImpact()
+        private void HandleImpact(RaycastHit raycastHit)
         {
             var impactSpeed = _model.Velocity.magnitude;
 
             _model.Stop();
             OnImpact?.Invoke(_view.Position, impactSpeed);
+            
+            if(!_configuration.DeactivatesOnImpact) return;
+            
+            var target = raycastHit.collider.GetComponentInParent<ObjectView>();
+            if(target != null && target != _view)
+                target.RequestDeactivate();
+
+            _pendingDispose = true;
         }
 
         public void ManagedFixedUpdate()
         {
+            if (_pendingDispose)
+            {
+                Dispose();
+                return;
+            }
             if (!_model.IsThrown) return;
 
             var deltaTime = Time.fixedDeltaTime;
 
             _model.ApplyGravity(_configuration.Gravity, deltaTime);
 
-            if (_view.TryMove(_model.Velocity * deltaTime, out _)) return;
+            if (_view.TryMove(_model.Velocity * deltaTime, out var raycastHit)) return;
 
-            HandleImpact();
+            HandleImpact(raycastHit);
         }
 
         public void Dispose()
@@ -152,6 +174,7 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Objec
             _isSetup = false;
 
             _view.InteractRequested -= OnInteract;
+            _view.DeactivateRequested -= OnDeactivateRequested;
             _updateSubscriptionService.UnregisterFixedUpdatable(this);
 
             if (_view != null && NetworkServer.active)
