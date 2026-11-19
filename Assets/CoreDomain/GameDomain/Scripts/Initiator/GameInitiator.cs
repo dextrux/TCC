@@ -1,3 +1,4 @@
+
 using System.Threading;
 using CoreDomain.GameDomain.Scripts.Inputs;
 using CoreDomain.GameDomain.Scripts.States.LobbyState;
@@ -10,8 +11,10 @@ using CoreDomain.Scripts.Services.StateMachineService;
 using CoreDomain.Scripts.Utils;
 using UnityEngine;
 
-namespace CoreDomain.GameDomain.Scripts.GameInitiator {
-    public class GameInitiator : ISceneInitiator, IGameInitiator {
+namespace CoreDomain.GameDomain.Scripts.GameInitiator
+{
+    public class GameInitiator : ISceneInitiator, IGameInitiator
+    {
         private readonly IStateMachineService _stateMachine;
         private readonly ILoadingScreenController _loadingScreenController;
         private readonly LobbyState.Factory _lobbyStateFactory;
@@ -20,32 +23,39 @@ namespace CoreDomain.GameDomain.Scripts.GameInitiator {
 
         public ScenesType SceneType => ScenesType.GameScene;
 
-        public GameInitiator(IStateMachineService stateMachine, LobbyState.Factory LobbyStateFactory,
-            ILoadingScreenController loadingScreenController, ISceneInitiatorsService sceneInitiatorsService,
-            IInputManager inputManager) {
+        public GameInitiator(IStateMachineService stateMachine, LobbyState.Factory lobbyStateFactory, ILoadingScreenController loadingScreenController, ISceneInitiatorsService sceneInitiatorsService, IInputManager inputManager)
+        {
             _stateMachine = stateMachine;
-            _lobbyStateFactory = LobbyStateFactory;
+            _lobbyStateFactory = lobbyStateFactory;
             _loadingScreenController = loadingScreenController;
             _sceneInitiatorsService = sceneInitiatorsService;
-            _sceneInitiatorsService.RegisterInitiator(this);
             _inputManager = inputManager;
+
+            _sceneInitiatorsService.RegisterInitiator(this);
         }
 
-        public async Awaitable LoadEntryPoint(IInitiatorEnterData enterDataObject, CancellationTokenSource cancellationTokenSource) {
+        public async Awaitable LoadEntryPoint(IInitiatorEnterData enterDataObject, CancellationTokenSource cancellationTokenSource)
+        {
             var enterData = (GameInitiatorEnterData)enterDataObject;
+
             _ = _loadingScreenController.SetLoadingSlider(0.5f, cancellationTokenSource);
-            //To-Do colocar um load real assincono do level
-            //await _levelsDataService.LoadLevelsData(cancellationTokenSource);
+
             _inputManager.Setup();
+
+            _inputManager.EnableUIInput();
+
             await _stateMachine.EnterInitialGameState(_lobbyStateFactory.Create(new LobbyInitiatorEnterData()), cancellationTokenSource);
         }
 
-        public Awaitable StartEntryPoint(IInitiatorEnterData enterDataObject, CancellationTokenSource cancellationTokenSource) {
+        public Awaitable StartEntryPoint(IInitiatorEnterData enterDataObject, CancellationTokenSource cancellationTokenSource)
+        {
             return AwaitableUtils.CompletedTask;
         }
 
-        public Awaitable InitExitPoint(CancellationTokenSource cancellationTokenSource) {
+        public Awaitable InitExitPoint(CancellationTokenSource cancellationTokenSource)
+        {
             _sceneInitiatorsService.UnregisterInitiator(this);
+
             return AwaitableUtils.CompletedTask;
         }
     }

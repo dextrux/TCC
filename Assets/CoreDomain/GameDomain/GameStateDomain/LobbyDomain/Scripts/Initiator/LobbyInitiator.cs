@@ -1,3 +1,4 @@
+
 using System.Threading;
 using CoreDomain.GameDomain.GameStateDomain.LobbyDomain.Scripts.Commands.EntryPoint;
 using CoreDomain.GameDomain.Scripts.States.LobbyState;
@@ -14,31 +15,40 @@ namespace CoreDomain.GameDomain.GameStateDomain.LobbyDomain.Scripts.Initiator {
         private readonly ICommandFactory _commandFactory;
         private readonly ISceneInitiatorsService _sceneInitiatorsService;
         private readonly IInputManager _inputManager;
+        private readonly ILobbyController _lobbyController;
+
         public ScenesType SceneType => ScenesType.LobbyScene;
 
-
-        public LobbyInitiator(ICommandFactory commandFactory, ISceneInitiatorsService sceneInitiatorsService,
-            IInputManager inputManager) {
+        public LobbyInitiator(ICommandFactory commandFactory, ISceneInitiatorsService sceneInitiatorsService, IInputManager inputManager, ILobbyController lobbyController) {
             _sceneInitiatorsService = sceneInitiatorsService;
             _commandFactory = commandFactory;
-            _sceneInitiatorsService.RegisterInitiator(this);
             _inputManager = inputManager;
+            _lobbyController = lobbyController;
+
+            _sceneInitiatorsService.RegisterInitiator(this);
         }
 
         public async Awaitable LoadEntryPoint(IInitiatorEnterData enterDataObject, CancellationTokenSource cancellationTokenSource) {
             var enterData = (LobbyInitiatorEnterData)enterDataObject;
+
             await _commandFactory.CreateCommandAsync<EnterLobbyStateCommand>().SetEnterData().Execute(cancellationTokenSource);
         }
 
         public Awaitable StartEntryPoint(IInitiatorEnterData enterDataObject, CancellationTokenSource cancellationTokenSource) {
             _inputManager.EnableUIInput();
+
             return AwaitableUtils.CompletedTask;
         }
 
         public Awaitable InitExitPoint(CancellationTokenSource cancellationTokenSource) {
             _inputManager.DisableUIInput();
+
+            _lobbyController.Dispose();
+
             _sceneInitiatorsService.UnregisterInitiator(this);
+
             _commandFactory.CreateCommandVoid<ExitLobbyStateCommand>().Execute();
+
             return AwaitableUtils.CompletedTask;
         }
     }

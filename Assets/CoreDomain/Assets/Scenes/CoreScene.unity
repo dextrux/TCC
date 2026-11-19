@@ -1013,6 +1013,7 @@ GameObject:
   - component: {fileID: 1783357825}
   - component: {fileID: 1783357830}
   - component: {fileID: 1783357829}
+  - component: {fileID: 1783357831}
   m_Layer: 0
   m_Name: Network_MirrorEOS
   m_TagString: Untagged
@@ -1048,6 +1049,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: NetworkAssembly::NetworkInstaller
   _networkManager: {fileID: 1783357828}
+  _eosLobby: {fileID: 1783357831}
 --- !u!114 &1783357826
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1121,7 +1123,7 @@ MonoBehaviour:
   onlineScene: 
   offlineSceneLoadDelay: 0
   playerPrefab: {fileID: 948410552570829733, guid: 5c3353d97b8e09744b572e86a1602dc5, type: 3}
-  autoCreatePlayer: 1
+  autoCreatePlayer: 0
   playerSpawnMethod: 1
   spawnPrefabs: []
   snapshotSettings:
@@ -1182,6 +1184,18 @@ MonoBehaviour:
   debugLog: 0
   statisticsGUI: 0
   statisticsLog: 0
+--- !u!114 &1783357831
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1783357823}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3ac2fd2a90bc7394ea1a232ea22d173f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Mirror.Transports::EOSLobby
 --- !u!1 &1847172464
 GameObject:
   m_ObjectHideFlags: 0
