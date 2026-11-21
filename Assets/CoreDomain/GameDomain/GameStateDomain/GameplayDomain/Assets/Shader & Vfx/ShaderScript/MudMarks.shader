@@ -78,11 +78,15 @@ Shader "Custom/MudMarks"
             float  _MudOpacity;
 
             // preenchido pelo script:
-            // _ContactPoints: xyz = posicao LOCAL (espaco do objeto) do contato, w = tempo (Time.timeSinceLevelLoad == _Time.y)
+            // _ContactPoints: xyz = posicao LOCAL (espaco do objeto) do contato, w = tempo (mesmo relogio de _MudTime)
             // _ContactParams: x = forca da marca (0..1)
             float4 _ContactPoints[MAX_CONTACTS];
             float4 _ContactParams[MAX_CONTACTS];
             float  _ContactCount; // float de proposito: MaterialPropertyBlock.SetFloat e o caminho mais confiavel
+
+            // relogio global enviado pelo MudSurface (mesmo relogio usado ao gravar as marcas).
+            // Nao coloque no bloco Properties.
+            float  _MudTime;
 
             Varyings vert(Attributes IN)
             {
@@ -109,7 +113,7 @@ Shader "Custom/MudMarks"
                 float downMask = lerp(1.0, downFacing, _DownwardBias);
 
                 float mudAccum = 0.0;
-                float now = _Time.y;
+                float now = _MudTime;
                 int count = (int)_ContactCount;
 
                 for (int i = 0; i < MAX_CONTACTS; i++)

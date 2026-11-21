@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: M_Character_material
+  m_Name: Mud_Character_material
   m_Shader: {fileID: 4800000, guid: dc8c69e22f10d074fbda697fb9b33beb, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -29,10 +29,10 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _DownwardBias: 0.5
+    - _DownwardBias: 0.6
     - _EdgeSoftness: 0.5
     - _LightInfluence: 0.9
-    - _MudDecayTime: 25
+    - _MudDecayTime: 6
     - _MudFadeCurve: 1.6
     - _MudOpacity: 1
     - _MudRadius: 0.35

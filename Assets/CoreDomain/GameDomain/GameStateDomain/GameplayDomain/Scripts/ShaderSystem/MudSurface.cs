@@ -20,6 +20,17 @@ public class MudSurface : MonoBehaviour
     private static readonly int ContactCountId  = Shader.PropertyToID("_ContactCount");
     private static readonly int MudOpacityId    = Shader.PropertyToID("_MudOpacity");
 
+    private static readonly int MudTimeId = Shader.PropertyToID("_MudTime");
+    private static int lastTimeFrame = -1;
+
+    // manda o relogio pro shader 1x por frame (o shader compara com o tempo gravado em cada marca)
+    void Update()
+    {
+        if (lastTimeFrame == Time.frameCount) return;
+        lastTimeFrame = Time.frameCount;
+        Shader.SetGlobalFloat(MudTimeId, Time.time);
+    }
+
     void Awake()
     {
         renderers = GetComponentsInChildren<Renderer>();
@@ -41,8 +52,7 @@ public class MudSurface : MonoBehaviour
         }
 
         Vector3 local = transform.InverseTransformPoint(worldPos);
-        // Time.timeSinceLevelLoad e o mesmo relogio do _Time.y do shader
-        points[count] = new Vector4(local.x, local.y, local.z, Time.timeSinceLevelLoad);
+        points[count] = new Vector4(local.x, local.y, local.z, Time.time);
         parms[count]  = new Vector4(Mathf.Clamp01(strength), 0f, 0f, 0f);
         count++;
 

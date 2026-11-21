@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: M_Puddle_material
+  m_Name: Mud_Puddle_material
   m_Shader: {fileID: 4800000, guid: 367b8a921c6e6b84b8d7c1318fb14e08, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
