@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9eb8f842877d4c33b85b5f3ae6b708dc, type: 3}
-  m_Name: SO_Object_Teste
+  m_Name: SO_Object_Mudball
   m_EditorClassIdentifier: GameplayAssembly::CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Object.ScriptableObject.ObjectConfigurationSo
-  objectName: Teste
+  objectName: Mudball
   itemId: -172376213
   objectType: 2
   maxStackSize: 1
@@ -21,7 +21,6 @@ MonoBehaviour:
   throwHeight: 1.6
   canBeActivated: 0
   deactivatesOnImpact: 1
-  deactivateObject: {fileID: 0}
   activateAction: 
   deactivateAction: 
   requiredItemToActivate: {fileID: 0}

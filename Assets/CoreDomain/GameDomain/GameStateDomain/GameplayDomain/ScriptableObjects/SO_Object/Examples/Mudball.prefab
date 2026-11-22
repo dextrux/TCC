@@ -18,7 +18,7 @@ GameObject:
   - component: {fileID: 3248138102211220963}
   - component: {fileID: 7293178175927086281}
   m_Layer: 0
-  m_Name: Sphere
+  m_Name: Mudball
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
