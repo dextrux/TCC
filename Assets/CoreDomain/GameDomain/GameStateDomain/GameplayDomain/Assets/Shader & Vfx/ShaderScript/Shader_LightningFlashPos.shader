@@ -1,17 +1,11 @@
 Shader "Hidden/LightningFlashPost"
 {
+
     Properties
     {
         [Header(Cor do Flash)]
         _FlashColor ("Cor do Flash", Color) = (0.9, 0.93, 1.0, 1)
         _FlashIntensity ("Intensidade Maxima do Flash (0-1)", Range(0, 1)) = 0.35
-
-        [Header(Timing)]
-        _StrikeInterval ("Intervalo Medio Entre Raios (segundos)", Range(0.2, 30)) = 6
-        _IntervalRandom ("Variacao Aleatoria do Intervalo (0-1)", Range(0, 1)) = 0.6
-        _FlashDuration  ("Duracao de Cada Flash (segundos)", Range(0.05, 1)) = 0.25
-        _DoubleFlashChance ("Chance de Flash Duplo (0-1)", Range(0, 1)) = 0.3
-        _Seed ("Seed (mesmo valor do material do Raio)", Float) = 0
 
         [Header(Sincronia com a Descida do Raio)]
         _StrikeDelay ("Atraso Antes do Flash (segundos)", Range(0, 1)) = 0.025
@@ -39,17 +33,20 @@ Shader "Hidden/LightningFlashPost"
 
             TEXTURE2D_X(_BlitTexture);
 
+            // do material deste pos-processamento
             float4 _FlashColor;
             float  _FlashIntensity;
-
-            float  _StrikeInterval;
-            float  _IntervalRandom;
-            float  _FlashDuration;
-            float  _DoubleFlashChance;
-            float  _Seed;
-
             float  _StrikeDelay;
             float  _FlashSoftness;
+
+            // GLOBAIS, preenchidas pelo LightningFlashGate (copiadas do material do relampago).
+            // Nao coloque estas no bloco Properties, senao o material sobrescreve o valor global.
+            float  _LightningActive;
+            float  _LightningStrikeInterval;
+            float  _LightningIntervalRandom;
+            float  _LightningFlashDuration;
+            float  _LightningDoubleFlashChance;
+            float  _LightningSeed;
 
             struct Attributes
             {
@@ -77,33 +74,36 @@ Shader "Hidden/LightningFlashPost"
 
             float strikeEnvelope(float time)
             {
-                float baseSeed = _Seed * 133.7;
+                float interval = max(_LightningStrikeInterval, 0.01);
+                float duration = max(_LightningFlashDuration, 0.001);
 
-                float cycleIndex = floor(time / _StrikeInterval);
-                float localTime = time - cycleIndex * _StrikeInterval;
+                float baseSeed = _LightningSeed * 133.7;
+
+                float cycleIndex = floor(time / interval);
+                float localTime = time - cycleIndex * interval;
 
                 float strikeSeed = baseSeed + cycleIndex * 9.173;
 
-                float jitter = hash11(strikeSeed + 1.0) * _IntervalRandom * (_StrikeInterval * 0.6);
+                float jitter = hash11(strikeSeed + 1.0) * _LightningIntervalRandom * (interval * 0.6);
                 float flashStart = jitter + _StrikeDelay;
 
                 float env1 = 0.0;
                 float t1 = localTime - flashStart;
-                if (t1 >= 0.0 && t1 < _FlashDuration)
+                if (t1 >= 0.0 && t1 < duration)
                 {
-                    float t = t1 / max(_FlashDuration, 0.001);
+                    float t = t1 / duration;
                     env1 = pow(1.0 - t, 2.0 * _FlashSoftness);
                 }
 
                 float env2 = 0.0;
                 float doubleRoll = hash11(strikeSeed + 50.0);
-                if (doubleRoll < _DoubleFlashChance)
+                if (doubleRoll < _LightningDoubleFlashChance)
                 {
-                    float secondStart = flashStart + _FlashDuration * 1.6;
+                    float secondStart = flashStart + duration * 1.6;
                     float t2 = localTime - secondStart;
-                    if (t2 >= 0.0 && t2 < _FlashDuration * 0.7)
+                    if (t2 >= 0.0 && t2 < duration * 0.7)
                     {
-                        float tn = t2 / max(_FlashDuration * 0.7, 0.001);
+                        float tn = t2 / (duration * 0.7);
                         env2 = pow(1.0 - tn, 2.0 * _FlashSoftness) * 0.8;
                     }
                 }
@@ -115,6 +115,10 @@ Shader "Hidden/LightningFlashPost"
             {
                 float2 uv = IN.texcoord;
                 half4 sceneColor = SAMPLE_TEXTURE2D_X(_BlitTexture, sampler_LinearClamp, uv);
+
+                // sem relampago ativo na cena: devolve a imagem como esta
+                if (_LightningActive < 0.5)
+                    return sceneColor;
 
                 float envelope = strikeEnvelope(_Time.y);
                 float amount = envelope * _FlashIntensity;

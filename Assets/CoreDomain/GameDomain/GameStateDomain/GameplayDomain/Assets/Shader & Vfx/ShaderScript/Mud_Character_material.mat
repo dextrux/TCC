@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: VFX_MudMarks_mat
-  m_Shader: {fileID: 4800000, guid: 2eaf0029997278a48bf542b038328bc4, type: 3}
+  m_Name: Mud_Character_material
+  m_Shader: {fileID: 4800000, guid: dc8c69e22f10d074fbda697fb9b33beb, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -24,7 +24,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 57f1d14500332a34786bd96f49845c39, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
@@ -32,9 +32,10 @@ Material:
     - _DownwardBias: 0.6
     - _EdgeSoftness: 0.5
     - _LightInfluence: 0.9
-    - _MudDecayTime: 25
+    - _MudDecayTime: 6
     - _MudFadeCurve: 1.6
-    - _MudRadius: 0.18
+    - _MudOpacity: 1
+    - _MudRadius: 0.35
     - _MudRoughness: 0.9
     - _NoiseScale: 12
     m_Colors:
