@@ -1,12 +1,14 @@
+
 using System.Threading;
 using CoreDomain.GameDomain.Scripts.States.GamePlayState;
 using CoreDomain.Scripts.Services.AudioService;
 using CoreDomain.Scripts.Services.CommandFactory;
 using CoreDomain.Scripts.Services.Logger.Base;
 using CoreDomain.Scripts.Services.NetworkService;
+using Mirror;
 using UnityEngine;
 
-namespace CoreDomain.GameDomain.GameStateDomain.GamePlayDomain.Scripts.Commands {
+namespace CoreDomain.GameDomain.GameStateDomain.GamePlayDomain.Scripts.Commands{
     public class StartGamePlayStateCommand : BaseCommand, ICommandAsync {
         private ICommandFactory _commandFactory;
         private IAudioService _audioService;
@@ -29,20 +31,30 @@ namespace CoreDomain.GameDomain.GameStateDomain.GamePlayDomain.Scripts.Commands 
             //_gameInputActionsController.EnableInputs();
             await _commandFactory.CreateCommandAsync<StartLevelCommand>().SetEnterData(_enterData).Execute(cancellationTokenSource);
 
-            if (_enterData.SessionMode == NetworkSessionMode.Offline) {
+            if (_enterData.SessionMode == NetworkSessionMode.Offline)
+ {
+                return;
+            }
+
+            if (NetworkServer.active || NetworkClient.active)
+ {
+                LogService.Log("Mirror session already active. Reusing existing connection.");
                 return;
             }
 
             await _networkService.WaitUntilInitialized(cancellationTokenSource);
 
-            switch (_enterData.SessionMode) {
-                case NetworkSessionMode.Host: {
+            switch (_enterData.SessionMode)
+ {
+                case NetworkSessionMode.Host:
+     {
                     CopyHostProductUserIdToClipboard();
                     _networkService.StartHost();
                     break;
                 }
 
-                case NetworkSessionMode.Client: {
+                case NetworkSessionMode.Client:
+     {
                     _networkService.StartClient(_enterData.HostProductUserId);
                     break;
                 }
@@ -52,7 +64,8 @@ namespace CoreDomain.GameDomain.GameStateDomain.GamePlayDomain.Scripts.Commands 
         private void CopyHostProductUserIdToClipboard() {
             string hostProductUserId = _networkService.LocalProductUserId;
 
-            if (string.IsNullOrWhiteSpace(hostProductUserId)) {
+            if (string.IsNullOrWhiteSpace(hostProductUserId))
+ {
                 LogService.LogWarning("Host Product User ID is empty and could not be copied to clipboard.");
                 return;
             }
