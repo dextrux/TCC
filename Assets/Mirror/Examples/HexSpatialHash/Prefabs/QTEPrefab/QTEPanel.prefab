@@ -47,6 +47,7 @@ GameObject:
   - component: {fileID: 6037545587515100684}
   - component: {fileID: 6201856792316992216}
   - component: {fileID: 6048110819192909857}
+  - component: {fileID: 4617179666196714890}
   m_Layer: 5
   m_Name: QTEPanel
   m_TagString: Untagged
@@ -113,6 +114,22 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &4617179666196714890
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3213369479929697466}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 920902aec90957b46875b8e30ffb8efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: GameplayAssembly::QuickTimeEventUI
+  qtePanel: {fileID: 3213369479929697466}
+  qteText: {fileID: 1435347390738697977}
+  timerSlider: {fileID: 2112009869744478141}
+  resultDisplayTime: 2
 --- !u!1 &3540858485748242414
 GameObject:
   m_ObjectHideFlags: 0
@@ -178,7 +195,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: W
+  m_text: FALHOU!
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -486,7 +503,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 1
   m_WholeNumbers: 0
-  m_Value: 1
+  m_Value: 0
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
