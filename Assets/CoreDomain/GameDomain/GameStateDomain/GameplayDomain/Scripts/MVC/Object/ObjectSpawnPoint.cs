@@ -19,10 +19,18 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Objec
         private void OnDrawGizmos()
         {
             if (!showGizmos) return;
-            if (!configuration.Prefab.TryGetComponent<MeshFilter>(out var filter) || filter.sharedMesh == null) return;
+
+            if (configuration == null || configuration.Prefab == null) return;
+            var filter = configuration.Prefab.GetComponentInChildren<MeshFilter>(true);
+            if (filter == null || filter.sharedMesh == null) return;
             
-            Gizmos.color = color;
-            Gizmos.DrawMesh(filter.sharedMesh, transform.position, transform.rotation);
+            // Respeita o offset e a escala do filho que tem a mesh
+            var child = filter.transform;
+            Gizmos.DrawMesh(
+                filter.sharedMesh,
+                transform.TransformPoint(child.localPosition),
+                transform.rotation * child.localRotation,
+                child.localScale);
         }
     }
 }

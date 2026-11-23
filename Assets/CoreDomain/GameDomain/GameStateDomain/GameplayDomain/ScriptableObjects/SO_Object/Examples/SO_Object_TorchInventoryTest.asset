@@ -20,11 +20,12 @@ MonoBehaviour:
   throwForce: 10
   throwHeight: 1.6
   canBeActivated: 1
+  deactivatesOnImpact: 0
   activateAction: 
   deactivateAction: 
   requiredItemToActivate: {fileID: 11400000, guid: e0f25f508e0775f48ad3af5c44208833, type: 2}
   requiredHeldItem: {fileID: 0}
   blockedAction: 
-  prefab: {fileID: 7972993341750917467, guid: 88997829402a95a4aa630392373b64c0, type: 3}
+  prefab: {fileID: 1242232976876601523, guid: c69d2675b997da94b9e63dacdf246aa1, type: 3}
   icon: {fileID: 21300000, guid: 4b66f21097323d44ab40669b2fb9c53d, type: 3}
-  heldPrefab: {fileID: 7123269728430021914, guid: 88997829402a95a4aa630392373b64c0, type: 3}
+  heldPrefab: {fileID: 4761637131549221298, guid: c69d2675b997da94b9e63dacdf246aa1, type: 3}
