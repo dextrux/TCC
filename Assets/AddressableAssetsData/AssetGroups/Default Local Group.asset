@@ -20,6 +20,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8c60c94d4126c7445909614f44083989
+    m_Address: Level2Scene
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: a840190de62e55b4c909d26b3023aea7
     m_Address: ZooScene
     m_ReadOnly: 0

@@ -111,7 +111,7 @@ public class LobbyController : ILobbyController
 
         NetworkSessionMode mode = _networkLobbyService.IsHost ? NetworkSessionMode.Host : NetworkSessionMode.Client;
 
-        SwitchToGameplay("GYMScene", mode, _networkLobbyService.HostProductUserId);
+        SwitchToGameplay("Level2Scene", mode, _networkLobbyService.HostProductUserId);
     }
 
     private void RefreshLobbyView()
