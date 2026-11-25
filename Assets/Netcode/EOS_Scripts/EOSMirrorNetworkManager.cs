@@ -21,6 +21,7 @@ public class EOSMirrorNetworkManager : NetworkManager
     private readonly HashSet<NetworkConnectionToClient> _pendingPlayers = new HashSet<NetworkConnectionToClient>();
 
     private INetworkQuickTimeEventService _networkQuickTimeEventService;
+
     [Inject]
     public void Construct(INetworkSoundService networkSoundService, INetworkInventoryService networkInventoryService, LazyInject<EOSMirrorLobbyService> lobbyService, DiContainer container)
     {
@@ -29,6 +30,7 @@ public class EOSMirrorNetworkManager : NetworkManager
         _lobbyService = lobbyService;
         _container = container;
     }
+
     [Inject]
     public void Construct(
         INetworkSoundService networkSoundService,
@@ -41,6 +43,7 @@ public class EOSMirrorNetworkManager : NetworkManager
         _networkQuickTimeEventService = networkQuickTimeEventService;
         _container = container;
     }
+
     public override void OnStartServer()
     {
         base.OnStartServer();
@@ -116,9 +119,29 @@ public class EOSMirrorNetworkManager : NetworkManager
         base.OnStopClient();
     }
 
+    /*public override void OnServerConnect(NetworkConnectionToClient connection)
+    {
+        base.OnServerConnect(connection);
+
+        BroadcastLobbyPlayerCount();
+
+        Z esteve aqui
+    }
+    */
+
     public override void OnServerConnect(NetworkConnectionToClient connection)
     {
         base.OnServerConnect(connection);
+
+        /*LogService.LogTopic(
+            "Jogador conectado. Connection ID: " + connection.connectionId,
+            LogTopicType.GameState
+        );*/
+
+        LogService.LogTopic(
+            "<color=#FF00FF>JOGADOR CONECTADO!</color> Connection ID: " + connection.connectionId,
+            LogTopicType.GameState
+        );
 
         BroadcastLobbyPlayerCount();
     }
@@ -138,8 +161,24 @@ public class EOSMirrorNetworkManager : NetworkManager
         LogService.Log("Mirror client connected.");
     }
 
+    /*{
+        _lobbyService?.Value.HandleMirrorDisconnected();
+
+        base.OnClientDisconnect();
+    }*/
+
     public override void OnClientDisconnect()
     {
+        /*LogService.LogTopic(
+            "Cliente desconectado do servidor.",
+            LogTopicType.GameState
+        );*/
+
+        LogService.LogTopic(
+            "<color=#FF00FF>CLIENTE DESCONECTADO DO SERVIDOR!</color>",
+            LogTopicType.GameState
+        );
+
         _lobbyService?.Value.HandleMirrorDisconnected();
 
         base.OnClientDisconnect();
@@ -327,13 +366,30 @@ public class EOSMirrorNetworkManager : NetworkManager
         _lobbyService?.Value.HandleGameStarted();
     }
 
-    public override void OnServerDisconnect(NetworkConnectionToClient connection)
+    /*public override void OnServerDisconnect(NetworkConnectionToClient connection)
     {
         _pendingPlayers.Remove(connection);
 
         _networkInventoryService?.RemovePlayer(connection.connectionId);
 
         LogService.Log("Player disconnected. Connection ID: " + connection.connectionId);
+
+        base.OnServerDisconnect(connection);
+
+        BroadcastLobbyPlayerCount(connection);
+    }
+    */
+
+    public override void OnServerDisconnect(NetworkConnectionToClient connection)
+    {
+        _pendingPlayers.Remove(connection);
+
+        _networkInventoryService?.RemovePlayer(connection.connectionId);
+
+        LogService.LogTopic(
+            "<color=#FF00FF>JOGADOR DESCONECTADO!</color> Connection ID: " + connection.connectionId,
+            LogTopicType.GameState
+        );
 
         base.OnServerDisconnect(connection);
 
