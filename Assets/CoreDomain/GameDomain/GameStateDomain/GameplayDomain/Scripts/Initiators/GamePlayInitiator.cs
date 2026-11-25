@@ -1,12 +1,11 @@
-
-using CoreDomain.GameDomain.GameStateDomain.GamePlayDomain.Scripts.Commands.EntryPoint;
+using System.Threading;
 using CoreDomain.GameDomain.GameStateDomain.GamePlayDomain.Scripts.Commands;
-using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.InventorySystem.Data;
-using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.InventorySystem.Interface;
-using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.NoiseSystem.Datas;
+using CoreDomain.GameDomain.GameStateDomain.GamePlayDomain.Scripts.Commands.EntryPoint;
+using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.GameplayNetwork;
+using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.Initiator;
+using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Enemy.Interface;
+using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Object.Interface;
 using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.NoiseSystem.Interfaces;
-using CoreDomain.GameDomain.Scripts.AudioSystem.Datas;
-using CoreDomain.GameDomain.Scripts.AudioSystem.Interfaces;
 using CoreDomain.GameDomain.Scripts.States.GamePlayState;
 using CoreDomain.Scripts.CoreInitiator.Base;
 using CoreDomain.Scripts.Services.CommandFactory;
@@ -14,56 +13,46 @@ using CoreDomain.Scripts.Services.InitiatorInvokerService;
 using CoreDomain.Scripts.Services.NetworkService;
 using CoreDomain.Scripts.Services.SceneService;
 using CoreDomain.Scripts.Utils;
-using System;
-using System.Threading;
-using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Enemy.Interface;
-using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Object.Interface;
-using CoreDomain.Scripts.Services.NetworkServices;
-using Mirror;
 using UnityEngine;
 
-namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.Initiator
+namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.Initiators
 {
+    /// <summary>
+    /// Orquestra o fluxo de entrada e saida da gameplay. Os detalhes de ligacao com a rede
+    /// (som e inventario) ficam no GameplayNetworkBridge.
+    /// </summary>
     public class GamePlayInitiator : ISceneInitiator, IGamePlayInitiator
     {
         private readonly ICommandFactory _commandFactory;
         private readonly ISceneInitiatorsService _sceneInitiatorsService;
-        private readonly INetworkPlayerCameraController _networkPlayerCameraController;
-        private readonly INetworkSoundService _networkSoundService;
-        private readonly INetworkInventoryService _networkInventoryService;
-        private readonly IInventoryManager _inventoryManager;
-        private readonly IInventoryActionManager _inventoryActionManager;
-        private readonly IAudioManager _audioManager;
+        private readonly IGameplayNetworkBridge _gameplayNetworkBridge;
+        private readonly INetworkService _networkService;
         private readonly INoiseManager _noiseManager;
         private readonly ILevelScenarioController _levelScenarioController;
         private readonly IWorldObjectSpawner _worldObjectSpawner;
-        private readonly INetworkService _networkService;
         private readonly IWorldEnemySpawner _worldEnemySpawner;
 
         public ScenesType SceneType => ScenesType.GamePlayScene;
 
-        public GamePlayInitiator(ICommandFactory commandFactory, ISceneInitiatorsService sceneInitiatorsService, INetworkPlayerCameraController networkPlayerCameraController, INetworkSoundService networkSoundService, IAudioManager audioManager, INoiseManager noiseManager, ILevelScenarioController levelScenarioController, INetworkInventoryService networkInventoryService, IInventoryManager inventoryManager, IWorldObjectSpawner worldObjectSpawner, IInventoryActionManager inventoryActionManager, IWorldEnemySpawner worldEnemySpawner, INetworkService networkService)
+        public GamePlayInitiator(ICommandFactory commandFactory, ISceneInitiatorsService sceneInitiatorsService,
+            IGameplayNetworkBridge gameplayNetworkBridge,
+            INetworkService networkService,INoiseManager noiseManager, ILevelScenarioController levelScenarioController,
+            IWorldObjectSpawner worldObjectSpawner, IWorldEnemySpawner worldEnemySpawner)
         {
             _commandFactory = commandFactory;
             _sceneInitiatorsService = sceneInitiatorsService;
-            _networkPlayerCameraController = networkPlayerCameraController;
-            _networkSoundService = networkSoundService;
-            _audioManager = audioManager;
+            _gameplayNetworkBridge = gameplayNetworkBridge;
+            _networkService =  networkService;
             _noiseManager = noiseManager;
             _levelScenarioController = levelScenarioController;
-            _networkInventoryService = networkInventoryService;
-            _inventoryManager = inventoryManager;
             _worldObjectSpawner = worldObjectSpawner;
-            _networkService = networkService;
             _worldEnemySpawner = worldEnemySpawner;
-            _inventoryActionManager = inventoryActionManager;
             _sceneInitiatorsService.RegisterInitiator(this);
         }
 
         public async Awaitable LoadEntryPoint(IInitiatorEnterData enterDataObject, CancellationTokenSource cancellationTokenSource)
         {
             GamePlayInitatorEnterData enterData = (GamePlayInitatorEnterData)enterDataObject;
-
             await _commandFactory.CreateCommandAsync<LoadGamePlayStateCommand>().SetEnterData(enterData).Execute(cancellationTokenSource);
         }
 
@@ -72,33 +61,29 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.Initiator
             var enterData = (GamePlayInitatorEnterData)enterDataObject;
 
             bool offline = enterData.SessionMode == NetworkSessionMode.Offline;
+            bool host = enterData.SessionMode == NetworkSessionMode.Host;
 
-            _networkSoundService.Configure(offline, PlayAudio, ReportNoise);
+            _gameplayNetworkBridge.Configure(offline);
 
-            // Inventario: o servico de rede nao conhece o IInventoryManager, entao a ligacao eh feita aqui
-            _networkInventoryService.Configure(offline, SelectSlot, ScrollSlot, RemoveInventory, OnThrowRequested, OnUseRequested);
-            _inventoryManager.InventoryChanged += OnInventoryChanged;
-            var id = NetworkConnection.LocalConnectionId;
-            _inventoryManager.TryAddItem(id, 1422698970, 1, 1); //TOCHA
-            _inventoryManager.TryAddItem(id, -520986800, 100, 999); //PEDERNEIRA   
-            _inventoryManager.TryAddItem(id, -172376213, 1, 1); //ITEM TESTE
+            await _commandFactory
+                .CreateCommandAsync<StartGamePlayStateCommand>()
+                .SetEnterData(enterData)
+                .Execute(cancellationTokenSource);
 
-            await _commandFactory.CreateCommandAsync<StartGamePlayStateCommand>().SetEnterData(enterData).Execute(cancellationTokenSource);
+            // Somente Offline e Host processam a percepção de ruído pela IA.
+            if (offline || host)
+            {
+                _levelScenarioController.CurrentLevelView.Setup(_noiseManager);
+            }
 
-            // Somente Offline e Host processam a percepcao de ruido pela IA.
-            if (enterData.SessionMode == NetworkSessionMode.Offline || enterData.SessionMode == NetworkSessionMode.Host) {
+            // Somente o Host cria objetos e inimigos.
+            if (host)
+            {
                 _worldObjectSpawner.StartSpawning();
                 _worldEnemySpawner.StartSpawning();
-                //_levelScenarioController.CurrentLevelView.Setup(_noiseManager);
             }
-
-            if (enterData.SessionMode == NetworkSessionMode.Host)
-            {
-                Debug.Log($"[Initiator] StartSpawning | mode={enterData.SessionMode} | serverActive={Mirror.NetworkServer.active}");
-
-            }
-
-            if (enterData.SessionMode != NetworkSessionMode.Offline)
+            
+            if (!offline)
             {
                 _networkService.NotifyGameplayReady();
             }
@@ -106,79 +91,13 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.Initiator
 
         public async Awaitable InitExitPoint(CancellationTokenSource cancellationTokenSource)
         {
-            //_levelScenarioController.CurrentLevelView.Release();
+            _levelScenarioController.CurrentLevelView.Release();
 
-            _networkSoundService.Configure(false, null, null);
-
-            _inventoryManager.InventoryChanged -= OnInventoryChanged;
-            _networkInventoryService.Configure(false, null, null, null, null, null);
+            _gameplayNetworkBridge.Release();
 
             _sceneInitiatorsService.UnregisterInitiator(this);
             _commandFactory.CreateCommandVoid<ExitGamePlayStateCommand>().Execute();
-
             await AwaitableUtils.CompletedTask;
-        }
-
-        private void PlayAudio(int soundId, Vector3 position, float volumeMultiplier)
-        {
-            if (!Enum.IsDefined(typeof(AudioEventId), soundId))
-            {
-                Debug.LogWarning("[GamePlayInitiator] Unknown AudioEventId.");
-                return;
-            }
-
-            AudioEventId audioId = (AudioEventId)soundId;
-
-            if (audioId == AudioEventId.None)
-            {
-                return;
-            }
-
-            var signal = new AudioSignal(audioId, position, null, volumeMultiplier);
-            _audioManager.ReportSignal(signal);
-        }
-
-        private void ReportNoise(Vector3 position, float loudness, GameObject source)
-        {
-            var signal = new NoiseSignal(position, loudness, source);
-            _noiseManager.ReportSignal(signal);
-        }
-
-        private void SelectSlot(int connectionId, int index)
-        {
-            _inventoryManager.GetOrCreateInventory(connectionId).Selected(index);
-        }
-
-        private void ScrollSlot(int connectionId, int direction)
-        {
-            _inventoryManager.GetOrCreateInventory(connectionId).ScrollToSelected(direction);
-        }
-
-        private void RemoveInventory(int connectionId)
-        {
-            _inventoryActionManager.TryUseSelected(connectionId, out bool active);
-            _inventoryManager.Remove(connectionId);
-        }
-
-        private void OnInventoryChanged(int connectionId, PlayerInventory inventory)
-        {
-            var stack = inventory.SelectedStack;
-            var heldItemId = stack.IsEmpty() ? 0 : stack.ItemId;
-            
-            _inventoryActionManager.OnHeldItemChanged(connectionId, heldItemId);
-            _networkInventoryService.NotifyHeldItemChanged(connectionId, heldItemId);
-
-        }
-
-        private void OnThrowRequested(int connectionId, Vector3 origem, Vector3 aimPoint)
-        {
-            _inventoryActionManager.TryThrowSelected(connectionId, origem, aimPoint);
-        }
-
-        private void OnUseRequested(int connectionId)
-        {
-            if(_inventoryActionManager.TryUseSelected(connectionId, out bool active))
-                _networkInventoryService.NotifyHeldItemActiveChanged(connectionId, active);
         }
     }
 }

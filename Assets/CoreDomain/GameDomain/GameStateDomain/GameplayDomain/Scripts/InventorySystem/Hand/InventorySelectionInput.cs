@@ -35,29 +35,54 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.Inventory
 
         private void Update()
         {
-            if (_networkInventoryService == null || playerHandView == null) return;
+            if (playerHandView == null)
+                return;
 
-            // Offline: nao ha NetworkClient. Online: so o player local.
-            var canControl = !NetworkClient.active || playerHandView.isLocalPlayer;
-            if (!canControl) return;
+            if (_networkInventoryService == null)
+                return;
+
+            if (NetworkClient.active && !playerHandView.isLocalPlayer)
+            {
+                return;
+            }
+
+            Debug.Log(
+                $"[INVENTORY INPUT] Player={playerHandView.name} | " +
+                $"Local={playerHandView.isLocalPlayer} | " +
+                $"NetId={playerHandView.netId} | " +
+                $"Connected={NetworkClient.isConnected}"
+            );
 
             if (Input.GetKeyDown(useKey))
             {
+                Debug.Log("[INVENTORY INPUT] Use solicitado");
                 _networkInventoryService.RequestUseSelected();
                 return;
             }
 
             for (var i = 0; i < hotKeyCount; i++)
             {
-                if (!Input.GetKeyDown(KeyCode.Alpha1 + i)) continue;
+                if (!Input.GetKeyDown(KeyCode.Alpha1 + i))
+                    continue;
+
+                Debug.Log($"[INVENTORY INPUT] Slot solicitado: {i}");
 
                 _networkInventoryService.RequestSelectSlot(i);
                 return;
             }
 
             var scroll = Input.mouseScrollDelta.y;
-            if (scroll > 0f) _networkInventoryService.RequestScroll(-1); // scroll pra cima = slot anterior
-            else if (scroll < 0f) _networkInventoryService.RequestScroll(1); // scroll pra baixo = proximo slot
+
+            if (scroll > 0f)
+            {
+                Debug.Log("[INVENTORY INPUT] Scroll anterior");
+                _networkInventoryService.RequestScroll(-1);
+            }
+            else if (scroll < 0f)
+            {
+                Debug.Log("[INVENTORY INPUT] Scroll próximo");
+                _networkInventoryService.RequestScroll(1);
+            }
         }
         
         

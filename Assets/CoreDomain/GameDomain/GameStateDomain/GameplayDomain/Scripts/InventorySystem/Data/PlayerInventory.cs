@@ -171,5 +171,14 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.Inventory
             OnInventoryChanged?.Invoke();
             return true;
         }
+        
+        public void Restore(IReadOnlyList<ItemStack> slots, int selectedIndex)
+        {
+            for (var i = 0; i < _slots.Length; i++)
+                _slots[i] = i < slots.Count ? slots[i] : default;
+
+            SelectedIndex = Mathf.Clamp(selectedIndex, 0, _slots.Length - 1);
+            OnInventoryChanged?.Invoke();
+        }
     }
 }

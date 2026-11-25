@@ -16,6 +16,7 @@ namespace Netcode.EOS_Scripts.Services
         private Action<int> _removePlayer;
         private Action<int, Vector3, Vector3> _throw;
         private Action<int> _useSelected;
+        private Action<int> _addPlayer;
 
         private bool _offline;
         private bool _handlersRegistered;
@@ -23,7 +24,7 @@ namespace Netcode.EOS_Scripts.Services
         public event Action<int> OfflineHeldItemChanged;
         public event Action<bool> OfflineHeldItemActiveChanged;
 
-        public void Configure(bool offline, Action<int, int> selectSlot, Action<int, int> scroll, Action<int> removePlayer, Action<int, Vector3, Vector3> throwAction, Action<int> useSelected)
+        public void Configure(bool offline, Action<int, int> selectSlot, Action<int, int> scroll, Action<int> removePlayer, Action<int, Vector3, Vector3> throwAction, Action<int> useSelected, Action<int> addPlayer)
         {
             _offline = offline;
             _selectSlot = selectSlot;
@@ -31,6 +32,7 @@ namespace Netcode.EOS_Scripts.Services
             _removePlayer = removePlayer;
             _throw = throwAction;
             _useSelected =  useSelected;
+            _addPlayer = addPlayer;
         }
 
         public void SetUp()
@@ -64,6 +66,14 @@ namespace Netcode.EOS_Scripts.Services
 
         public void RequestSelectSlot(int index)
         {
+            Debug.Log(
+                $"[INV CLIENT] SelectSlot | " +
+                $"Connected={NetworkClient.isConnected} | " +
+                $"Ready={NetworkClient.ready} | " +
+                $"LocalPlayer={NetworkClient.localPlayer != null} | " +
+                $"Offline={_offline} | Index={index}"
+            );
+
             if (_offline)
             {
                 _selectSlot?.Invoke(OfflineConnectionId, index);
@@ -72,7 +82,9 @@ namespace Netcode.EOS_Scripts.Services
 
             if (!NetworkClient.isConnected) return;
 
-            NetworkClient.Send(new InventorySelectSlotMessage { Index = index });
+            NetworkClient.Send(
+                new InventorySelectSlotMessage { Index = index }
+            );
         }
 
         public void RequestScroll(int direction)
@@ -101,6 +113,8 @@ namespace Netcode.EOS_Scripts.Services
             
             NetworkClient.Send(new UseSelectedMessage());
         }
+        
+        public void AddPlayer(int connectionId) => _addPlayer?.Invoke(connectionId);
         
         public void NotifyHeldItemChanged(int connectionId, int itemId)
         {
@@ -154,9 +168,19 @@ namespace Netcode.EOS_Scripts.Services
             NetworkClient.Send(new ThrowSelectedMessage { Origin = origin, AimPoint = aimPoint });
         }
 
-        private void OnSelectSlotMessage(NetworkConnectionToClient connection, InventorySelectSlotMessage message)
+        private void OnSelectSlotMessage(
+            NetworkConnectionToClient connection,
+            InventorySelectSlotMessage message)
         {
-            if (connection == null || connection.identity == null) return;
+            Debug.Log(
+                $"[INV SERVER] SelectSlot recebido | " +
+                $"ConnectionId={connection?.connectionId} | " +
+                $"Identity={connection?.identity != null} | " +
+                $"Index={message.Index}"
+            );
+
+            if (connection == null || connection.identity == null)
+                return;
 
             _selectSlot?.Invoke(connection.connectionId, message.Index);
         }

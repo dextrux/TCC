@@ -14,8 +14,11 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Objec
         /// Quando objeto for do tipo interacao
         /// </summary>
         event Action<string> OnActionPerfom;
+        event Action Collected;
+        bool IsOpen { get; }
 
         void Setup();
+        void RestoreOpen(bool open);
         void Throw(Vector3 origin, Vector3 direction);
         void OnInteract(int connectionId);
         void Dispose();

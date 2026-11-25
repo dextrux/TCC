@@ -10,6 +10,7 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.Inventory
         /// </summary>
         event Action<int, PlayerInventory> InventoryChanged;
         PlayerInventory GetOrCreateInventory(int connectionId);
+        void GiveStartingItems(int connectionId);
         bool TryAddItem(int connectionId, int itemId, int amount, int maxStacks);
         bool Remove(int connectionId);
         bool HasItem(int connectionId, int itemId, int amount = 1);
