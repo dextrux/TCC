@@ -260,7 +260,9 @@ public class EOSMirrorLobbyService : INetworkLobbyService
 
         SetStatus("Iniciando partida...");
 
-        NetworkServer.SendToAll(new LobbyStartGameMessage());
+        // O NetworkManager registra que o jogo comecou
+        // antes de enviar a mensagem aos clientes.
+        _networkManager.StartLobbyGame();
     }
 
     public void LeaveLobby()

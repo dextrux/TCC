@@ -15,12 +15,15 @@ public class EOSMirrorNetworkManager : NetworkManager
     private DiContainer _container;
 
     private bool _serverGameplayReady;
+    private bool _serverLobbyGameStarted;
     private bool _clientGameplayReady;
     private bool _playerRequested;
+    private bool _clientStartGamePending;
 
     private readonly HashSet<NetworkConnectionToClient> _pendingPlayers = new HashSet<NetworkConnectionToClient>();
 
     private INetworkQuickTimeEventService _networkQuickTimeEventService;
+
     [Inject]
     public void Construct(INetworkSoundService networkSoundService, INetworkInventoryService networkInventoryService, LazyInject<EOSMirrorLobbyService> lobbyService, DiContainer container)
     {
@@ -29,29 +32,27 @@ public class EOSMirrorNetworkManager : NetworkManager
         _lobbyService = lobbyService;
         _container = container;
     }
+
     [Inject]
-    public void Construct(
-        INetworkSoundService networkSoundService,
-        INetworkInventoryService networkInventoryService,
-        INetworkQuickTimeEventService networkQuickTimeEventService,
-        DiContainer container)
+    public void Construct(INetworkSoundService networkSoundService, INetworkInventoryService networkInventoryService, INetworkQuickTimeEventService networkQuickTimeEventService, DiContainer container)
     {
         _networkSoundService = networkSoundService;
         _networkInventoryService = networkInventoryService;
         _networkQuickTimeEventService = networkQuickTimeEventService;
         _container = container;
     }
+
     public override void OnStartServer()
     {
         base.OnStartServer();
 
         _serverGameplayReady = false;
+        _serverLobbyGameStarted = false;
         _pendingPlayers.Clear();
 
         NetworkServer.RegisterHandler<PlayerCameraInputMessage>(OnPlayerCameraInputMessage);
         NetworkServer.RegisterHandler<PlayerMovementInputMessage>(OnPlayerMovementInputMessage);
 
-        //z
         _networkQuickTimeEventService?.SetUp();
 
         _networkSoundService?.SetUp();
@@ -63,12 +64,12 @@ public class EOSMirrorNetworkManager : NetworkManager
     public override void OnStopServer()
     {
         _serverGameplayReady = false;
+        _serverLobbyGameStarted = false;
         _pendingPlayers.Clear();
 
         _networkSoundService?.StopServer();
         _networkInventoryService?.StopServer();
 
-        //z
         _networkQuickTimeEventService?.StopServer();
 
         NetworkServer.UnregisterHandler<PlayerCameraInputMessage>();
@@ -90,6 +91,7 @@ public class EOSMirrorNetworkManager : NetworkManager
 
         _clientGameplayReady = false;
         _playerRequested = false;
+        _clientStartGamePending = false;
 
         NetworkClient.RegisterHandler<LobbyPlayerCountMessage>(OnLobbyPlayerCountMessage);
         NetworkClient.RegisterHandler<LobbyStartGameMessage>(OnLobbyStartGameMessage);
@@ -102,6 +104,7 @@ public class EOSMirrorNetworkManager : NetworkManager
     {
         _clientGameplayReady = false;
         _playerRequested = false;
+        _clientStartGamePending = false;
 
         NetworkClient.UnregisterHandler<LobbyPlayerCountMessage>();
         NetworkClient.UnregisterHandler<LobbyStartGameMessage>();
@@ -121,6 +124,29 @@ public class EOSMirrorNetworkManager : NetworkManager
         base.OnServerConnect(connection);
 
         BroadcastLobbyPlayerCount();
+
+        // Se a partida ja comecou, avisa o jogador que acabou de conectar.
+        if (_serverLobbyGameStarted && connection != null)
+        {
+            connection.Send(new LobbyStartGameMessage());
+
+            LogService.Log("Sending current game state to reconnected player: " + connection.connectionId);
+        }
+    }
+
+    public void StartLobbyGame()
+    {
+        if (!NetworkServer.active || _serverLobbyGameStarted)
+        {
+            return;
+        }
+
+        // Registra o estado antes de enviar o comando.
+        _serverLobbyGameStarted = true;
+
+        NetworkServer.SendToAll(new LobbyStartGameMessage());
+
+        LogService.Log("Lobby match started. Future connections will join the active game.");
     }
 
     public override void OnClientConnect()
@@ -132,6 +158,15 @@ public class EOSMirrorNetworkManager : NetworkManager
         _networkInventoryService?.SetUp();
 
         _lobbyService?.Value.HandleMirrorConnected();
+
+        // Trata o caso em que a mensagem de inicio chegou
+        // antes da conclusao do callback de conexao.
+        if (_clientStartGamePending && _lobbyService != null && _lobbyService.Value.IsConnected)
+        {
+            _clientStartGamePending = false;
+
+            _lobbyService.Value.HandleGameStarted();
+        }
 
         TryRequestLocalPlayer();
 
@@ -195,6 +230,7 @@ public class EOSMirrorNetworkManager : NetworkManager
         }
 
         GameObject player = Instantiate(playerPrefab, spawnPosition, spawnRotation);
+
         player.name = "NetworkPlayer_" + connection.connectionId;
 
         _container.InjectGameObject(player);
@@ -324,7 +360,17 @@ public class EOSMirrorNetworkManager : NetworkManager
 
     private void OnLobbyStartGameMessage(LobbyStartGameMessage message)
     {
-        _lobbyService?.Value.HandleGameStarted();
+        // Nao descartar a mensagem caso o lobby ainda nao
+        // tenha terminado o processo de conexao.
+        if (_lobbyService == null || !_lobbyService.Value.IsConnected)
+        {
+            _clientStartGamePending = true;
+            return;
+        }
+
+        _clientStartGamePending = false;
+
+        _lobbyService.Value.HandleGameStarted();
     }
 
     public override void OnServerDisconnect(NetworkConnectionToClient connection)
