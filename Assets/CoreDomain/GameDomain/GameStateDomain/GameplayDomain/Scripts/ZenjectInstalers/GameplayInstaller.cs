@@ -1,4 +1,6 @@
+using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.GameplayNetwork;
 using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.Initiator;
+using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.Initiators;
 using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.InventorySystem.Interface;
 using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.InventorySystem.ScriptableObject;
 using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.InventorySystem.Services;
@@ -34,7 +36,10 @@ public class GameplayInstaller : MonoInstaller
         Container.Bind<IInventoryManager>().To<InventoryManager>().AsSingle();
         Container.Bind<ObjectFactory>().AsSingle();
         Container.Bind<EnemyFactory>().AsSingle();
+        
+        Container.Bind<IGameplayNetworkBridge>().To<GameplayNetworkBridge>().AsSingle();
     }
+    
 
     private void BindControllers()
     {

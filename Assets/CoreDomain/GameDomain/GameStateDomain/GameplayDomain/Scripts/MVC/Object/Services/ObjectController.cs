@@ -25,6 +25,8 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Objec
 
         public event Action<Vector3, float> OnImpact;
         public event Action<string> OnActionPerfom;
+        public event Action Collected;
+        public bool IsOpen { get; }
 
         public ObjectController(ObjectConfigurationSo configuration,
             IUpdateSubscriptionService updateSubscriptionService,
@@ -36,6 +38,7 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Objec
             _updateSubscriptionService = updateSubscriptionService;
             _inventoryManager = inventoryManager;
         }
+
 
         public void Setup()
         {
@@ -54,6 +57,13 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Objec
             _updateSubscriptionService.RegisterFixedUpdatable(this);
         }
 
+        public void RestoreOpen(bool open)
+        {
+            if (_model.IsOpen == open) return;
+
+            _model.ToggleOpen();
+            _view.SetOpen(open);
+        }
         /// <summary>
         /// Chamado pelo servidor quando o objeto e lancado (ver InventoryActionService).
         /// </summary>
@@ -131,6 +141,7 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Objec
             }
 
             _isCollected = true;
+            Collected?.Invoke();
             Dispose();
         }
 

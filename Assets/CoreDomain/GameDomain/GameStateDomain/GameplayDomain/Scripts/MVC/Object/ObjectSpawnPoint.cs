@@ -32,5 +32,6 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Objec
                 transform.rotation * child.localRotation,
                 child.localScale);
         }
+        
     }
 }

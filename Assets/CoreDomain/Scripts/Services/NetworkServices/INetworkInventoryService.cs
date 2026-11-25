@@ -7,7 +7,7 @@ namespace CoreDomain.Scripts.Services.NetworkServices
     {
         event Action<int> OfflineHeldItemChanged;
         
-        void Configure(bool offline, Action<int, int> selectSlot, Action<int, int> scroll, Action<int> removePlayer, Action<int, Vector3, Vector3> throwAction, Action<int> useSelected);
+        void Configure(bool offline, Action<int, int> selectSlot, Action<int, int> scroll, Action<int> removePlayer, Action<int, Vector3, Vector3> throwAction, Action<int> useSelected, Action<int> addPlayer);
 
         void SetUp();
         void StopServer();
@@ -21,6 +21,7 @@ namespace CoreDomain.Scripts.Services.NetworkServices
         void RequestThrow(Vector3 origin, Vector3 aimPoint);
         
         void RequestUseSelected();
+        void AddPlayer(int connectionId);
         void NotifyHeldItemChanged(int connectionId, int itemId);
         void NotifyHeldItemActiveChanged(int connectionId, bool active);
     }

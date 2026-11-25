@@ -8,7 +8,7 @@ public class LevelScenarioView : MonoBehaviour
 {
     [SerializeReference] public List<NoiseListener> _noiseListeners = new List<NoiseListener>();
 
-    /*public void Setup(INoiseManager noiseManager)
+    public void Setup(INoiseManager noiseManager)
     {
         foreach (var noiseListener in _noiseListeners)
         {
@@ -28,5 +28,5 @@ public class LevelScenarioView : MonoBehaviour
                 noiseListener.Release();
             }
         }
-    }*/
+    }
 }

@@ -15,6 +15,7 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Objec
         private readonly ObjectFactory _objectFactory;
         private readonly IUpdateSubscriptionService _updateSubscriptionService;
         private readonly IInventoryManager _inventoryManager;
+
         private readonly Dictionary<ObjectSpawnPoint, IObjectController> _controllers = new();
         private readonly HashSet<IObjectController> _runtimeControllers = new();
 
@@ -41,7 +42,7 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Objec
                 LogService.Log("[WorldObjectSpawner] Network server is not active");
                 return;
             }
-            
+
             _isRunning = true;
             ObjectSpawnPointRegistry.Registered += Spawn;
             ObjectSpawnPointRegistry.Unregistered += Despawn;
@@ -50,16 +51,17 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Objec
                 Spawn(point);
             }
         }
-        
+
         private IObjectController CreateController(ObjectConfigurationSo configuration, ObjectView prefab,
             Vector3 position, Quaternion rotation)
         {
             var view = _objectFactory.CreateView(prefab, position, rotation);
             var controller = new ObjectController(configuration, _updateSubscriptionService, view, _inventoryManager);
-            
+
             controller.Setup();
             return controller;
         }
+
 #region SPAWN
         public IObjectController SpawnObject(ObjectConfigurationSo configuration, ObjectView prefab, Vector3 position,
             Quaternion rotation)
@@ -71,28 +73,14 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Objec
 
         private void Spawn(ObjectSpawnPoint spawnPoint)
         {
-            LogService.Log($"[WorldObjectSpawner] Spawning {spawnPoint.Configuration.ObjectName}");
-            if (_controllers.ContainsKey(spawnPoint))
-            {
-                LogService.Log($"[WorldObjectSpawner] Contains {spawnPoint.Configuration.ObjectName}");
-                return;
-            }
+            if (_controllers.ContainsKey(spawnPoint)) return;
 
-            var view = _objectFactory.CreateView(
+            var controller = CreateController(
+                spawnPoint.Configuration,
                 spawnPoint.Configuration.Prefab,
                 spawnPoint.transform.position,
                 spawnPoint.transform.rotation);
-            LogService.Log($"[WorldObjectSpawner] View created {spawnPoint.Configuration.ObjectName}");
 
-            var controller = new ObjectController(
-                spawnPoint.Configuration,
-                _updateSubscriptionService,
-                view,
-                _inventoryManager);
-            LogService.Log($"[WorldObjectSpawner] Controller created {spawnPoint.Configuration.ObjectName}");
-            
-            controller.Setup();
-            LogService.Log($"[WorldObjectSpawner] Controller setup {spawnPoint.Configuration.ObjectName}");
             _controllers.Add(spawnPoint, controller);
         }
 #endregion SPAWN
@@ -101,18 +89,19 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Objec
         private void Despawn(ObjectSpawnPoint spawnPoint)
         {
             if (!_controllers.Remove(spawnPoint, out var controller)) return;
-            
+
             LogService.Log($"[WorldObjectSpawner] Despawning {spawnPoint.Configuration.ObjectName}");
             controller.Dispose();
         }
-        
+
         public void DespawnObject(IObjectController controller)
         {
             if (!_runtimeControllers.Remove(controller)) return;
-            
+
             controller.Dispose();
         }
 #endregion DESPAWN
+
 
         public void Dispose()
         {
@@ -122,10 +111,10 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Objec
                 ObjectSpawnPointRegistry.Registered -= Spawn;
                 ObjectSpawnPointRegistry.Unregistered -= Despawn;
             }
-                    
-            foreach(var controller in _controllers.Values) controller.Dispose();
-            foreach(var controller in _runtimeControllers) controller.Dispose();
-                    
+
+            foreach (var controller in _controllers.Values) controller.Dispose();
+            foreach (var controller in _runtimeControllers) controller.Dispose();
+
             _controllers.Clear();
             _runtimeControllers.Clear();
         }

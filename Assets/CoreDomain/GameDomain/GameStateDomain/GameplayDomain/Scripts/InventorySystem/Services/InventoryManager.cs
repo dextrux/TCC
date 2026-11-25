@@ -4,6 +4,7 @@ using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.InventorySyst
 using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.InventorySystem.Interface;
 using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.InventorySystem.ScriptableObject;
 using CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Object.ScriptableObject;
+using CoreDomain.Scripts.Services.Logger.Base;
 
 namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.InventorySystem.Services
 {
@@ -29,6 +30,19 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.Inventory
             inventory.OnInventoryChanged += () => InventoryChanged?.Invoke(connectionId, inventory);
             _playersInventories.Add(connectionId, inventory);
             return inventory;
+        }
+
+        public void GiveStartingItems(int connectionId)
+        {
+            var inventory = GetOrCreateInventory(connectionId);
+
+            foreach (var starting in _configurationSo.StartingItems)
+            {
+                if (starting.item == null) continue;
+
+                if (!inventory.TryAdd(starting.item.ItemId, starting.amount, starting.item.MaxStackSize))
+                    LogService.LogWarning($"[InventoryManager] Sem espaco para o item inicial {starting.item.ObjectName}.");
+            }
         }
 
         public bool TryAddItem(int connectionId, int itemId, int amount, int maxStacks)

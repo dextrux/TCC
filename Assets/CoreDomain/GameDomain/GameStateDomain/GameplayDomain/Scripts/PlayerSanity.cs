@@ -96,4 +96,5 @@ public class PlayerSanity : MonoBehaviour
     {
         Debug.Log("O jogador enlouqueceu!");
     }
+    
 }

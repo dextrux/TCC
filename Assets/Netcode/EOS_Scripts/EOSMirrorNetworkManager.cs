@@ -1,4 +1,3 @@
-
 using CoreDomain.Scripts.Services.Logger.Base;
 using CoreDomain.Scripts.Services.NetworkService;
 using CoreDomain.Scripts.Services.NetworkServices;
@@ -11,6 +10,7 @@ public class EOSMirrorNetworkManager : NetworkManager
 {
     private INetworkSoundService _networkSoundService;
     private INetworkInventoryService _networkInventoryService;
+    private INetworkQuickTimeEventService _networkQuickTimeEventService;
     private LazyInject<EOSMirrorLobbyService> _lobbyService;
     private DiContainer _container;
 
@@ -39,6 +39,7 @@ public class EOSMirrorNetworkManager : NetworkManager
         _networkSoundService = networkSoundService;
         _networkInventoryService = networkInventoryService;
         _networkQuickTimeEventService = networkQuickTimeEventService;
+        _lobbyService = lobbyService;
         _container = container;
     }
 
@@ -93,8 +94,25 @@ public class EOSMirrorNetworkManager : NetworkManager
         _playerRequested = false;
         _clientStartGamePending = false;
 
-        NetworkClient.RegisterHandler<LobbyPlayerCountMessage>(OnLobbyPlayerCountMessage);
-        NetworkClient.RegisterHandler<LobbyStartGameMessage>(OnLobbyStartGameMessage);
+        // Substitui o registro padrão pelo spawn personalizado.
+        if (playerPrefab != null)
+        {
+            NetworkClient.UnregisterPrefab(playerPrefab);
+
+            NetworkClient.RegisterPrefab(
+                playerPrefab,
+                SpawnClientPlayer,
+                UnspawnClientPlayer
+            );
+        }
+
+        NetworkClient.RegisterHandler<LobbyPlayerCountMessage>(
+            OnLobbyPlayerCountMessage
+        );
+
+        NetworkClient.RegisterHandler<LobbyStartGameMessage>(
+            OnLobbyStartGameMessage
+        );
 
         _networkSoundService?.SetUp();
         _networkInventoryService?.SetUp();
@@ -202,12 +220,15 @@ public class EOSMirrorNetworkManager : NetworkManager
     private void SpawnPlayer(NetworkConnectionToClient connection)
     {
         if (connection == null || connection.identity != null)
-        {
             return;
-        }
 
         if (!connection.isAuthenticated || !connection.isReady)
         {
+            LogService.LogWarning(
+                $"[NM] SpawnPlayer ignorado: conn={connection.connectionId} " +
+                $"authenticated={connection.isAuthenticated} " +
+                $"ready={connection.isReady}");
+
             return;
         }
 
@@ -229,19 +250,82 @@ public class EOSMirrorNetworkManager : NetworkManager
             spawnRotation = startPosition.rotation;
         }
 
-        GameObject player = Instantiate(playerPrefab, spawnPosition, spawnRotation);
+        GameObject player = Instantiate(
+            playerPrefab,
+            spawnPosition,
+            spawnRotation
+        );
 
         player.name = "NetworkPlayer_" + connection.connectionId;
 
-        _container.InjectGameObject(player);
+        if (_container != null)
+        {
+            _container.InjectGameObject(player);
+        }
+        else
+        {
+            LogService.LogError(
+                "[NM] DiContainer nao foi injetado.");
+        }
 
-        NetworkServer.AddPlayerForConnection(connection, player);
+        bool added = NetworkServer.AddPlayerForConnection(
+            connection,
+            player
+        );
 
-        LogService.Log("Player spawned. Connection ID: " + connection.connectionId + " | Position: " + spawnPosition);
+        if (!added)
+        {
+            LogService.LogError(
+                $"[NM] Falha ao associar Player à conexão {connection.connectionId}");
+
+            return;
+        }
+
+        _networkInventoryService?.AddPlayer(connection.connectionId);
+
+        LogService.Log(
+            $"Player spawned. Connection ID: {connection.connectionId} " +
+            $"| Position: {spawnPosition}");
+    }
+    
+    private GameObject SpawnClientPlayer(SpawnMessage message)
+    {
+        GameObject player = Instantiate(
+            playerPrefab,
+            message.position,
+            message.rotation
+        );
+
+        player.name = "NetworkPlayer_Client";
+
+        if (_container != null)
+        {
+            _container.InjectGameObject(player);
+
+            LogService.Log(
+                "[NM] Player do cliente recebeu injecao Zenject."
+            );
+        }
+        else
+        {
+            LogService.LogError(
+                "[NM] Container nulo ao criar Player no cliente."
+            );
+        }
+
+        return player;
+    }
+
+    private void UnspawnClientPlayer(GameObject player)
+    {
+        Destroy(player);
     }
 
     public void NotifyGameplayReady()
     {
+        // DIAGNOSTICO: se este log nunca aparece, ninguem esta avisando que a gameplay carregou
+        LogService.Log($"[NM] NotifyGameplayReady | serverActive={NetworkServer.active} pendentes={_pendingPlayers.Count}");
+
         if (NetworkServer.active)
         {
             _serverGameplayReady = true;
@@ -285,18 +369,20 @@ public class EOSMirrorNetworkManager : NetworkManager
     private void ProcessPendingPlayers()
     {
         if (!_serverGameplayReady)
-        {
             return;
-        }
 
-        NetworkConnectionToClient[] pending = new NetworkConnectionToClient[_pendingPlayers.Count];
+        NetworkConnectionToClient[] pending =
+            new NetworkConnectionToClient[_pendingPlayers.Count];
 
         _pendingPlayers.CopyTo(pending);
         _pendingPlayers.Clear();
 
         foreach (NetworkConnectionToClient connection in pending)
         {
-            if (connection != null && connection.isAuthenticated && connection.isReady && connection.identity == null)
+            if (connection != null &&
+                connection.isAuthenticated &&
+                connection.isReady &&
+                connection.identity == null)
             {
                 SpawnPlayer(connection);
             }
