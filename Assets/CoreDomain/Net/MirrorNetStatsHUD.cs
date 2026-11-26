@@ -35,6 +35,7 @@ public class MirrorNetStatsHUD : MonoBehaviour
 
     private bool visible;
     private int profileIndex;
+    private int simulatedSendRateHz = 60;
     private float refreshTimer;
     private string cachedText = "";
     private GUIStyle boxStyle;
@@ -44,6 +45,10 @@ public class MirrorNetStatsHUD : MonoBehaviour
     private void Awake()
     {
         visible = visibleOnStart;
+        if (NetworkManager.singleton != null)
+        {
+            simulatedSendRateHz = NetworkManager.singleton.sendRate;
+        }
     }
 
     private void Update()
@@ -80,7 +85,12 @@ public class MirrorNetStatsHUD : MonoBehaviour
         profileIndex = index;
 
         InternetProfile profile = Profiles[profileIndex];
-        NetworkServer.sendRate = profile.SendRateHz;
+        simulatedSendRateHz = profile.SendRateHz;
+
+        if (NetworkManager.singleton != null)
+        {
+            NetworkManager.singleton.sendRate = profile.SendRateHz;
+        }
 
         KcpTransport kcp = FindKcpTransport();
         if (kcp != null)
@@ -181,9 +191,10 @@ public class MirrorNetStatsHUD : MonoBehaviour
         InternetProfile current = Profiles[profileIndex];
         KcpTransport kcp = FindKcpTransport();
         uint activeInterval = kcp != null ? kcp.Interval : current.KcpIntervalMs;
+        int activeSendRate = NetworkManager.singleton != null ? NetworkManager.singleton.sendRate : simulatedSendRateHz;
 
         builder.AppendLine($"Simulacao [F5-F7]: <b>{current.Name}</b>");
-        builder.AppendLine($"Send rate: {NetworkServer.sendRate} Hz  |  KCP Interval: {activeInterval} ms");
+        builder.AppendLine($"Send rate: {activeSendRate} Hz  |  KCP Interval: {activeInterval} ms");
 
         if (Transport.active != null)
         {
