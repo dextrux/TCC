@@ -22,19 +22,9 @@ public class EOSMirrorNetworkManager : NetworkManager
 
     private readonly HashSet<NetworkConnectionToClient> _pendingPlayers = new HashSet<NetworkConnectionToClient>();
 
-    private INetworkQuickTimeEventService _networkQuickTimeEventService;
-
+    
     [Inject]
-    public void Construct(INetworkSoundService networkSoundService, INetworkInventoryService networkInventoryService, LazyInject<EOSMirrorLobbyService> lobbyService, DiContainer container)
-    {
-        _networkSoundService = networkSoundService;
-        _networkInventoryService = networkInventoryService;
-        _lobbyService = lobbyService;
-        _container = container;
-    }
-
-    [Inject]
-    public void Construct(INetworkSoundService networkSoundService, INetworkInventoryService networkInventoryService, INetworkQuickTimeEventService networkQuickTimeEventService, DiContainer container)
+    public void Construct(INetworkSoundService networkSoundService, INetworkInventoryService networkInventoryService, INetworkQuickTimeEventService networkQuickTimeEventService, LazyInject<EOSMirrorLobbyService> lobbyService, DiContainer container)
     {
         _networkSoundService = networkSoundService;
         _networkInventoryService = networkInventoryService;
