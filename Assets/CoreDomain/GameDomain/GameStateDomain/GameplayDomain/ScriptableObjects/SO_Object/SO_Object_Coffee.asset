@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9eb8f842877d4c33b85b5f3ae6b708dc, type: 3}
+  m_Name: SO_Object_Coffee
+  m_EditorClassIdentifier: GameplayAssembly::CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.MVC.Object.ScriptableObject.ObjectConfigurationSo
+  objectName: Coffee
+  itemId: 1247950724
+  objectType: 1
+  maxStackSize: 999
+  gravity: -9.81
+  throwForce: 10
+  throwHeight: 1.6
+  canBeActivated: 0
+  deactivatesOnImpact: 0
+  activateAction: 
+  deactivateAction: 
+  requiredItemToActivate: {fileID: 0}
+  requiredHeldItem: {fileID: 0}
+  blockedAction: 
+  prefab: {fileID: 6518406682618026289, guid: 1d1ed777d2124f548a62a70215bc4904, type: 3}
+  icon: {fileID: 0}
+  heldPrefab: {fileID: 4953785492996611180, guid: 1d1ed777d2124f548a62a70215bc4904, type: 3}

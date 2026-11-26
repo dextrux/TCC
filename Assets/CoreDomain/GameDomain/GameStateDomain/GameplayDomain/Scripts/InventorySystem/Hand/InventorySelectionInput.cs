@@ -24,13 +24,13 @@ namespace CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.Inventory
 
         private void Start()
         {
-            if (_networkInventoryService != null) return;
-
-            //TODO: CASO O PLAYER DO NGO ESTIVER SPAWNANDO, RETIRE-O E O ERRO DEIXARA DE EXISTIR!
-            LogService.LogError(
-                $"[InventorySelectionInput] nao injetado | objeto={name} | " +
-                $"server={Mirror.NetworkServer.active} client={Mirror.NetworkClient.active} " +
-                $"local={(playerHandView != null && playerHandView.isLocalPlayer)} netId={(playerHandView != null ? playerHandView.netId : 0)}");
+            // if (_networkInventoryService != null) return;
+            //
+            //
+            // LogService.LogError(
+            //     $"[InventorySelectionInput] nao injetado | objeto={name} | " +
+            //     $"server={Mirror.NetworkServer.active} client={Mirror.NetworkClient.active} " +
+            //     $"local={(playerHandView != null && playerHandView.isLocalPlayer)} netId={(playerHandView != null ? playerHandView.netId : 0)}");
         }
 
         private void Update()

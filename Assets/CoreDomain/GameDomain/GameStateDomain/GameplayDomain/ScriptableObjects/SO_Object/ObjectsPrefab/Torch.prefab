@@ -351,6 +351,42 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 6160947563911796686, guid: c2c5d7528cdb6d642833880b1ae56439, type: 3}
+      propertyPath: m_Type
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6160947563911796686, guid: c2c5d7528cdb6d642833880b1ae56439, type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6160947563911796686, guid: c2c5d7528cdb6d642833880b1ae56439, type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6160947563911796686, guid: c2c5d7528cdb6d642833880b1ae56439, type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6160947563911796686, guid: c2c5d7528cdb6d642833880b1ae56439, type: 3}
+      propertyPath: m_Intensity
+      value: 0.01
+      objectReference: {fileID: 0}
+    - target: {fileID: 6160947563911796686, guid: c2c5d7528cdb6d642833880b1ae56439, type: 3}
+      propertyPath: m_Lightmapping
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 6160947563911796686, guid: c2c5d7528cdb6d642833880b1ae56439, type: 3}
+      propertyPath: m_Shadows.m_Type
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6160947563911796686, guid: c2c5d7528cdb6d642833880b1ae56439, type: 3}
+      propertyPath: m_ColorTemperature
+      value: 4000
+      objectReference: {fileID: 0}
+    - target: {fileID: 6160947563911796686, guid: c2c5d7528cdb6d642833880b1ae56439, type: 3}
+      propertyPath: m_UseColorTemperature
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6703335167280491019, guid: c2c5d7528cdb6d642833880b1ae56439, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.2171161
