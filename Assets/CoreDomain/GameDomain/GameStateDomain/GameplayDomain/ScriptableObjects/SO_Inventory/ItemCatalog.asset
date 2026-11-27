@@ -13,6 +13,10 @@ MonoBehaviour:
   m_Name: ItemCatalog
   m_EditorClassIdentifier: GameplayAssembly::CoreDomain.GameDomain.GameStateDomain.GameplayDomain.Scripts.InventorySystem.ScriptableObject.ItemCatalogSo
   items:
+  - {fileID: 11400000, guid: 4a62378464b84ac49835ba90954b016a, type: 2}
+  - {fileID: 11400000, guid: e7a728346fb31be4b863e24114a4d786, type: 2}
   - {fileID: 11400000, guid: e0f25f508e0775f48ad3af5c44208833, type: 2}
+  - {fileID: 11400000, guid: 25128dd0177448f4284e52fd667063ec, type: 2}
+  - {fileID: 11400000, guid: cb6fb0c927d089d458ecb37e44b51f44, type: 2}
   - {fileID: 11400000, guid: f5b9bf6b9c620fc44934c9446ac1386c, type: 2}
   - {fileID: 11400000, guid: 54cca9dafda1ee047a9301f2a487ed8d, type: 2}
